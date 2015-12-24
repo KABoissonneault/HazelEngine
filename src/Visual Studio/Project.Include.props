@@ -3,16 +3,20 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <LibDir>$(RootDir)lib\</LibDir>
+    <SrcDir>$(RootDir)src\Source\</SrcDir>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(LibDir)GSL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(LibDir)GSL\include;$(LibDir)debugbreak;$(SrcDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <BuildMacro Include="LibDir">
       <Value>$(LibDir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="SrcDir">
+      <Value>$(SrcDir)</Value>
     </BuildMacro>
   </ItemGroup>
 </Project>

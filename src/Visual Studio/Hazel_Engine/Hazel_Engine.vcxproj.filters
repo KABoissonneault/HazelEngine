@@ -16,10 +16,54 @@
     <Filter Include="Source Files\Source">
       <UniqueIdentifier>{14a372d4-3966-409f-b019-0dce31ff9809}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Source">
+      <UniqueIdentifier>{db1f4980-e989-4a81-b315-026899e15e34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Source\Engine">
+      <UniqueIdentifier>{d92018e1-3953-47e2-96d1-c538a03beef7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Source\SDK">
+      <UniqueIdentifier>{bdb54906-daa5-4cc7-bed9-093b10152026}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source\Engine">
+      <UniqueIdentifier>{5fbcbedc-ce37-4190-8e5d-9a8f7cbad8fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source\SDK">
+      <UniqueIdentifier>{a79125c7-a1bd-4946-8dc4-2f37fc626d08}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\main.cpp">
       <Filter>Source Files\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\stdafx.cpp">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SDK\HE_Assert.cpp">
+      <Filter>Source Files\Source\SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SDK\HE_String.cpp">
+      <Filter>Source Files\Source\SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\HazelEngine.cpp">
+      <Filter>Source Files\Source\Engine</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\HazelEngine.h">
+      <Filter>Header Files\Source\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SDK\HE_String.h">
+      <Filter>Header Files\Source\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SDK\HE_Assert.h">
+      <Filter>Header Files\Source\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files\Source\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
