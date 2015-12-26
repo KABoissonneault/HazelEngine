@@ -5,15 +5,17 @@
 #include <cstdarg>
 #include <vector>
 
+#include "HE_String.h"
+
 namespace HE
 {
 	namespace Assert
 	{
 		namespace
 		{
-			Response DefaultHandler(char const* const psCondition, char const* const psMsg, char const* const psFile, int const nLine)
+			Response DefaultHandler(const std::string& psCondition, const std::string& psMsg, const std::string& psFile, int const nLine)
 			{
-				std::cout << "[" << psFile << "(" << nLine << ")] Assert failure ("
+				std::cerr << "[" << psFile << "(" << nLine << ")] Assert failure ("
 					<< psCondition << "): "
 					<< psMsg
 					<< std::endl;
@@ -36,30 +38,12 @@ namespace HE
 
 		const char* Exception::what() const
 		{
-			return m_sMessage.c_str();
+			return to_string(*this).c_str();
 		}
 
-		namespace Private
+		std::string Exception::FormatExceptionMessage(const std::string& sCondition, const std::string& sMessage, const std::string& sFile, int nLine)
 		{
-			bool ReportFailure(const char* psCondition, const char* psFile, int nLine, const char* psMsg, ...)
-			{
-				va_list args;
-				va_start(args, psMsg);
-				auto const sMessage = CStringFormat(psMsg, args);
-				va_end(args);
-
-				auto const eResponse = s_pAssertHandler(psCondition, sMessage.c_str(), psFile, nLine);
-
-				switch (eResponse)
-				{
-				case Response::Halt: return true;
-				case Response::Terminate: std::terminate(); break;
-				case Response::Exception: throw Exception{ sMessage }; break;
-				case Response::Continue: break;
-				}
-
-				return false;
-			}
+			return "[" + sFile + " (" + ::to_string(nLine) + ")] Assert failure exception: (" + sCondition + ") " + sMessage;
 		}
 	}
 }

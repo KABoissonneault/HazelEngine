@@ -28,3 +28,30 @@ std::string to_string(const std::exception& e)
 {
 	return{ e.what() };
 }
+
+namespace
+{
+	template< class T >
+	std::string to_string_impl(T arg, const std::string& sFormat)
+	{
+		using namespace std::string_literals;
+
+		auto const nStringSize = snprintf(nullptr, 0, sFormat.c_str(), arg);
+		std::string sOutput(nStringSize + 1, '\0');
+		auto const nResult = snprintf(&sOutput[0], nStringSize + 1, sFormat.c_str(), arg);
+		sOutput.resize(nStringSize);
+		Assert(nStringSize == nResult);
+
+		return sOutput;
+	}
+}
+
+std::string to_string(double f, const std::string& sFormat, const std::string& sStyle /* ="f" */)
+{
+	return to_string_impl(f, "%" + sFormat + sStyle);
+}
+
+std::string to_string(long double f, const std::string& sFormat, const std::string& sStyle /* ="f" */)
+{
+	return to_string_impl(f, "%" + sFormat + sStyle + "L");
+}

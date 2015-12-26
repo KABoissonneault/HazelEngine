@@ -30,3 +30,9 @@
 # Directories
 /bin
 src/Visual Studio/ipch/
+*.idb
+*.pdb
+*.tlog
+*.log
+*.cache
+*.ilk

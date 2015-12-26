@@ -4,6 +4,7 @@
   <PropertyGroup Label="UserMacros">
     <LibDir>$(RootDir)lib\</LibDir>
     <SrcDir>$(RootDir)src\Source\</SrcDir>
+    <BinDir>$(RootDir)bin\</BinDir>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup>
@@ -17,6 +18,9 @@
     </BuildMacro>
     <BuildMacro Include="SrcDir">
       <Value>$(SrcDir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="BinDir">
+      <Value>$(BinDir)</Value>
     </BuildMacro>
   </ItemGroup>
 </Project>
