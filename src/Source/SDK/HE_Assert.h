@@ -85,10 +85,10 @@ namespace HE
 
 #if ASSERTS_ENABLED > 0
 
-#ifdef Assert_Msg
-#undef Assert_Msg
+#ifdef ASSERT_MSG
+#undef ASSERT_MSG
 #endif
-#define Assert_Msg(bCondition, sMsg)																\
+#define ASSERT_MSG(bCondition, sMsg)																\
 	do {																							\
 		using namespace HE::Assert::Private; using namespace std::string_literals;					\
 		if( !(bCondition) ) {																		\
@@ -100,18 +100,18 @@ namespace HE
 	do { (void)sizeof(bCondition); (void)sizeof(sMsg); } while(__LINE__ == -1, false)
 #endif // ASSERTS_ENABLED
 
-#ifdef Assert
+#ifdef ASSERT
 	#undef Assert
 #endif
-#define Assert(bCondition)	Assert_Msg((bCondition), "")		
+#define ASSERT(bCondition)	ASSERT_MSG((bCondition), "Assertion fail")		
 
-#ifdef Expects
-	#undef Expects
+#ifdef EXPECTS
+	#undef EXPECTS
 #endif
-#ifdef Ensures
-	#undef Ensures
+#ifdef ENSURES
+	#undef ENSURES
 #endif
 
 // Contract enforcements
-#define Expects(bCondition) Assert_Msg(bCondition, "Pre-condition fail")
-#define Ensures(bCondition) Assert_Msg(bCondition, "Post-condition fail")
+#define EXPECTS(bCondition) ASSERT_MSG(bCondition, "Pre-condition fail")
+#define ENSURES(bCondition) ASSERT_MSG(bCondition, "Post-condition fail")

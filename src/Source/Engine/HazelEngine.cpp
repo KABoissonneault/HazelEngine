@@ -13,29 +13,29 @@ namespace HE
 
 	std::future<void> Engine::Run()
 	{
-		Expects(!m_bRunning);
+		EXPECTS(!m_bRunning);
 
 		m_bRunning = true;
 
 		std::packaged_task<void()> engineRun([this]() {
 			using namespace std::literals::chrono_literals;
 
-			std::cout << "Hello, this is HazelEngine" << std::endl;
+			Log("Hello, this is HazelEngine");
 
 			auto i = 0;
 			while (!m_bShouldStop) 
 			{ 
-				std::this_thread::sleep_for(1s); 
+				std::this_thread::sleep_for(100ms); 
 				++i;
-				if (i > 10)
+				if (i > 100)
 				{
-					std::cout << "HazelEngine got bored doing nothing, it will now stop" << std::endl;
+					Log("HazelEngine got bored doing nothing, it will now stop");
 					Stop();
 					break;
 				}
 			}
 
-			std::cout << "HazelEngine has stopped" << std::endl;
+			Log("HazelEngine has stopped");
 			return;
 		});
 		auto futEngineEnd = engineRun.get_future();

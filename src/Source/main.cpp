@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << "Fatal unhandled engine error: " << to_string(e) << std::endl;
+		HE::LogError("Fatal unhandled engine error: {0}", e);
 		return -1;
 	}
 
