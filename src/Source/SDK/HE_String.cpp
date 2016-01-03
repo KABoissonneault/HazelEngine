@@ -143,7 +143,7 @@ namespace HE
 		catch (const std::system_error& e)
 		{
 			// Desperate attempt at logging the exception despite the lack of lock
-			LogError("Error while attempting to log [" + sMessage + "]. The returned error was " + e.what());
+			LogError(Format("Error while attempting to log \"{_}\". The returned error was {_}", sMessage, e));
 		}
 	}
 
@@ -157,7 +157,7 @@ namespace HE
 		catch (const std::system_error& e)
 		{
 			// Desperate attempt at logging the exception despite the lack of lock
-			std::fputs(("Error while attempting to log [" + sMessage + "]. The returned error was " + e.what()).c_str(), stderr);
+			std::fputs(Format("Error while attempting to log \"{_}\". The returned error was {_}\n", sMessage, e).c_str(), stderr);
 		}
 	}
 }
