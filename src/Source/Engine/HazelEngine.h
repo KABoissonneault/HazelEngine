@@ -1,5 +1,7 @@
 #pragma once
 
+#include <future>
+
 namespace HE
 {
 

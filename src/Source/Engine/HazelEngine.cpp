@@ -1,6 +1,7 @@
-#include "stdafx.h"
-
 #include "HazelEngine.h"
+
+#include "HE_Assert.h"
+#include "HE_String.h"
 
 namespace HE
 {

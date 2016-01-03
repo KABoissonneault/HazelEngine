@@ -36,9 +36,6 @@
     <ClCompile Include="..\..\Source\main.cpp">
       <Filter>Source Files\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\stdafx.cpp">
-      <Filter>Source Files\Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\SDK\HE_Assert.cpp">
       <Filter>Source Files\Source\SDK</Filter>
     </ClCompile>
@@ -50,9 +47,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\Engine\HazelEngine.h">
       <Filter>Header Files\Source\Engine</Filter>
     </ClInclude>
@@ -68,5 +62,8 @@
     <ClInclude Include="..\..\Source\SDK\TMP_Helper.h">
       <Filter>Header Files\Source\SDK</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

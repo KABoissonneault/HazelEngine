@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "HE_String.h"
 
 #include <mutex>

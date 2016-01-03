@@ -1,8 +1,9 @@
-#include "stdafx.h"
-
 #include <iostream>
+#include <vector>
+#include <string>
 
 #include "HazelEngine.h"
+#include "HE_String.h"
 
 int main(int argc, char* argv[])
 {

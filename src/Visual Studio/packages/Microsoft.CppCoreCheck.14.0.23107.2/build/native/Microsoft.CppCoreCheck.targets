@@ -1,0 +1,13 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PREfastAdditionalPlugins Condition="'%(ClCompile.EnablePREfast)'=='true'">$(MSBuildThisFileDirectory)$(PreferredToolArchitecture)\EspX.dll;%(ClCompile.PREfastAdditionalPlugins)</PREfastAdditionalPlugins>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="CAExcludePath">
+      <EnvironmentVariable>true</EnvironmentVariable>
+      <Value>$(IncludePath)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>
