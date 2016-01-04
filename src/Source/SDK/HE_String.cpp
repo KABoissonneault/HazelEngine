@@ -76,7 +76,16 @@ std::string CStringFormat(const char* const sFormat, ...)
 
 std::string to_string(const std::exception& e)
 {
-	return{ e.what() };
+	auto sOutput = std::string{ e.what() };
+	try 
+	{
+		std::rethrow_if_nested(e);
+	}
+	catch (const std::exception& eNested)
+	{
+		sOutput += " [Nested: " + to_string(eNested) + "]";
+	}
+	return sOutput;
 }
 
 std::string to_string(void* p)

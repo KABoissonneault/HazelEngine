@@ -29,6 +29,39 @@ TEST(to_string, double_format)
 	ASSERT_EQ(sFormatted, to_string(fValue, "2.4"));
 }
 
+TEST(to_string, nested_exception)
+{
+	try
+	{
+		[]() {
+			try
+			{
+				[]() {
+					try
+					{
+						throw std::exception{ "Exception3" };
+					}
+					catch (...)
+					{
+						std::throw_with_nested(std::invalid_argument{ "Exception2" });
+					}
+				}();
+			}
+			catch (...)
+			{
+				std::throw_with_nested(std::runtime_error{ "Exception1" });
+			}
+		}();
+	}
+	catch (const std::exception& e)
+	{
+		auto const sMessage = to_string(e);
+		EXPECT_TRUE(sMessage.find("Exception1") != std::string::npos
+			&& sMessage.find("Exception2") != std::string::npos
+			&& sMessage.find("Exception3") != std::string::npos);
+	}
+}
+
 TEST(HE_Format, NoFormat)
 {
 	ASSERT_EQ("Hello", Format("Hello"));
