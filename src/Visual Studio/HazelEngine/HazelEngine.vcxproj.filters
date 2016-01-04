@@ -45,6 +45,9 @@
     <ClCompile Include="..\..\Source\Engine\HazelEngine.cpp">
       <Filter>Source Files\Source\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SDK\HE_Allocator.cpp">
+      <Filter>Source Files\Source\SDK</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Engine\HazelEngine.h">
@@ -60,6 +63,9 @@
       <Filter>Header Files\Source\Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\SDK\TMP_Helper.h">
+      <Filter>Header Files\Source\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SDK\HE_Allocator.h">
       <Filter>Header Files\Source\SDK</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 namespace HE
 {
 	template<class T, template<class> class Op, class = std::void_t<>>
@@ -15,7 +17,7 @@ namespace HE
 	struct and_<Cond, Conds...> : std::conditional_t<Cond::value, and_<Conds...>, std::false_type> {};
 
 	template< class... Conds>
-	struct or_ : std::true_type {};
+	struct or_ : std::false_type {};
 
 	template< class Cond, class... Conds>
 	struct or_<Cond, Conds...> : std::conditional_t<Cond::value, std::true_type, or_<Conds...>> {};

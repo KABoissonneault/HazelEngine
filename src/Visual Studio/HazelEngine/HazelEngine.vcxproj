@@ -244,11 +244,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_Test|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_Test|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SDK\HE_Allocator.cpp" />
     <ClCompile Include="..\..\Source\SDK\HE_Assert.cpp" />
     <ClCompile Include="..\..\Source\SDK\HE_String.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Engine\HazelEngine.h" />
+    <ClInclude Include="..\..\Source\SDK\HE_Allocator.h" />
     <ClInclude Include="..\..\Source\SDK\HE_Assert.h" />
     <ClInclude Include="..\..\Source\SDK\HE_String.h" />
     <ClInclude Include="..\..\Source\SDK\TMP_Helper.h" />

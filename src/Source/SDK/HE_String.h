@@ -12,9 +12,11 @@
 std::string CStringFormat(const char* sFormat, va_list args);
 std::string CStringFormat(const char* sFormat, ...);
 
+// Default to_string functions
 using std::to_string;
 using gsl::to_string;
 std::string to_string(const std::exception& e);
+std::string to_string(void* p);
 
 inline std::string& to_string(std::string& s) { return s; }
 inline std::string to_string(std::string&& s) { return s; }
@@ -40,6 +42,7 @@ std::string to_string(unsigned long long val, const std::string& sFormat); // De
 std::string to_string(float val, const std::string& sFormat); // Defaults to %[sFormat]f
 std::string to_string(double val, const std::string& sFormat); // Defaults to %[sFormat]f
 std::string to_string(long double val, const std::string& sFormat); // Defaults to %[sFormat]fL
+std::string to_string(void* val, const std::string& sFormat); // Defaults to %[sFormat]p
 
 
 namespace HE
@@ -51,18 +54,12 @@ namespace HE
 
 		template<class T>
 		using has_format = has_op < T, try_format >;
-
-		template<class... T>
-		using have_format = and_<has_format<T>...>;
 		
 		template<class T>
 		using try_format_specifier = decltype(to_string(std::declval<T>(), std::declval<std::string>()));
 
 		template<class T>
 		using has_format_specifier = has_op<T, try_format_specifier >;
-
-		template<class... T>
-		using have_format_specifier = and_<has_format_specifier<T>...>;
 
 		template< typename Arg >
 		std::string FormatIthArgN(size_t i, size_t n, Arg&& arg)
@@ -131,13 +128,13 @@ namespace HE
 	template< class... T >
 	constexpr bool HasFormat()
 	{
-		return Private::have_format<T...>::value;
+		return and_<Private::has_format<T>...>::value;
 	}
 
 	template< class... T >
 	constexpr bool HasFormatSpecifier()
 	{
-		return Private::have_format_specifier<T...>::value;
+		return and_<Private::has_format_specifier<T>...>::value;
 	}
 
 	// Form: Format(sFormat, args...) -> sFormatted
