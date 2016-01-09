@@ -253,6 +253,7 @@
     <ClInclude Include="..\..\Source\SDK\HE_Allocator.h" />
     <ClInclude Include="..\..\Source\SDK\HE_Assert.h" />
     <ClInclude Include="..\..\Source\SDK\HE_String.h" />
+    <ClInclude Include="..\..\Source\SDK\HE_Platform.h" />
     <ClInclude Include="..\..\Source\SDK\TMP_Helper.h" />
     <ClInclude Include="Model.h" />
   </ItemGroup>

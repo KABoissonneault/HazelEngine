@@ -1,8 +1,15 @@
 #include <gtest/gtest.h>
 
 #include "HE_Allocator.h"
+#include "HE_Platform.h"
 
 using namespace HE;
+
+template<class T>
+constexpr bool IsAligned(const T* const p, size_t const alignment)
+{
+	return reinterpret_cast<size_t>(p) % alignment == 0;
+}
 
 TEST(StackAllocator, AllocateTest)
 {
@@ -31,6 +38,15 @@ TEST(StackAllocator, Owns)
 	EXPECT_TRUE(a.owns(b));
 }
 
+TEST(StackAllocator, AlignedAlloc)
+{
+	StackAllocator<64> a;
+	auto const b = a.allocate(sizeof(char));
+
+	auto const b2 = a.allocate(sizeof(size_t), alignof(size_t));
+	EXPECT_TRUE(IsAligned(b2.ptr, alignof(size_t)));
+}
+
 TEST(StackAllocator, DeallocateTest)
 {
 	StackAllocator<64> a;
@@ -43,12 +59,49 @@ TEST(StackAllocator, DeallocateTest)
 	EXPECT_NE(nullptr, a.allocate(64).ptr);
 }
 
+TEST(StackAllocator, DeallocateAlignedTest)
+{
+	StackAllocator<64> a;
+	auto const blk1 = allocate_aligned<char>(a);
+
+	auto const blk2 = allocate_aligned<size_t>(a);
+
+	a.deallocate(blk2);
+	a.deallocate(blk1);
+
+	auto const blk3 = allocate_aligned<char>(a);
+	EXPECT_EQ(&a, blk3.ptr); // Since the buffer is the first member, we expect it to be allocated at the beginning of the object
+}
+
+TEST(StackAllocator, DeallocateAll)
+{
+	StackAllocator<8*sizeof(size_t)> a;
+	auto const b1 = allocate<size_t>(a, 8);
+	a.deallocateAll();
+
+	auto const b2 = allocate<size_t>(a);
+	EXPECT_NE(nullptr, b2.ptr);
+}
+
 TEST(MallocAllocator, AllocateTest)
 {
 	MallocAllocator a;
 	auto const blk1 = a.allocate(sizeof(size_t));
 	EXPECT_EQ(sizeof(size_t), blk1.length);
+	EXPECT_TRUE(blk1.ptr != nullptr || errno == ENOMEM);
+	EXPECT_NE(EINVAL, errno);
 	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(blk1.ptr) = 42ull);
+	
+}
+
+TEST(MallocAllocator, AlignedAllocate)
+{
+	MallocAllocator a;
+	auto const b1 = allocate_aligned<char>(a);
+	auto const b2 = allocate_aligned<size_t>(a);
+	EXPECT_TRUE(b2.ptr != nullptr || errno == ENOMEM);
+	EXPECT_NE(EINVAL, errno);
+	EXPECT_TRUE(IsAligned(b2.ptr, alignof(size_t)));
 }
 
 TEST(MallocAllocator, DeallocateTest)
@@ -71,7 +124,7 @@ TEST(FallbackAllocator, FallbackAllocateTest)
 {
 	FallbackAllocator<StackAllocator<64>, MallocAllocator> a;
 	auto const b = a.allocate(sizeof(size_t) * 32);
-	EXPECT_NE(nullptr, b.ptr); // Malloc might return null if out of memory, but that's a very rare case if you're just running tests...
+	EXPECT_TRUE(b.ptr != nullptr || errno == ENOMEM); // Malloc might return null if out of memory, but that's a very rare case if you're just running tests...
 	EXPECT_NO_FATAL_FAILURE(reinterpret_cast<size_t*>(b.ptr)[31] = 42ull);
 }
 

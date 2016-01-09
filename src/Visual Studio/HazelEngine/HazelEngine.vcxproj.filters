@@ -68,6 +68,9 @@
     <ClInclude Include="..\..\Source\SDK\HE_Allocator.h">
       <Filter>Header Files\Source\SDK</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SDK\HE_Platform.h">
+      <Filter>Header Files\Source\SDK</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
