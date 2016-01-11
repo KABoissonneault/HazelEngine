@@ -197,6 +197,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\Test\SDK\HE_Allocator_Test.cpp" />
+    <ClCompile Include="..\..\Source\Test\SDK\HE_Math_Test.cpp" />
     <ClCompile Include="..\..\Source\Test\SDK\HE_String_Test.cpp" />
     <ClCompile Include="..\..\Source\Test\test_main.cpp" />
   </ItemGroup>
