@@ -11,6 +11,21 @@ constexpr bool IsAligned(const T* const p, size_t const alignment)
 	return reinterpret_cast<size_t>(p) % alignment == 0;
 }
 
+TEST(NullAllocator, Allocate)
+{
+	NullAllocator a;
+
+	EXPECT_EQ(nullptr, allocate<size_t>(a).ptr);
+}
+
+TEST(NullAllocator, Owns)
+{
+	NullAllocator a;
+
+	EXPECT_TRUE(a.owns({ nullptr, 0 }));
+	EXPECT_FALSE(a.owns({ reinterpret_cast<void*>(0xABCDEF), 8 }));
+}
+
 TEST(StackAllocator, AllocateTest)
 {
 	StackAllocator<64> a;

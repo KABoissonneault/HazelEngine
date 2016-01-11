@@ -5,6 +5,7 @@
 #include "TMP_Helper.h"
 #include "HE_String.h"
 #include "HE_Assert.h"
+#include "HE_Math.h"
 
 #include <type_traits>
 
@@ -16,6 +17,10 @@ namespace HE
 		size_t length;
 	};
 	using Blk = MemoryBlock;
+
+	// Max alignment
+	constexpr size_t PlatformMaxAlignment = Math::Max(alignof(void*), alignof(long double), alignof(size_t));
+
 
 	namespace Private
 	{
@@ -40,7 +45,7 @@ namespace HE
 	// - MemoryBlock T::allocate(size_t)
 	// - void T::deallocate(MemoryBlock)
 	template<class T>
-	using is_allocator = and_<has_op<T, Private::try_allocate>, has_op<T, Private::try_deallocate>>;
+	using is_allocator = and_ < has_op<T, Private::try_allocate>, has_op<T, Private::try_deallocate> > ;
 	template<class... T>
 	constexpr bool IsAllocator()
 	{
@@ -96,37 +101,45 @@ namespace HE
 		return a.allocate(count*sizeof(Type), alignof(Type));
 	}
 
+	class NullAllocator
+	{
+	public:
+		static constexpr size_t alignment = 64 * 1024;
+
+		Blk allocate(size_t);
+		Blk allocate(size_t, size_t);
+		void deallocate(Blk) noexcept;
+		void deallocateAll() noexcept;
+		bool owns(Blk);
+	};
+
 	template<size_t S>
 	class StackAllocator 
 	{
 	public:
-		static constexpr size_t size() noexcept { return S; }
+		static constexpr size_t size = S;
+		static constexpr size_t alignment = PlatformMaxAlignment;
 
-		Blk allocate(size_t n)
+		Blk allocate(size_t const n)
 		{
-			if (n > S - static_cast<size_t>(m_pSentinel - m_Buffer))
-				return{ nullptr, 0 };
-
-			auto const p = m_pSentinel;
-			m_pSentinel += n;
-			return{ p, n };
+			return allocate(n, alignment);
 		}
 
-		Blk allocate(size_t n, size_t alignment)
+		Blk allocate(size_t const n, size_t const alignment)
 		{
-			// Expect a power of 2
-			EXPECTS(alignment && !(alignment & (alignment - 1)));
-			auto const a = offsetToAlignment(alignment);
-			if (a + n > S - static_cast<size_t>(m_pSentinel - m_Buffer))
+			EXPECTS(Math::IsPow2(alignment));
+			auto const a = offsetToAligned(n, alignment);
+			auto const n1 = n + a; // Total allocated memory
+
+			if (n1 > S - static_cast<size_t>(m_pSentinel - m_Buffer))
 				return{ nullptr, 0 };
 			
-			m_pSentinel += a;
-			auto const p = m_pSentinel;
-			m_pSentinel += n;
-			return{ p, a + n };
+			Blk const result{ m_pSentinel + a, n }; // Return the aligned pointer
+			m_pSentinel += n1;
+			return result;
 		}
 
-		void deallocate(Blk blk) noexcept
+		void deallocate(Blk const blk) noexcept
 		{
 			if (blk.ptr != nullptr)
 			{
@@ -140,15 +153,33 @@ namespace HE
 			m_pSentinel = m_Buffer;
 		}
 
-		bool owns(Blk blk)
+		bool owns(Blk const blk)
 		{
 			return blk.ptr >= m_Buffer && blk.ptr < (m_Buffer + blk.length);
 		}
 
 	private:
-		size_t offsetToAlignment(size_t alignment) 
+		size_t offsetToAligned(size_t const n, size_t const alignment)
 		{
-			return (alignment - reinterpret_cast<size_t>(m_pSentinel) & (alignment - 1));
+			EXPECTS(Math::IsPow2(alignment));
+			auto const offsetFromAlignment = reinterpret_cast<size_t>(m_pSentinel) & (alignment - 1); // The distance past the previous aligned value
+			
+			if (offsetFromAlignment == 0)
+			{
+				return 0;
+			}
+			// If the allocated memory is smaller than the space we have from
+			// the current sentry position to the alignment requirement,
+			// assume we only have to align to the memory size
+			// ex: m_pSentry == &m_Buffer[1] -> allocate(2) -> offsetToAligned(2, 8) -> offsetToAligned(2, 2) (since 2 < 8 - 1) -> 1
+			else if (n < alignment - offsetFromAlignment && Math::IsPow2(n))
+			{
+				return offsetToAligned(n, n);
+			}
+			else
+			{
+				return (alignment - offsetFromAlignment);
+			}
 		}
 
 		char m_Buffer[S];
@@ -158,6 +189,8 @@ namespace HE
 	class MallocAllocator
 	{
 	public:
+		static constexpr size_t alignment = PlatformMaxAlignment;
+
 		Blk allocate(size_t);
 		Blk allocate(size_t, size_t alignment);
 		void deallocate(Blk);
@@ -176,6 +209,8 @@ namespace HE
 		static_assert(IsAllocator<F>(), "Fallback allocator does not meet the HE::Allocator concept");
 
 	public:
+		static constexpr size_t alignment = Math::Min(Primary::alignment, Fallback::alignment);
+
 		Blk allocate(size_t n)
 		{
 			auto const blk = P::allocate(n);

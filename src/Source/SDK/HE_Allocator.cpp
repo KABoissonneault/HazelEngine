@@ -19,4 +19,27 @@ namespace HE
 	{
 		return FREE(blk.ptr);
 	}
+
+	Blk NullAllocator::allocate(size_t)
+	{
+		return{ nullptr, 0 };
+	}
+
+	Blk NullAllocator::allocate(size_t, size_t)
+	{
+		return{ nullptr, 0 };
+	}
+
+	void NullAllocator::deallocate(Blk b) noexcept
+	{
+		ASSERT(b.ptr == nullptr);
+	}
+	void NullAllocator::deallocateAll() noexcept
+	{
+
+	}
+	bool NullAllocator::owns(Blk b)
+	{
+		return b.ptr == nullptr;
+	}
 }
