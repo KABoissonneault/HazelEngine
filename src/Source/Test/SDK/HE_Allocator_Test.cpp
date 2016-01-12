@@ -171,3 +171,38 @@ TEST(FallbackAllocator, DeallocateTest)
 	EXPECT_NO_FATAL_FAILURE(a.deallocate(blk));
 	EXPECT_NO_FATAL_FAILURE(a.deallocate({ nullptr, 0 }));
 }
+
+TEST(FreelistAllocator, Allocate)
+{
+	FreelistAllocator<StackAllocator<64>, 16> a;
+	auto const b = allocate<char>(a);
+	EXPECT_NE(nullptr, b.ptr);
+	EXPECT_EQ(sizeof(char), b.length);
+	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = 42ull);
+}
+
+TEST(FreelistAllocator, FreelistAllocate)
+{
+	FreelistAllocator<StackAllocator<16*16>, 16> a;
+	auto const b = a.allocate(16);
+	EXPECT_NE(nullptr, b.ptr);
+	EXPECT_EQ(16, b.length);
+	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = 42ull);
+}
+
+TEST(FreelistAllocator, MidrangeFreelistAllocate)
+{
+	FreelistAllocator<StackAllocator<16 * 32>, 17, 32> a;
+	auto const b = a.allocate(23);
+	EXPECT_NE(nullptr, b.ptr);
+	EXPECT_EQ(32, b.length);
+	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = 42ull);
+}
+
+TEST(FreelistAllocator, Owns)
+{
+	// FreelistAllocator is only a OwningAllocator if the parent allocator is an OwningAllocator
+	FreelistAllocator<StackAllocator<64>, 16> a;
+	auto const b = a.allocate(sizeof(size_t));
+	EXPECT_TRUE(a.owns(b));
+}

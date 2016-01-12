@@ -256,6 +256,126 @@ namespace HE
 		{
 			return Primary::owns(b) || Fallback::owns(b);
 		}
-		
+	};
+
+	namespace Allocator
+	{
+		constexpr size_t unbounded = static_cast<size_t>(-1);
+	}
+
+	// An allocator that allocates nodes on a Parent allocator and internally keeps blocks
+	// of memory on deallocation instead of actually deallocating them, but only
+	// if they have a certain size
+
+	// minSize: Minimum size of the allocation to be considered in range
+	// maxSize: Maxsimum size of the allocation to be considered in range
+	// batchCount: Number of allocations on a fresh "in range" allocation. Basically fills up the Freelist with batchCount nodes on allocation
+	// maxNodes: Max number of nodes the freelist can keep
+	template< class Parent,
+		size_t MinSize, 
+		size_t MaxSize = MinSize,
+		size_t BatchCount = 8,
+		size_t MaxNodes = Allocator::unbounded,
+		class Enable = std::enable_if_t<is_allocator<Parent>::value>
+		>
+	class FreelistAllocator
+		: private Parent
+	{
+		static_assert(BatchCount <= MaxNodes, "batchCount should be smaller or equal to maxNodes");
+
+	public:
+		static constexpr size_t alignment = Parent::alignment;
+
+		Blk allocate(size_t n)
+		{
+			return allocateImpl(n);
+		}
+
+		template<class Enable = std::enable_if_t<is_aligned_allocator<Parent>::value>>
+		Blk allocate(size_t n, size_t alignment)
+		{
+			return allocateImpl(n, alignment);
+		}
+
+		void deallocate(Blk b)
+		{
+			if (m_nNodesCount != MaxNodes && inRange(b.length))
+			{
+				auto const next = m_pFreelistRoot;
+				m_pFreelistRoot = static_cast<Node*>(b.ptr);
+				m_pFreelistRoot.next = next;
+				++m_nNodesCount;
+			}
+			else
+			{
+				Parent::deallocate(b);
+			}
+		}
+
+		template<class Enable = std::enable_if_t<has_op<Parent, Private::try_deallocateAll>::value>>
+		void deallocateAll()
+		{
+			Parent::deallocateAll();
+			_root = nullptr;
+		}
+
+		template<class Enable = std::enable_if_t<is_owning_allocator<Parent>::value>>
+		bool owns(Blk b)
+		{
+			return Parent::owns(b);
+		}
+
+	private:
+		struct Node
+		{
+			Node* next;
+		};
+		Node* m_pFreelistRoot{ nullptr };
+		size_t m_nNodesCount{ 0 };
+
+		bool inRange(size_t n) const
+		{
+			if (MinSize == MaxSize) return n == MaxSize;
+
+			return (MinSize == 0 || n >= MinSize) && n <= MaxSize;
+		}
+
+		template<class... Args>
+		Blk allocateImpl(size_t n, Args... args)
+		{
+			if (!inRange(n)) return Parent::allocate(n, args...);
+
+			n = MaxSize;
+			if (!m_pFreelistRoot) return allocateNewBlocks(n, args...);
+
+			Blk const result{ static_cast<void*>(m_pFreelistRoot), n };
+			m_pFreelistRoot = m_pFreelistRoot->next;
+			--m_nNodesCount;
+			return result;
+		}
+
+		template<class... Args>
+		Blk allocateNewBlocks(size_t n, Args... args)
+		{
+			if (MaxNodes == 1) return Parent::allocate(n, args...);
+
+			auto batch = Parent::allocate(BatchCount * n);
+			if (!batch.ptr) return batch;
+
+			Blk const result{ batch.ptr, n };
+			Blk rest{ static_cast<char*>(batch.ptr) + n, batch.length - n };
+			m_pFreelistRoot = static_cast<Node*>(rest.ptr);
+
+			while (rest.length >= n)
+			{
+				batch = rest;
+				rest = { static_cast<char*>(batch.ptr) + n, batch.length - n};
+				static_cast<Node*>(batch.ptr)->next = static_cast<Node*>(rest.ptr);
+			}
+
+			m_nNodesCount = BatchCount - 1;
+			
+			return result;
+		}
 	};
 }
