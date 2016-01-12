@@ -25,10 +25,8 @@
 // alignment must be a power of two
 #if defined(COMPILER_MSVC)
 #define ALIGNED_MALLOC(size, alignment) _aligned_malloc(size, alignment)
-#define MALLOC(size) _aligned_malloc(size, 1)
-#define FREE(ptr) _aligned_free(ptr)
+#define ALIGNED_FREE(ptr) _aligned_free(ptr);
 #else
 #define ALIGNED_MALLOC(size, alignment) aligned_alloc(alignment, size)
-#define MALLOC(size) std::malloc(size)
-#define FREE(ptr) std::free(ptr)
+#define ALIGNED_FREE(ptr) std::free(ptr)
 #endif

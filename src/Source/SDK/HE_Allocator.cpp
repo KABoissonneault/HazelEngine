@@ -7,17 +7,29 @@ namespace HE
 {
 	Blk MallocAllocator::allocate(size_t n)
 	{
-		return{ MALLOC(n), n };
+		return{ std::malloc(n), n };
 	}
 
-	Blk MallocAllocator::allocate(size_t n, size_t aligned)
+
+	void MallocAllocator::deallocate(Blk blk) noexcept
 	{
-		return{ ALIGNED_MALLOC(n, aligned), n };
+		std::free(blk.ptr);
 	}
 
-	void MallocAllocator::deallocate(Blk blk)
+	Blk AlignedMallocAllocator::allocate(size_t n)
 	{
-		return FREE(blk.ptr);
+		return{ ALIGNED_MALLOC(n, alignment), n };
+	}
+
+	Blk AlignedMallocAllocator::allocate(size_t n, size_t a)
+	{
+		EXPECTS(Math::IsPow2(a) && a >= alignment);
+		return{ ALIGNED_MALLOC(n, a), n };
+	}
+
+	void AlignedMallocAllocator::deallocate(Blk b) noexcept
+	{
+		ALIGNED_FREE(b.ptr);
 	}
 
 	Blk NullAllocator::allocate(size_t)
@@ -34,10 +46,12 @@ namespace HE
 	{
 		ASSERT(b.ptr == nullptr);
 	}
+
 	void NullAllocator::deallocateAll() noexcept
 	{
 
 	}
+
 	bool NullAllocator::owns(Blk b)
 	{
 		return b.ptr == nullptr;

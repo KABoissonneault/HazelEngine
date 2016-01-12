@@ -20,13 +20,15 @@ namespace HE
 
 	// Max alignment
 	constexpr size_t PlatformMaxAlignment = Math::Max(alignof(void*), alignof(long double), alignof(size_t));
-
+	static_assert(Math::IsPow2(PlatformMaxAlignment), "PlatformMaxAlignment is not a power of 2, as should be");
 
 	namespace Private
 	{
 		template<class T>
 		using try_allocate = std::enable_if_t<std::is_same<Blk, decltype(std::declval<T>().allocate(std::declval<size_t>()))>::value>;
 
+		// Custom aligned allocation's alignment parameter generally has to be a power of 2 and bigger than the allocator's default alignment,
+		// in order to respect the allocator's semantics
 		template<class T>
 		using try_aligned_allocate = std::enable_if_t<std::is_same<Blk, decltype(std::declval<T>().allocate(std::declval<size_t>(), std::declval<size_t>()))>::value>;
 
@@ -89,18 +91,6 @@ namespace HE
 		return a.allocate(count*sizeof(Type), alignof(Type));
 	}
 
-	template< class Type, class Allocator, class Enable = std::enable_if_t<is_aligned_allocator<Allocator>::value>>
-	Blk allocate_aligned(Allocator&& a)
-	{
-		return a.allocate(sizeof(Type), alignof(Type));
-	}
-
-	template<class Type, class Allocator, class Enable = std::enable_if_t<is_aligned_allocator<Allocator>::value>>
-	Blk allocate_aligned(Allocator&& a, size_t count)
-	{
-		return a.allocate(count*sizeof(Type), alignof(Type));
-	}
-
 	class NullAllocator
 	{
 	public:
@@ -125,16 +115,22 @@ namespace HE
 			return allocate(n, alignment);
 		}
 
-		Blk allocate(size_t const n, size_t const alignment)
+		// Aligned allocation
+		Blk allocate(size_t const n, size_t const custom_alignement)
 		{
-			EXPECTS(Math::IsPow2(alignment));
-			auto const a = offsetToAligned(n, alignment);
+			EXPECTS(Math::IsPow2(alignment) && custom_alignement >= alignment);
+
+			auto const a = offsetToAligned(n, custom_alignement);
 			auto const n1 = n + a; // Total allocated memory
 
-			if (n1 > S - static_cast<size_t>(m_pSentinel - m_Buffer))
+			if (n1 > leftoverMemory())
 				return{ nullptr, 0 };
-			
-			Blk const result{ m_pSentinel + a, n }; // Return the aligned pointer
+
+			// Return the aligned pointer and the requested size
+			// Note that even though more memory might have been "allocated"
+			// due to alignment requirements, that memory is not part of the
+			// current allocation, but will be restored once the previous one is deallocated
+			Blk const result{ m_pSentinel + a, n };
 			m_pSentinel += n1;
 			return result;
 		}
@@ -143,8 +139,8 @@ namespace HE
 		{
 			if (blk.ptr != nullptr)
 			{
-				ASSERT_MSG(blk.ptr >= m_pSentinel - blk.length, Format("MemoryBlock(ptr={_}, length={_}) was deallocated out of order", blk.ptr, blk.length));
-				m_pSentinel -= blk.length;
+				ASSERT_MSG(blk.ptr == m_pSentinel - blk.length, Format("MemoryBlock(ptr={_}, length={_}) was deallocated out of order", blk.ptr, blk.length));
+				m_pSentinel = static_cast<char*>(blk.ptr);
 			}
 		}
 
@@ -159,9 +155,8 @@ namespace HE
 		}
 
 	private:
-		size_t offsetToAligned(size_t const n, size_t const alignment)
+		size_t offsetToAligned(size_t const n, size_t const alignment) const noexcept
 		{
-			EXPECTS(Math::IsPow2(alignment));
 			auto const offsetFromAlignment = reinterpret_cast<size_t>(m_pSentinel) & (alignment - 1); // The distance past the previous aligned value
 			
 			if (offsetFromAlignment == 0)
@@ -182,6 +177,11 @@ namespace HE
 			}
 		}
 
+		size_t leftoverMemory() const noexcept
+		{
+			return S - static_cast<size_t>(m_pSentinel - m_Buffer);
+		}
+
 		char m_Buffer[S];
 		char* m_pSentinel{ m_Buffer };
 	};	
@@ -191,8 +191,17 @@ namespace HE
 	public:
 		static constexpr size_t alignment = PlatformMaxAlignment;
 
-		Blk allocate(size_t);
-		Blk allocate(size_t, size_t alignment);
+		Blk allocate(size_t n);
+		void deallocate(Blk) noexcept;
+	};
+
+	class AlignedMallocAllocator
+	{
+	public:
+		static constexpr size_t alignment = PlatformMaxAlignment;
+
+		Blk allocate(size_t n);
+		Blk allocate(size_t n, size_t alignment);
 		void deallocate(Blk) noexcept;
 	};
 

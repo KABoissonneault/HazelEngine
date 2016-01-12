@@ -26,13 +26,22 @@ TEST(NullAllocator, Owns)
 	EXPECT_FALSE(a.owns({ reinterpret_cast<void*>(0xABCDEF), 8 }));
 }
 
-TEST(StackAllocator, AllocateTest)
+TEST(StackAllocator, Allocate)
 {
 	StackAllocator<64> a;
 	auto const blk1 = a.allocate(16);
 	EXPECT_EQ(16, blk1.length);
 	EXPECT_NE(nullptr, blk1.ptr);
 	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(blk1.ptr) = 16ull);
+}
+
+TEST(StackAllocator, AllocateSmall)
+{
+	StackAllocator<64> a;
+	auto const blk1 = a.allocate(1);
+	EXPECT_EQ(1, blk1.length);
+	EXPECT_NE(nullptr, blk1.ptr);
+	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<char*>(blk1.ptr) = 16);
 }
 
 TEST(StackAllocator, AllocateFail)
@@ -74,20 +83,6 @@ TEST(StackAllocator, DeallocateTest)
 	EXPECT_NE(nullptr, a.allocate(64).ptr);
 }
 
-TEST(StackAllocator, DeallocateAlignedTest)
-{
-	StackAllocator<64> a;
-	auto const blk1 = allocate_aligned<char>(a);
-
-	auto const blk2 = allocate_aligned<size_t>(a);
-
-	a.deallocate(blk2);
-	a.deallocate(blk1);
-
-	auto const blk3 = allocate_aligned<char>(a);
-	EXPECT_EQ(&a, blk3.ptr); // Since the buffer is the first member, we expect it to be allocated at the beginning of the object
-}
-
 TEST(StackAllocator, DeallocateAll)
 {
 	StackAllocator<8*sizeof(size_t)> a;
@@ -109,16 +104,6 @@ TEST(MallocAllocator, AllocateTest)
 	
 }
 
-TEST(MallocAllocator, AlignedAllocate)
-{
-	MallocAllocator a;
-	auto const b1 = allocate_aligned<char>(a);
-	auto const b2 = allocate_aligned<size_t>(a);
-	EXPECT_TRUE(b2.ptr != nullptr || errno == ENOMEM);
-	EXPECT_NE(EINVAL, errno);
-	EXPECT_TRUE(IsAligned(b2.ptr, alignof(size_t)));
-}
-
 TEST(MallocAllocator, DeallocateTest)
 {
 	MallocAllocator a;
@@ -127,7 +112,35 @@ TEST(MallocAllocator, DeallocateTest)
 	EXPECT_NO_FATAL_FAILURE(a.deallocate({ nullptr, 0 }));
 }
 
-TEST(FallbackAllocator, AllocateTest)
+TEST(AlignedMallocAllocator, AllocateTest)
+{
+	AlignedMallocAllocator a;
+	auto const blk1 = a.allocate(sizeof(size_t));
+	EXPECT_EQ(sizeof(size_t), blk1.length);
+	EXPECT_TRUE(blk1.ptr != nullptr || errno == ENOMEM);
+	EXPECT_NE(EINVAL, errno);
+	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(blk1.ptr) = 42ull);
+
+}
+
+TEST(AlignedMallocAllocator, AlignedAllocate)
+{
+	AlignedMallocAllocator a;
+	auto const b1 = a.allocate(256, 16);
+	EXPECT_TRUE(b1.ptr != nullptr || errno == ENOMEM);
+	EXPECT_NE(EINVAL, errno);
+	EXPECT_TRUE(IsAligned(b1.ptr, 16));
+}
+
+TEST(AlignedMallocAllocator, DeallocateTest)
+{
+	AlignedMallocAllocator a;
+	auto const blk = a.allocate(sizeof(size_t));
+	EXPECT_NO_FATAL_FAILURE(a.deallocate(blk));
+	EXPECT_NO_FATAL_FAILURE(a.deallocate({ nullptr, 0 }));
+}
+
+TEST(FallbackAllocator, Allocate)
 {
 	FallbackAllocator<StackAllocator<64>, MallocAllocator> a;
 	auto const b = a.allocate(sizeof(size_t));
@@ -135,7 +148,7 @@ TEST(FallbackAllocator, AllocateTest)
 	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = 42ull);
 }
 
-TEST(FallbackAllocator, FallbackAllocateTest)
+TEST(FallbackAllocator, FallbackAllocate)
 {
 	FallbackAllocator<StackAllocator<64>, MallocAllocator> a;
 	auto const b = a.allocate(sizeof(size_t) * 32);
