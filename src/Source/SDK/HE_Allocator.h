@@ -193,7 +193,7 @@ namespace HE
 
 		Blk allocate(size_t);
 		Blk allocate(size_t, size_t alignment);
-		void deallocate(Blk);
+		void deallocate(Blk) noexcept;
 	};
 
 	template< class Primary, class Fallback >
