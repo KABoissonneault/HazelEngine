@@ -20,10 +20,8 @@ TEST(NullAllocator, Allocate)
 
 TEST(NullAllocator, Owns)
 {
-	NullAllocator a;
-
-	EXPECT_TRUE(a.owns({ nullptr, 0 }));
-	EXPECT_FALSE(a.owns({ reinterpret_cast<void*>(0xABCDEF), 8 }));
+	EXPECT_TRUE(NullAllocator::owns({ nullptr, 0 }));
+	EXPECT_FALSE(NullAllocator::owns({ reinterpret_cast<void*>(0xABCDEF), 8 }));
 }
 
 TEST(StackAllocator, Allocate)
@@ -95,27 +93,23 @@ TEST(StackAllocator, DeallocateAll)
 
 TEST(MallocAllocator, AllocateTest)
 {
-	MallocAllocator a;
-	auto const blk1 = a.allocate(sizeof(size_t));
+	auto const blk1 = MallocAllocator::allocate(sizeof(size_t));
 	EXPECT_EQ(sizeof(size_t), blk1.length);
 	EXPECT_TRUE(blk1.ptr != nullptr || errno == ENOMEM);
 	EXPECT_NE(EINVAL, errno);
 	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(blk1.ptr) = 42ull);
-	
 }
 
 TEST(MallocAllocator, DeallocateTest)
 {
-	MallocAllocator a;
-	auto const blk = a.allocate(sizeof(size_t));
-	EXPECT_NO_FATAL_FAILURE(a.deallocate(blk));
-	EXPECT_NO_FATAL_FAILURE(a.deallocate({ nullptr, 0 }));
+	auto const blk = MallocAllocator::allocate(sizeof(size_t));
+	EXPECT_NO_FATAL_FAILURE(MallocAllocator::deallocate(blk));
+	EXPECT_NO_FATAL_FAILURE(MallocAllocator::deallocate({ nullptr, 0 }));
 }
 
 TEST(AlignedMallocAllocator, AllocateTest)
 {
-	AlignedMallocAllocator a;
-	auto const blk1 = a.allocate(sizeof(size_t));
+	auto const blk1 = AlignedMallocAllocator::allocate(sizeof(size_t));
 	EXPECT_EQ(sizeof(size_t), blk1.length);
 	EXPECT_TRUE(blk1.ptr != nullptr || errno == ENOMEM);
 	EXPECT_NE(EINVAL, errno);
@@ -125,8 +119,7 @@ TEST(AlignedMallocAllocator, AllocateTest)
 
 TEST(AlignedMallocAllocator, AlignedAllocate)
 {
-	AlignedMallocAllocator a;
-	auto const b1 = a.allocate(256, 16);
+	auto const b1 = AlignedMallocAllocator::allocate(256, 16);
 	EXPECT_TRUE(b1.ptr != nullptr || errno == ENOMEM);
 	EXPECT_NE(EINVAL, errno);
 	EXPECT_TRUE(IsAligned(b1.ptr, 16));
@@ -134,10 +127,9 @@ TEST(AlignedMallocAllocator, AlignedAllocate)
 
 TEST(AlignedMallocAllocator, DeallocateTest)
 {
-	AlignedMallocAllocator a;
-	auto const blk = a.allocate(sizeof(size_t));
-	EXPECT_NO_FATAL_FAILURE(a.deallocate(blk));
-	EXPECT_NO_FATAL_FAILURE(a.deallocate({ nullptr, 0 }));
+	auto const blk = AlignedMallocAllocator::allocate(sizeof(size_t));
+	EXPECT_NO_FATAL_FAILURE(AlignedMallocAllocator::deallocate(blk));
+	EXPECT_NO_FATAL_FAILURE(AlignedMallocAllocator::deallocate({ nullptr, 0 }));
 }
 
 TEST(FallbackAllocator, Allocate)
