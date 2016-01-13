@@ -4,6 +4,7 @@
 #include <string>
 #include <cstdarg>
 #include <typeinfo>
+#include <exception>
 
 #include "HE_Assert.h"
 #include "TMP_Helper.h"
@@ -254,4 +255,30 @@ namespace HE
 	{
 		LogError(Format(sFormat, std::forward<Args>(args)...));
 	}
+
+	// Constexpr-friendly string
+	template<class Char = char>
+	class basic_constexpr_string
+	{
+	public:
+		template<size_t N>
+		constexpr basic_constexpr_string(const char(&a)[N]) noexcept :
+			m_pStr{ a }, m_nSize{ N - 1 } {}
+
+		constexpr Char operator[](size_t n) const
+		{
+			return n < m_nSize ? m_pStr[n] : throw std::out_of_range("");
+		}
+
+		constexpr size_t size() const noexcept { return m_nSize; }
+
+	private:
+		const Char* const m_pStr;
+		const size_t m_nSize;
+	};
+
+	using constexpr_string = basic_constexpr_string<char>;
+	using constexpr_wstring = basic_constexpr_string<wchar_t>;
+	using constexpr_u16string = basic_constexpr_string<char16_t>;
+	using constexpr_u32string = basic_constexpr_string<char32_t>;
 }
