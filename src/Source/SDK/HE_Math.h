@@ -14,28 +14,29 @@ namespace HE
 			return a && !(a & (a - 1));
 		}
 
-		template<class T>
-		constexpr T Min(const T& a, const T& b) noexcept
+		template<class T1, class T2, class T = std::common_type_t<T1, T2>>
+		constexpr T Min(const T1& a, const T2& b) noexcept
 		{
 			return a < b ? a : b;
 		}
 
-		template<class T, class... Tr>
-		constexpr T Min(const T& a, const T& b, const Tr&... rest) noexcept
+		template<class T1, class T2, class... Tr, class T = std::common_type_t<T1, T2, Tr...>>
+		constexpr T Min(const T1& a, const T2& b, const Tr&... rest) noexcept
 		{
-			return a < b ? Min(a, rest...) : Min(b, rest...);
+			return Min(a, Min(b, rest...));
 		}
 
-		template<class T>
-		constexpr T Max(const T&a, const T& b) noexcept
+		template<class T1, class T2, class T = std::common_type_t<T1, T2>>
+		constexpr T Max(const T1& a, const T2& b) noexcept
 		{
 			return a > b ? a : b;
 		}
 
-		template<class T, class... Tr>
-		constexpr T Max(const T& a, const T& b, const Tr&... rest) noexcept
+		template<class T1, class T2, class... Tr, class T = std::common_type_t<T1, T2, Tr...>>
+		constexpr T Max(const T1& a, const T2& b, const Tr&... rest) noexcept
 		{
-			return a > b ? Max(a, rest...) : Max(b, rest...);
+			return Max(a, Max(b, rest...));
 		}
+
 	}
 }
