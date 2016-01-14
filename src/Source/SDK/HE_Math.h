@@ -38,5 +38,11 @@ namespace HE
 			return Max(a, Max(b, rest...));
 		}
 
+		// Base should be non-zero and unsigned
+		template<class T1, class T2, class T = std::common_type_t<T1, T2>>
+		constexpr T RoundUpToMultipleOf(T1 s, T2 base) noexcept
+		{
+			return (s % base) ? s + base - (s % base) : s;
+		}
 	}
 }
