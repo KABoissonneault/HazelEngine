@@ -5,11 +5,15 @@
 
 namespace HE
 {
+	NullAllocator NullAllocator::it;
+	MallocAllocator MallocAllocator::it;
+	AlignedMallocAllocator AlignedMallocAllocator::it;
+
+
 	Blk MallocAllocator::allocate(size_t n)
 	{
 		return{ std::malloc(n), n };
 	}
-
 
 	void MallocAllocator::deallocate(Blk blk) noexcept
 	{

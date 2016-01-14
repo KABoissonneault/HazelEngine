@@ -95,12 +95,13 @@ namespace HE
 	{
 	public:
 		static constexpr size_t alignment = 64 * 1024;
+		static NullAllocator it;
 
-		static Blk allocate(size_t);
-		static Blk allocate(size_t, size_t);
-		static void deallocate(Blk) noexcept;
-		static void deallocateAll() noexcept;
-		static bool owns(Blk);
+		Blk allocate(size_t);
+		Blk allocate(size_t, size_t);
+		void deallocate(Blk) noexcept;
+		void deallocateAll() noexcept;
+		bool owns(Blk);
 	};
 
 	template<size_t S>
@@ -190,19 +191,21 @@ namespace HE
 	{
 	public:
 		static constexpr size_t alignment = PlatformMaxAlignment;
+		static MallocAllocator it;
 
-		static Blk allocate(size_t n);
-		static void deallocate(Blk) noexcept;
+		Blk allocate(size_t n);
+		void deallocate(Blk) noexcept;
 	};
 
 	class AlignedMallocAllocator
 	{
 	public:
 		static constexpr size_t alignment = PlatformMaxAlignment;
+		static AlignedMallocAllocator it;
 
-		static Blk allocate(size_t n);
-		static Blk allocate(size_t n, size_t alignment);
-		static void deallocate(Blk) noexcept;
+		Blk allocate(size_t n);
+		Blk allocate(size_t n, size_t alignment);
+		void deallocate(Blk) noexcept;
 	};
 
 	template< class Primary, class Fallback >
