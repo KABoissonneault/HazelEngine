@@ -196,3 +196,62 @@ TEST(FreelistAllocator, Owns)
 	auto const b = a.allocate(sizeof(size_t));
 	EXPECT_TRUE(a.owns(b));
 }
+
+TEST(FreelistAllocator, Deallocate)
+{
+	FreelistAllocator<MallocAllocator, 16> a;
+	auto const blk = a.allocate(sizeof(size_t));
+	EXPECT_NO_FATAL_FAILURE(a.deallocate(blk));
+	EXPECT_NO_FATAL_FAILURE(a.deallocate({ nullptr, 0 }));
+
+	auto const blk1 = a.allocate(16);
+	EXPECT_NO_FATAL_FAILURE(a.deallocate(blk1));
+}
+
+TEST(AffixAllocator, StatelessAllocate)
+{
+	using Affix = AffixAllocator<MallocAllocator, size_t>;
+	auto const b = allocate<size_t>(Affix::it);
+	EXPECT_NE(nullptr, b.ptr);
+	EXPECT_EQ(sizeof(size_t), b.length);
+	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = size_t{ 42 });
+}
+
+TEST(AffixAllocator, StatefulAllocate)
+{
+	using Affix = AffixAllocator<StackAllocator<64>, size_t>;
+	Affix a;
+	auto const b = allocate<size_t>(a);
+	EXPECT_NE(nullptr, b.ptr);
+	EXPECT_EQ(sizeof(size_t), b.length);
+	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = size_t{ 42 });
+}
+
+TEST(AffixAllocator, Owns)
+{
+	using Affix = AffixAllocator<StackAllocator<64>, size_t>;
+	Affix a;
+	auto const b = allocate<size_t>(a);
+	EXPECT_TRUE(a.owns(b));
+}
+
+TEST(AffixAllocator, Deallocate)
+{
+	using Affix = AffixAllocator<MallocAllocator, size_t>;
+	auto const blk = Affix::it.allocate(sizeof(size_t));
+	EXPECT_NO_FATAL_FAILURE(Affix::it.deallocate(blk));
+	EXPECT_NO_FATAL_FAILURE(Affix::it.deallocate({ nullptr, 0 }));
+}
+
+TEST(AffixAllocator, Affix)
+{
+	using Affix = AffixAllocator<MallocAllocator, size_t, size_t>;
+
+	auto b = Affix::it.allocate(16);
+	auto const p = static_cast<unsigned long long*>(b.ptr);
+	p[0] = 0;
+	p[1] = 0;
+	EXPECT_NO_FATAL_FAILURE(Affix::Prefix(b) = 0xFFFFFFFFFFFFFFFULL);
+	EXPECT_NO_FATAL_FAILURE(Affix::Suffix(b) = 0xFFFFFFFFFFFFFFFULL);
+	EXPECT_TRUE(p[0] == 0 && p[0] == 0); // Expect the data to be intact
+}

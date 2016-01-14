@@ -384,4 +384,115 @@ namespace HE
 			return result;
 		}
 	};
+
+	template<class T>
+	class StateSize : public std::integral_constant<size_t, std::is_empty<T>::value ? 0 : sizeof(T)> {};
+
+	template<>
+	class StateSize<void> : public std::integral_constant<size_t, 0> {};
+
+	static_assert(StateSize<size_t>::value == sizeof(size_t), "StateSize test fail");
+	static_assert(StateSize<std::integral_constant<size_t, 0>>::value == 0, "StateSize test fail");
+	static_assert(StateSize<void>::value == 0, "StateSize test fail");
+
+	template<class Parent, class PrefixType, class SuffixType>
+	class AffixAllocator;
+
+	namespace Private
+	{
+		template < class Parent, class PrefixType, class SuffixType, class Enable = void>
+		struct AffixParentImpl : protected Parent {	};
+
+		template < class Parent, class PrefixType, class SuffixType>
+		struct AffixParentImpl<Parent, PrefixType, SuffixType, std::enable_if_t<StateSize<Parent>::value == 0>>
+			: protected Parent
+		{
+			static AffixAllocator<Parent, PrefixType, SuffixType> it;
+		};
+
+		template<class PrefixType>
+		struct PrefixImpl
+		{
+			template<class Enable = std::enable_if_t<StateSize<PrefixType>::value != 0>>
+			static PrefixType& Prefix(Blk& b)
+			{
+				return reinterpret_cast<PrefixType*>(b.ptr)[-1];
+			}
+		};
+
+		template<>
+		struct PrefixImpl<void>{};
+
+		template<class PrefixType, class SuffixType>
+		struct SuffixImpl
+		{
+			template<class Enable = std::enable_if_t<StateSize<SuffixType>::value != 0>>
+			static SuffixType& Suffix(Blk& b)
+			{
+
+				auto const p = static_cast<char*>(b.ptr) + b.length;
+				return *reinterpret_cast<SuffixType*>(p);
+			}
+
+		protected:
+			static size_t totalAllocationSize(size_t s)
+			{
+				if (StateSize<SuffixType>::value == 0)
+				{
+					return s + StateSize<PrefixType>::value;
+				}
+				else
+				{
+					return Math::RoundUpToMultipleOf(s + StateSize<PrefixType>::value, alignof(SuffixType)) + StateSize<SuffixType>::value;
+				}
+			}
+		};
+
+		template<class PrefixType>
+		struct SuffixImpl<PrefixType, void>
+		{
+		protected:
+			static size_t totalAllocationSize(size_t s)
+			{
+				return s + StateSize<PrefixType>::value;
+			}
+		};
+	}
+
+	template<class Parent, class PrefixType, class SuffixType = void>
+	class AffixAllocator : public Private::AffixParentImpl<Parent, PrefixType, SuffixType>,
+		public Private::PrefixImpl<PrefixType>,
+		public Private::SuffixImpl<PrefixType, SuffixType>
+	{
+	public:
+		static constexpr size_t alignment = StateSize<PrefixType>::value ? alignof(PrefixType) : Parent::alignment;
+
+		Blk allocate(size_t n)
+		{
+			auto const result = Parent::allocate(totalAllocationSize(n));
+			if (!result.ptr) return result;
+
+			return{ static_cast<char*>(result.ptr) + StateSize<PrefixType>::value, n };
+		}
+
+		bool owns(Blk b)
+		{
+			return Parent::owns(actualAllocation(b));
+		}
+
+		void deallocate(Blk b)
+		{
+			Parent::deallocate(actualAllocation(b));
+		}
+
+	private:
+		// Takes a requested allocation, and returns the actual allocation that was request to the parent
+		static Blk actualAllocation(Blk b)
+		{
+			return{ static_cast<char*>(b.ptr) - StateSize<PrefixType>::value, totalAllocationSize(b.length) };
+		}
+	};
+
+	template<class Parent, class PrefixType, class SuffixType>
+	AffixAllocator<Parent, PrefixType, SuffixType> Private::AffixParentImpl<Parent, PrefixType, SuffixType, std::enable_if_t<StateSize<Parent>::value == 0>>::it;
 }
