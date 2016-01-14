@@ -124,3 +124,8 @@ TEST(HE_Format, MisorderedArguments)
 {
 	ASSERT_EQ("7.5 + 13.5 = 21", Format("{1:1.1} + {2:2.1} = {0}", 21, 7.5f, 13.5));
 }
+
+// constexpr_string tests
+static_assert(constexpr_string{ "Hey, a test" }.size() == 11, "constexpr_string test failed");
+static_assert(constexpr_string{ "Hey, a test" }[2] == 'y', "constexpr_string test failed");
+//static_assert(constexpr_string{ "Umm" }[7], "Fail"); // This shouldn't compile
