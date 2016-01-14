@@ -13,15 +13,13 @@ constexpr bool IsAligned(const T* const p, size_t const alignment)
 
 TEST(NullAllocator, Allocate)
 {
-	NullAllocator a;
-
-	EXPECT_EQ(nullptr, allocate<size_t>(a).ptr);
+	EXPECT_EQ(nullptr, allocate<size_t>(NullAllocator::it).ptr);
 }
 
 TEST(NullAllocator, Owns)
 {
-	EXPECT_TRUE(NullAllocator::owns({ nullptr, 0 }));
-	EXPECT_FALSE(NullAllocator::owns({ reinterpret_cast<void*>(0xABCDEF), 8 }));
+	EXPECT_TRUE(NullAllocator::it.owns({ nullptr, 0 }));
+	EXPECT_FALSE(NullAllocator::it.owns({ reinterpret_cast<void*>(0xABCDEF), 8 }));
 }
 
 TEST(StackAllocator, Allocate)
@@ -93,7 +91,7 @@ TEST(StackAllocator, DeallocateAll)
 
 TEST(MallocAllocator, AllocateTest)
 {
-	auto const blk1 = MallocAllocator::allocate(sizeof(size_t));
+	auto const blk1 = MallocAllocator::it.allocate(sizeof(size_t));
 	EXPECT_EQ(sizeof(size_t), blk1.length);
 	EXPECT_TRUE(blk1.ptr != nullptr || errno == ENOMEM);
 	EXPECT_NE(EINVAL, errno);
@@ -102,14 +100,14 @@ TEST(MallocAllocator, AllocateTest)
 
 TEST(MallocAllocator, DeallocateTest)
 {
-	auto const blk = MallocAllocator::allocate(sizeof(size_t));
-	EXPECT_NO_FATAL_FAILURE(MallocAllocator::deallocate(blk));
-	EXPECT_NO_FATAL_FAILURE(MallocAllocator::deallocate({ nullptr, 0 }));
+	auto const blk = MallocAllocator::it.allocate(sizeof(size_t));
+	EXPECT_NO_FATAL_FAILURE(MallocAllocator::it.deallocate(blk));
+	EXPECT_NO_FATAL_FAILURE(MallocAllocator::it.deallocate({ nullptr, 0 }));
 }
 
 TEST(AlignedMallocAllocator, AllocateTest)
 {
-	auto const blk1 = AlignedMallocAllocator::allocate(sizeof(size_t));
+	auto const blk1 = AlignedMallocAllocator::it.allocate(sizeof(size_t));
 	EXPECT_EQ(sizeof(size_t), blk1.length);
 	EXPECT_TRUE(blk1.ptr != nullptr || errno == ENOMEM);
 	EXPECT_NE(EINVAL, errno);
@@ -119,7 +117,7 @@ TEST(AlignedMallocAllocator, AllocateTest)
 
 TEST(AlignedMallocAllocator, AlignedAllocate)
 {
-	auto const b1 = AlignedMallocAllocator::allocate(256, 16);
+	auto const b1 = AlignedMallocAllocator::it.allocate(256, 16);
 	EXPECT_TRUE(b1.ptr != nullptr || errno == ENOMEM);
 	EXPECT_NE(EINVAL, errno);
 	EXPECT_TRUE(IsAligned(b1.ptr, 16));
@@ -127,9 +125,9 @@ TEST(AlignedMallocAllocator, AlignedAllocate)
 
 TEST(AlignedMallocAllocator, DeallocateTest)
 {
-	auto const blk = AlignedMallocAllocator::allocate(sizeof(size_t));
-	EXPECT_NO_FATAL_FAILURE(AlignedMallocAllocator::deallocate(blk));
-	EXPECT_NO_FATAL_FAILURE(AlignedMallocAllocator::deallocate({ nullptr, 0 }));
+	auto const blk = AlignedMallocAllocator::it.allocate(sizeof(size_t));
+	EXPECT_NO_FATAL_FAILURE(AlignedMallocAllocator::it.deallocate(blk));
+	EXPECT_NO_FATAL_FAILURE(AlignedMallocAllocator::it.deallocate({ nullptr, 0 }));
 }
 
 TEST(FallbackAllocator, Allocate)
@@ -156,7 +154,7 @@ TEST(FallbackAllocator, Owns)
 	EXPECT_TRUE(a.owns(b));
 }
 
-TEST(FallbackAllocator, DeallocateTest)
+TEST(FallbackAllocator, Deallocate)
 {
 	FallbackAllocator<StackAllocator<64>, MallocAllocator> a;
 	auto const blk = a.allocate(sizeof(size_t));
@@ -166,7 +164,7 @@ TEST(FallbackAllocator, DeallocateTest)
 
 TEST(FreelistAllocator, Allocate)
 {
-	FreelistAllocator<StackAllocator<64>, 16> a;
+	FreelistAllocator<MallocAllocator, 16> a;
 	auto const b = allocate<char>(a);
 	EXPECT_NE(nullptr, b.ptr);
 	EXPECT_EQ(sizeof(char), b.length);
@@ -175,20 +173,20 @@ TEST(FreelistAllocator, Allocate)
 
 TEST(FreelistAllocator, FreelistAllocate)
 {
-	FreelistAllocator<StackAllocator<16*16>, 16> a;
+	FreelistAllocator<MallocAllocator, 16> a;
 	auto const b = a.allocate(16);
 	EXPECT_NE(nullptr, b.ptr);
 	EXPECT_EQ(16, b.length);
-	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = 42ull);
+	EXPECT_NO_FATAL_FAILURE(reinterpret_cast<size_t*>(b.ptr)[0] = 42ull);
 }
 
 TEST(FreelistAllocator, MidrangeFreelistAllocate)
 {
-	FreelistAllocator<StackAllocator<16 * 32>, 17, 32> a;
+	FreelistAllocator<MallocAllocator, 17, 32> a;
 	auto const b = a.allocate(23);
 	EXPECT_NE(nullptr, b.ptr);
 	EXPECT_EQ(32, b.length);
-	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = 42ull);
+	EXPECT_NO_FATAL_FAILURE(reinterpret_cast<size_t*>(b.ptr)[0] = 42ull);
 }
 
 TEST(FreelistAllocator, Owns)

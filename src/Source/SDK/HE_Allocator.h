@@ -269,6 +269,9 @@ namespace HE
 	// An allocator that allocates nodes on a Parent allocator and internally keeps blocks
 	// of memory on deallocation instead of actually deallocating them, but only
 	// if they have a certain size
+	// Important: Actual deallocations to the parent allocator are not guaranteed to be ordered as 
+	// deallocated in the Freelist allocator, and therefore should not be used with allocators
+	// that require ordered deallocations, such as StackAllocator
 
 	// minSize: Minimum size of the allocation to be considered in range
 	// maxSize: Maxsimum size of the allocation to be considered in range
@@ -306,7 +309,7 @@ namespace HE
 			{
 				auto const next = m_pFreelistRoot;
 				m_pFreelistRoot = static_cast<Node*>(b.ptr);
-				m_pFreelistRoot.next = next;
+				m_pFreelistRoot->next = next;
 				++m_nNodesCount;
 			}
 			else
