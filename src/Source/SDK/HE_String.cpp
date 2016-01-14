@@ -152,31 +152,32 @@ namespace HE
 		std::mutex s_mutLogError;
 	}
 
-	void Log(const std::string& sMessage) noexcept
+	void Log(const char* psMsg) noexcept
 	{
 		try
 		{
 			std::lock_guard<std::mutex> lock{ s_mutLog };
-			std::puts(sMessage.c_str());
+			std::puts(psMsg);
 		}
 		catch (const std::system_error& e)
 		{
 			// Desperate attempt at logging the exception despite the lack of lock
-			LogError(Format("Error while attempting to log \"{_}\". The returned error was {_}", sMessage, e));
+			LogError(Format("Error while attempting to log \"{_}\". The returned error was {_}", psMsg, e));
 		}
 	}
 
-	void LogError(const std::string& sMessage) noexcept
+	void LogError(const char* psMsg) noexcept
 	{
 		try
 		{
 			std::lock_guard<std::mutex> lock{ s_mutLog };
-			std::fputs((sMessage + "\n").c_str(), stderr);
+			std::fputs(psMsg, stderr);
+			std::fputs("\n", stderr);
 		}
 		catch (const std::system_error& e)
 		{
 			// Desperate attempt at logging the exception despite the lack of lock
-			std::fputs(Format("Error while attempting to log \"{_}\". The returned error was {_}\n", sMessage, e).c_str(), stderr);
+			std::fputs(Format("Error while attempting to log \"{_}\". The returned error was {_}\n", psMsg, e).c_str(), stderr);
 		}
 	}
 }

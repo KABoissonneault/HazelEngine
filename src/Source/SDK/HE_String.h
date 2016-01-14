@@ -241,8 +241,11 @@ namespace HE
 	}
 	
 	// Thread-safe logging
-	void Log(const std::string& sMsg) noexcept;
-	void LogError(const std::string& sMsg) noexcept;
+	void Log(const char* psMsg) noexcept;
+	inline void Log(const std::string& sMsg) noexcept { Log(sMsg.c_str()); }
+	void LogError(const char* psMsg) noexcept;
+	inline void LogError(const std::string& sMsg) noexcept { LogError(sMsg.c_str()); }
+	
 
 	template< typename... Args>
 	void Log(const std::string& sFormat, Args&&... args)
