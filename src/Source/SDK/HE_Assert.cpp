@@ -37,7 +37,7 @@ namespace HE
 
 		const char* Exception::what() const
 		{
-			return to_string(*this).c_str();
+			return GetMessage().c_str();
 		}
 
 		std::string Exception::FormatExceptionMessage(const std::string& sCondition, const std::string& sMessage, const std::string& sFile, int nLine)

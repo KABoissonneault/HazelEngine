@@ -54,11 +54,6 @@ namespace HE
 			int m_nLine;
 		};
 
-		inline const std::string& to_string(const Exception& e)
-		{
-			return e.GetMessage();
-		}
-
 		// Use the assert macros below, not this
 		namespace Private
 		{
