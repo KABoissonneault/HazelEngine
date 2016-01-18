@@ -122,89 +122,55 @@ namespace HE
 		void deallocateAll() noexcept;
 		bool owns(Blk);
 	};
-
-	template<size_t S>
-	class StackAllocator 
+	
+	// Returns the beginning of the buffer is the buffer is big enough, even if it
+	// was already allocated. This is because the allocator does no tracking. The client
+	// is responsible for making sure memory doesn't get corrupted
+	// Probably shouldn't be used as the main allocator of the Fallback allocator, but pairs
+	// well with Segregator
+	template<size_t N>
+	class alignas(PlatformMaxAlignment) LightInlineAllocator
 	{
 	public:
-		static constexpr size_t size = S;
 		static constexpr size_t alignment = PlatformMaxAlignment;
 
-		Blk allocate(size_t const n)
+		Blk allocate(size_t n)
 		{
-			return allocate(n, alignment);
-		}
-
-		// Aligned allocation
-		Blk allocate(size_t const n, size_t const custom_alignement)
-		{
-			EXPECTS(Math::IsPow2(alignment) && custom_alignement >= alignment);
-
-			auto const a = offsetToAligned(n, custom_alignement);
-			auto const n1 = n + a; // Total allocated memory
-
-			if (n1 > leftoverMemory())
-				return{ nullptr, 0 };
-
-			// Return the aligned pointer and the requested size
-			// Note that even though more memory might have been "allocated"
-			// due to alignment requirements, that memory is not part of the
-			// current allocation, but will be restored once the previous one is deallocated
-			Blk const result{ m_pSentinel + a, n };
-			m_pSentinel += n1;
-			return result;
-		}
-
-		void deallocate(Blk const blk) noexcept
-		{
-			if (blk.ptr != nullptr)
+			if (n <= N)
 			{
-				ASSERT_MSG(blk.ptr == m_pSentinel - blk.length, Format("MemoryBlock(ptr={_}, length={_}) was deallocated out of order", blk.ptr, blk.length));
-				m_pSentinel = static_cast<char*>(blk.ptr);
-			}
-		}
-
-		void deallocateAll() noexcept
-		{
-			m_pSentinel = m_Buffer;
-		}
-
-		bool owns(Blk const blk)
-		{
-			return blk.ptr >= m_Buffer && blk.ptr < (m_Buffer + blk.length);
-		}
-
-	private:
-		size_t offsetToAligned(size_t const n, size_t const alignment) const noexcept
-		{
-			auto const offsetFromAlignment = reinterpret_cast<size_t>(m_pSentinel) & (alignment - 1); // The distance past the previous aligned value
-			
-			if (offsetFromAlignment == 0)
-			{
-				return 0;
-			}
-			// If the allocated memory is smaller than the space we have from
-			// the current sentry position to the alignment requirement,
-			// assume we only have to align to the memory size
-			// ex: m_pSentry == &m_Buffer[1] -> allocate(2) -> offsetToAligned(2, 8) -> offsetToAligned(2, 2) (since 2 < 8 - 1) -> 1
-			else if (n < alignment - offsetFromAlignment && Math::IsPow2(n))
-			{
-				return offsetToAligned(n, n);
+				return{ m_buffer, n };
 			}
 			else
 			{
-				return (alignment - offsetFromAlignment);
+				return{ nullptr, 0 };
 			}
 		}
 
-		size_t leftoverMemory() const noexcept
+		Blk allocate(size_t n, size_t a)
 		{
-			return S - static_cast<size_t>(m_pSentinel - m_Buffer);
+			EXPECTS(Math::IsPow2(alignment) && a >= alignment);
+			auto const p = reinterpret_cast<char*>(Math::RoundUpToMultipleOf(reinterpret_cast<size_t>(&m_buffer[0]), a));
+			Blk const b{ p, n };
+			if (b.end() <= m_buffer + N)
+			{
+				return b;
+			}
+			else
+			{
+				return{ nullptr, 0 };
+			}
 		}
 
-		char m_Buffer[S];
-		char* m_pSentinel{ m_Buffer };
-	};	
+		bool owns(Blk b)
+		{
+			return b.begin() >= m_buffer && b.end() <= m_buffer + N;
+		}
+
+		void deallocate(Blk) noexcept {}
+
+	private:
+		char m_buffer[N];
+	};
 
 	class MallocAllocator
 	{
