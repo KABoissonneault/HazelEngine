@@ -15,11 +15,15 @@ namespace HE
 	{
 		void* ptr;
 		size_t length;
+
+		void* begin() const { return ptr; }
+		void* end() const { return static_cast<char*>(ptr) + length; }
 	};
 	using Blk = MemoryBlock;
+	
 
 	// Max alignment
-	constexpr size_t PlatformMaxAlignment = Math::Max(alignof(void*), alignof(long double), alignof(size_t));
+	constexpr size_t PlatformMaxAlignment = Math::Max(alignof(void*), alignof(size_t));
 	static_assert(Math::IsPow2(PlatformMaxAlignment), "PlatformMaxAlignment is not a power of 2, as should be");
 
 	namespace Private
@@ -40,18 +44,33 @@ namespace HE
 
 		template<class T>
 		using try_owns = std::enable_if_t<std::is_same<bool, decltype(std::declval<T>().owns(std::declval<Blk>()))>::value>;
+
+		template<class T>
+		using try_it = std::enable_if_t<std::is_same<T, decltype(T::it)>::value>;
 	}
 
 	// Allocator
 	// Must have (for allocator of type T): 
 	// - MemoryBlock T::allocate(size_t)
-	// - void T::deallocate(MemoryBlock)
+	// - void T::deallocate(MemoryBlock) noexcept
 	template<class T>
 	using is_allocator = and_ < has_op<T, Private::try_allocate>, has_op<T, Private::try_deallocate> > ;
 	template<class... T>
 	constexpr bool IsAllocator()
 	{
 		return and_<is_allocator<T>...>::value;
+	}
+
+	// StatelessAllocator
+	// - Allocator
+	// - StateSize<T>::value == 0
+	// - is_same<decltype(T::it), T> 
+	template<class T>
+	using is_stateless_allocator = and_<is_allocator<T>, equal_<StateSize<T>, std::integral_constant<size_t, 0>>>;
+	template<class... T>
+	constexpr bool IsStatelessAllocator()
+	{
+		return and_<is_stateless_allocator<T>...>::value;
 	}
 
 	// OwningAllocator
@@ -385,16 +404,6 @@ namespace HE
 		}
 	};
 
-	template<class T>
-	class StateSize : public std::integral_constant<size_t, std::is_empty<T>::value ? 0 : sizeof(T)> {};
-
-	template<>
-	class StateSize<void> : public std::integral_constant<size_t, 0> {};
-
-	static_assert(StateSize<size_t>::value == sizeof(size_t), "StateSize test fail");
-	static_assert(StateSize<std::integral_constant<size_t, 0>>::value == 0, "StateSize test fail");
-	static_assert(StateSize<void>::value == 0, "StateSize test fail");
-
 	template<class Parent, class PrefixType, class SuffixType>
 	class AffixAllocator;
 
@@ -489,10 +498,13 @@ namespace HE
 		// Takes a requested allocation, and returns the actual allocation that was request to the parent
 		static Blk actualAllocation(Blk b)
 		{
+			if (!b.ptr) return{ nullptr, 0 };
 			return{ static_cast<char*>(b.ptr) - StateSize<PrefixType>::value, totalAllocationSize(b.length) };
 		}
 	};
 
 	template<class Parent, class PrefixType, class SuffixType>
 	AffixAllocator<Parent, PrefixType, SuffixType> Private::AffixParentImpl<Parent, PrefixType, SuffixType, std::enable_if_t<StateSize<Parent>::value == 0>>::it;
+
+
 }

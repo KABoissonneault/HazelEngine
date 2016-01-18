@@ -5,10 +5,14 @@
 
 using namespace HE;
 
-template<class T>
-constexpr bool IsAligned(const T* const p, size_t const alignment)
+
+namespace
 {
-	return reinterpret_cast<size_t>(p) % alignment == 0;
+	template<class T>
+	constexpr bool IsAligned(const T* const p, size_t const alignment) noexcept
+	{
+		return reinterpret_cast<size_t>(p) % alignment == 0;
+	}
 }
 
 TEST(NullAllocator, Allocate)
@@ -112,7 +116,6 @@ TEST(AlignedMallocAllocator, AllocateTest)
 	EXPECT_TRUE(blk1.ptr != nullptr || errno == ENOMEM);
 	EXPECT_NE(EINVAL, errno);
 	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(blk1.ptr) = 42ull);
-
 }
 
 TEST(AlignedMallocAllocator, AlignedAllocate)
@@ -123,7 +126,7 @@ TEST(AlignedMallocAllocator, AlignedAllocate)
 	EXPECT_TRUE(IsAligned(b1.ptr, 16));
 }
 
-TEST(AlignedMallocAllocator, DeallocateTest)
+TEST(AlignedMallocAllocator, Deallocate)
 {
 	auto const blk = AlignedMallocAllocator::it.allocate(sizeof(size_t));
 	EXPECT_NO_FATAL_FAILURE(AlignedMallocAllocator::it.deallocate(blk));
@@ -132,15 +135,16 @@ TEST(AlignedMallocAllocator, DeallocateTest)
 
 TEST(FallbackAllocator, Allocate)
 {
-	FallbackAllocator<StackAllocator<64>, MallocAllocator> a;
+	FallbackAllocator<NullAllocator, MallocAllocator> a;
 	auto const b = a.allocate(sizeof(size_t));
+	EXPECT_NE(nullptr, b.ptr);
 	EXPECT_EQ(sizeof(size_t), b.length);
 	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = 42ull);
 }
 
 TEST(FallbackAllocator, FallbackAllocate)
 {
-	FallbackAllocator<StackAllocator<64>, MallocAllocator> a;
+	FallbackAllocator<NullAllocator, MallocAllocator> a;
 	auto const b = a.allocate(sizeof(size_t) * 32);
 	EXPECT_TRUE(b.ptr != nullptr || errno == ENOMEM); // Malloc might return null if out of memory, but that's a very rare case if you're just running tests...
 	EXPECT_NO_FATAL_FAILURE(reinterpret_cast<size_t*>(b.ptr)[31] = 42ull);
@@ -149,14 +153,14 @@ TEST(FallbackAllocator, FallbackAllocate)
 TEST(FallbackAllocator, Owns)
 {
 	// FallbackAllocator is only a OwningAllocator if the fallback allocator is an OwningAllocator (the primary one must be Owning anyway)
-	FallbackAllocator<StackAllocator<64>, StackAllocator<512>> a;
+	FallbackAllocator<NullAllocator, LightInlineAllocator<16>> a;
 	auto const b = a.allocate(sizeof(size_t));
 	EXPECT_TRUE(a.owns(b));
 }
 
 TEST(FallbackAllocator, Deallocate)
 {
-	FallbackAllocator<StackAllocator<64>, MallocAllocator> a;
+	FallbackAllocator<NullAllocator, MallocAllocator> a;
 	auto const blk = a.allocate(sizeof(size_t));
 	EXPECT_NO_FATAL_FAILURE(a.deallocate(blk));
 	EXPECT_NO_FATAL_FAILURE(a.deallocate({ nullptr, 0 }));
@@ -192,7 +196,7 @@ TEST(FreelistAllocator, MidrangeFreelistAllocate)
 TEST(FreelistAllocator, Owns)
 {
 	// FreelistAllocator is only a OwningAllocator if the parent allocator is an OwningAllocator
-	FreelistAllocator<StackAllocator<64>, 16> a;
+	FreelistAllocator<NullAllocator, 16> a;
 	auto const b = a.allocate(sizeof(size_t));
 	EXPECT_TRUE(a.owns(b));
 }
@@ -219,7 +223,7 @@ TEST(AffixAllocator, StatelessAllocate)
 
 TEST(AffixAllocator, StatefulAllocate)
 {
-	using Affix = AffixAllocator<StackAllocator<64>, size_t>;
+	using Affix = AffixAllocator<MallocAllocator, size_t>;
 	Affix a;
 	auto const b = allocate<size_t>(a);
 	EXPECT_NE(nullptr, b.ptr);
@@ -229,7 +233,7 @@ TEST(AffixAllocator, StatefulAllocate)
 
 TEST(AffixAllocator, Owns)
 {
-	using Affix = AffixAllocator<StackAllocator<64>, size_t>;
+	using Affix = AffixAllocator<NullAllocator, size_t>;
 	Affix a;
 	auto const b = allocate<size_t>(a);
 	EXPECT_TRUE(a.owns(b));
