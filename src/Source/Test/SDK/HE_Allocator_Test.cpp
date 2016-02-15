@@ -26,43 +26,51 @@ TEST(NullAllocator, Owns)
 	EXPECT_FALSE(NullAllocator::it.owns({ reinterpret_cast<void*>(0xABCDEF), 8 }));
 }
 
-TEST(MallocAllocator, AllocateTest)
+TEST(MallocAllocator, Allocate)
 {
-	auto const blk1 = MallocAllocator::it.allocate(sizeof(size_t));
-	EXPECT_EQ(sizeof(size_t), blk1.length);
-	EXPECT_TRUE(blk1.ptr != nullptr || errno == ENOMEM);
+	auto const b = MallocAllocator::it.allocate(sizeof(size_t));
+
+	EXPECT_TRUE(b.ptr != nullptr || errno == ENOMEM);
+	EXPECT_EQ(sizeof(size_t), b.length);
 	EXPECT_NE(EINVAL, errno);
-	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(blk1.ptr) = 42ull);
+	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = 42ull);
+
+	MallocAllocator::it.deallocate(b);
 }
 
-TEST(MallocAllocator, DeallocateTest)
+TEST(MallocAllocator, Deallocate)
 {
 	auto const blk = MallocAllocator::it.allocate(sizeof(size_t));
 	EXPECT_NO_FATAL_FAILURE(MallocAllocator::it.deallocate(blk));
 	EXPECT_NO_FATAL_FAILURE(MallocAllocator::it.deallocate({ nullptr, 0 }));
 }
 
-TEST(AlignedMallocAllocator, AllocateTest)
+TEST(AlignedMallocAllocator, Allocate)
 {
-	auto const blk1 = AlignedMallocAllocator::it.allocate(sizeof(size_t));
-	EXPECT_EQ(sizeof(size_t), blk1.length);
-	EXPECT_TRUE(blk1.ptr != nullptr || errno == ENOMEM);
+	auto const b = AlignedMallocAllocator::it.allocate(sizeof(size_t));
+
+	EXPECT_EQ(sizeof(size_t), b.length);
+	EXPECT_TRUE(b.ptr != nullptr || errno == ENOMEM);
 	EXPECT_NE(EINVAL, errno);
-	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(blk1.ptr) = 42ull);
+	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = 42ull);
+
+	AlignedMallocAllocator::it.deallocate(b);
 }
 
 TEST(AlignedMallocAllocator, AlignedAllocate)
 {
-	auto const b1 = AlignedMallocAllocator::it.allocate(256, 16);
-	EXPECT_TRUE(b1.ptr != nullptr || errno == ENOMEM);
+	auto const b = AlignedMallocAllocator::it.allocate(256, 16);
+	EXPECT_TRUE(b.ptr != nullptr || errno == ENOMEM);
 	EXPECT_NE(EINVAL, errno);
-	EXPECT_TRUE(IsAligned(b1.ptr, 16));
+	EXPECT_TRUE(IsAligned(b.ptr, 16));
+
+	AlignedMallocAllocator::it.deallocate(b);
 }
 
 TEST(AlignedMallocAllocator, Deallocate)
 {
-	auto const blk = AlignedMallocAllocator::it.allocate(sizeof(size_t));
-	EXPECT_NO_FATAL_FAILURE(AlignedMallocAllocator::it.deallocate(blk));
+	auto const b = AlignedMallocAllocator::it.allocate(sizeof(size_t));
+	EXPECT_NO_FATAL_FAILURE(AlignedMallocAllocator::it.deallocate(b));
 	EXPECT_NO_FATAL_FAILURE(AlignedMallocAllocator::it.deallocate({ nullptr, 0 }));
 }
 
@@ -70,6 +78,7 @@ TEST(LightInlineAllocator, Allocate)
 {
 	LightInlineAllocator<16> a;
 	auto const b = allocate<size_t>(a);
+
 	EXPECT_NE(nullptr, b.ptr);
 	EXPECT_EQ(sizeof(size_t), b.length);
 	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = 42ull);
@@ -79,6 +88,7 @@ TEST(LightInlineAllocator, AllocateAligned)
 {
 	LightInlineAllocator<64> a;
 	auto const b = a.allocate(sizeof(size_t) * 4, alignof(size_t) * 4);
+
 	EXPECT_NE(nullptr, b.ptr);
 	EXPECT_EQ(sizeof(size_t) * 4, b.length);
 	EXPECT_TRUE(IsAligned(b.ptr, alignof(size_t)* 4));
@@ -100,6 +110,7 @@ TEST(FallbackAllocator, Allocate)
 {
 	FallbackAllocator<NullAllocator, MallocAllocator> a;
 	auto const b = a.allocate(sizeof(size_t));
+
 	EXPECT_NE(nullptr, b.ptr);
 	EXPECT_EQ(sizeof(size_t), b.length);
 	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = 42ull);
@@ -152,7 +163,7 @@ TEST(FreelistAllocator, MidrangeFreelistAllocate)
 	FreelistAllocator<MallocAllocator, 17, 32> a;
 	auto const b = a.allocate(23);
 	EXPECT_NE(nullptr, b.ptr);
-	EXPECT_EQ(32, b.length);
+	EXPECT_EQ(23, b.length);
 	EXPECT_NO_FATAL_FAILURE(reinterpret_cast<size_t*>(b.ptr)[0] = 42ull);
 }
 
@@ -175,23 +186,32 @@ TEST(FreelistAllocator, Deallocate)
 	EXPECT_NO_FATAL_FAILURE(a.deallocate(blk1));
 }
 
+static_assert(FreelistAllocator<NullAllocator, 16>::has_fast_deallocateAll(), "Test fail on FreelistAllocator");
+static_assert(!FreelistAllocator<MallocAllocator, 16>::has_fast_deallocateAll(), "Test fail on FreelistAllocator");
+
 TEST(AffixAllocator, StatelessAllocate)
 {
 	using Affix = AffixAllocator<MallocAllocator, size_t>;
 	auto const b = allocate<size_t>(Affix::it);
+
 	EXPECT_NE(nullptr, b.ptr);
 	EXPECT_EQ(sizeof(size_t), b.length);
 	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = size_t{ 42 });
+
+	Affix::it.deallocate(b);
 }
 
 TEST(AffixAllocator, StatefulAllocate)
 {
-	using Affix = AffixAllocator<MallocAllocator, size_t>;
+	using Affix = AffixAllocator<LightInlineAllocator<sizeof(size_t)>, size_t>;
 	Affix a;
 	auto const b = allocate<size_t>(a);
+
 	EXPECT_NE(nullptr, b.ptr);
 	EXPECT_EQ(sizeof(size_t), b.length);
 	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = size_t{ 42 });
+
+	a.deallocate(b);
 }
 
 TEST(AffixAllocator, Owns)
