@@ -222,3 +222,79 @@ TEST(AffixAllocator, Affix)
 	EXPECT_NO_FATAL_FAILURE(Affix::Suffix(b) = 0xFFFFFFFFFFFFFFFULL);
 	EXPECT_TRUE(p[0] == 0 && p[0] == 0); // Expect the data to be intact
 }
+
+TEST(SegregateAllocator, SmallAllocate)
+{
+	SegregateAllocator<16, LightInlineAllocator<16>, MallocAllocator> a;
+
+	auto const b = a.allocate(16);
+	EXPECT_EQ(&a, b.ptr);
+	EXPECT_EQ(16, b.length);
+	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = size_t{ 42 });
+
+	a.deallocate(b);
+}
+
+TEST(SegregateAllocator, LargeAllocate)
+{
+	SegregateAllocator<16, LightInlineAllocator<16>, MallocAllocator> a;
+
+	auto const b = a.allocate(32);
+	EXPECT_NE(&a, b.ptr);
+	EXPECT_EQ(32, b.length);
+	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = size_t{ 42 });
+
+	a.deallocate(b);
+}
+
+TEST(SegregateAllocator, SmallAllocateAligned)
+{
+	SegregateAllocator<16, LightInlineAllocator<64>, MallocAllocator> a;
+
+	auto const b = a.allocate(16, 16);
+	EXPECT_TRUE(&a <= b.ptr && b.ptr <= &a + 8);
+	EXPECT_EQ(16, b.length);
+	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = size_t{ 42 });
+
+	a.deallocate(b);
+}
+
+TEST(SegregateAllocator, LargeAllocateAligned)
+{
+	SegregateAllocator<16, LightInlineAllocator<64>, MallocAllocator> a;
+
+	auto const b = a.allocate(32, 16);
+	EXPECT_FALSE(&a <= b.ptr && b.ptr <= &a + 8);
+	EXPECT_EQ(32, b.length);
+	EXPECT_NO_FATAL_FAILURE(*reinterpret_cast<size_t*>(b.ptr) = size_t{ 42 });
+
+	a.deallocate(b);
+}
+
+TEST(SegregateAllocator, SmallOwns)
+{
+	SegregateAllocator<16, LightInlineAllocator<16>, MallocAllocator> a;
+
+	auto const b = a.allocate(16);
+	EXPECT_TRUE(a.owns(b));
+
+	a.deallocate(b);
+}
+
+TEST(SegregateAllocator, LargeOwns)
+{
+	SegregateAllocator<16, LightInlineAllocator<16>, MallocAllocator> a;
+
+	auto const b = a.allocate(32);
+	EXPECT_TRUE(a.owns(b));
+
+	a.deallocate(b);
+}
+
+static_assert(sizeof(SegregateAllocator<16, NullAllocator, MallocAllocator>) == 1, "!!!!");
+
+static_assert(std::is_empty<SegregateAllocator<16, NullAllocator, MallocAllocator>>::value, "!!!?");
+static_assert(StateSize<SegregateAllocator<16, NullAllocator, MallocAllocator>>::value == 0, "???!");
+
+static_assert(equal_<StateSize<SegregateAllocator<16, NullAllocator, MallocAllocator>>, std::integral_constant<size_t, 0>>::value, "???");
+static_assert(IsStatelessAllocator<SegregateAllocator<16, NullAllocator, MallocAllocator>>(), "Test fail on SegregateAllocator");
