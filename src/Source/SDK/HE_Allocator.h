@@ -3,7 +3,6 @@
 #include <gsl.h>
 
 #include "TMP_Helper.h"
-#include "HE_String.h"
 #include "HE_Assert.h"
 #include "HE_Math.h"
 
@@ -37,10 +36,10 @@ namespace HE
 		using try_aligned_allocate = std::enable_if_t<std::is_same<Blk, decltype(std::declval<T>().allocate(std::declval<size_t>(), std::declval<size_t>()))>::value>;
 
 		template<class T>
-		using try_deallocate = std::enable_if_t<noexcept(std::declval<T>().deallocate(std::declval<Blk>()))>;
+		using try_deallocate = decltype(std::declval<T>().deallocate(std::declval<Blk>()));
 
 		template<class T>
-		using try_deallocateAll = std::enable_if_t<noexcept(std::declval<T>().deallocateAll())>;
+		using try_deallocateAll = decltype(std::declval<T>().deallocateAll());
 
 		template<class T>
 		using try_owns = std::enable_if_t<std::is_same<bool, decltype(std::declval<T>().owns(std::declval<Blk>()))>::value>;
@@ -194,9 +193,34 @@ namespace HE
 	};
 
 	template< class Primary, class Fallback >
+	class FallbackAllocator;
+
+	namespace Private
+	{
+		template < class Primary, class Fallback, class Enable = void>
+		struct FallbackAllocatorImpl {	};
+
+		template< class Primary, class Fallback >
+		using FallbackStatelessCond = std::enable_if_t<
+			and_<
+			equal_<StateSize<Primary>, std::integral_constant<size_t, 0>>,
+			equal_<StateSize<Fallback>, std::integral_constant<size_t, 0>>
+			>::value
+		>;
+
+		template < class Primary, class Fallback >
+		struct FallbackAllocatorImpl<Primary, Fallback, 
+			FallbackStatelessCond<Primary, Fallback> >
+		{
+			static FallbackAllocator<Primary, Fallback> it;
+		};
+	}
+
+	template< class Primary, class Fallback >
 	class FallbackAllocator :
 		private Primary,
-		private Fallback
+		private Fallback,
+		private Private::FallbackAllocatorImpl<Primary, Fallback>
 	{
 	protected:
 		using P = Primary;
@@ -246,6 +270,9 @@ namespace HE
 		}
 	};
 
+	template< class Primary, class Fallback >
+	FallbackAllocator<Primary, Fallback> Private::FallbackAllocatorImpl<Primary, Fallback, Private::FallbackStatelessCond<Primary, Fallback>>::it;
+
 	namespace Allocator
 	{
 		constexpr size_t unbounded = static_cast<size_t>(-1);
@@ -265,14 +292,14 @@ namespace HE
 	template< class Parent,
 		size_t MinSize, 
 		size_t MaxSize = MinSize,
-		size_t BatchCount = 8,
 		size_t MaxNodes = Allocator::unbounded,
 		class Enable = std::enable_if_t<is_allocator<Parent>::value>
 		>
 	class FreelistAllocator
 		: private Parent
 	{
-		static_assert(BatchCount <= MaxNodes, "batchCount should be smaller or equal to maxNodes");
+		static_assert(MaxSize >= MinSize, "FreelistAllocator's MaxSize should be higher or equal to MinSize");
+		static_assert(MaxSize >= sizeof(void*), "FreelistAllocator's MaxSize and MinSize should be higher or equal than sizeof(void*)");
 
 	public:
 		static constexpr size_t alignment = Parent::alignment;
@@ -288,9 +315,9 @@ namespace HE
 			return allocateImpl(n, alignment);
 		}
 
-		void deallocate(Blk b)
+		void deallocate(Blk b) noexcept
 		{
-			if (m_nNodesCount != MaxNodes && inRange(b.length))
+			if ((MaxNodes == Allocator::unbounded || m_nNodesCount != MaxNodes) && inRange(b.length))
 			{
 				auto const next = m_pFreelistRoot;
 				m_pFreelistRoot = static_cast<Node*>(b.ptr);
@@ -303,14 +330,17 @@ namespace HE
 			}
 		}
 
-		template<class Enable = std::enable_if_t<has_op<Parent, Private::try_deallocateAll>::value>>
-		void deallocateAll()
+		// Only O(1) if the Parent allocator supports deallocateAll
+		// If the Freelist is unbounded and the Parent doesn't support deallocateAll,
+		// the Freelist will do a best effort of deallocating all the nodes in its freelist
+		// in O(n)
+		void deallocateAll() noexcept
 		{
-			Parent::deallocateAll();
-			_root = nullptr;
+			deallocateAllImpl();
 		}
 
-		template<class Enable = std::enable_if_t<is_owning_allocator<Parent>::value>>
+		static constexpr bool has_fast_deallocateAll() { return has_op<Parent, Private::try_deallocateAll>::value; }
+
 		bool owns(Blk b)
 		{
 			return Parent::owns(b);
@@ -336,37 +366,42 @@ namespace HE
 		{
 			if (!inRange(n)) return Parent::allocate(n, args...);
 
-			n = MaxSize;
-			if (!m_pFreelistRoot) return allocateNewBlocks(n, args...);
-
-			Blk const result{ static_cast<void*>(m_pFreelistRoot), n };
-			m_pFreelistRoot = m_pFreelistRoot->next;
-			--m_nNodesCount;
-			return result;
+			if (!m_pFreelistRoot)
+			{
+				auto const b = Parent::allocate(MaxSize, args...);
+				return{ b.ptr, n };
+			}
+			else
+			{
+				Blk const result{ static_cast<void*>(m_pFreelistRoot), n };
+				m_pFreelistRoot = m_pFreelistRoot->next;
+				--m_nNodesCount;
+				return result;
+			}
 		}
 
-		template<class... Args>
-		Blk allocateNewBlocks(size_t n, Args... args)
+		void deallocateAllImpl(std::enable_if_t<has_op<Parent, Private::try_deallocateAll>::value>* = nullptr) noexcept
 		{
-			if (MaxNodes == 1) return Parent::allocate(n, args...);
+			Parent::deallocateAll();
+			m_pFreelistRoot = nullptr;
+		}
 
-			auto batch = Parent::allocate(BatchCount * n);
-			if (!batch.ptr) return batch;
-
-			Blk const result{ batch.ptr, n };
-			Blk rest{ static_cast<char*>(batch.ptr) + n, batch.length - n };
-			m_pFreelistRoot = static_cast<Node*>(rest.ptr);
-
-			while (rest.length >= n)
+		// In this case, we can only guarantee a complete deallocation if the freelist is unbounded
+		void deallocateAllImpl(std::enable_if_t<
+			and_<
+			not_<has_op<Parent, Private::try_deallocateAll>>,
+			has_op<Parent, Private::try_deallocate>,
+			equal_<std::integral_constant<size_t, MaxNodes>, std::integral_constant<size_t, Allocator::unbounded>>
+			>::value>* = nullptr) noexcept
+		{
+			auto next = m_pFreelistRoot;
+			while (next)
 			{
-				batch = rest;
-				rest = { static_cast<char*>(batch.ptr) + n, batch.length - n};
-				static_cast<Node*>(batch.ptr)->next = static_cast<Node*>(rest.ptr);
+				Blk const b{ static_cast<void*>(next), MaxSize };
+				next = next->next;
+				Parent::deallocate(b);
 			}
-
-			m_nNodesCount = BatchCount - 1;
-			
-			return result;
+			m_pFreelistRoot = nullptr;
 		}
 	};
 

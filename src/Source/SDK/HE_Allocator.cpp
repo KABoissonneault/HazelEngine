@@ -36,19 +36,19 @@ namespace HE
 		ALIGNED_FREE(b.ptr);
 	}
 
-	Blk NullAllocator::allocate(size_t)
+	Blk NullAllocator::allocate(size_t n)
 	{
-		return{ nullptr, 0 };
+		return{ nullptr, n };
 	}
 
-	Blk NullAllocator::allocate(size_t, size_t)
+	Blk NullAllocator::allocate(size_t n, size_t)
 	{
-		return{ nullptr, 0 };
+		return{ nullptr, n };
 	}
 
 	void NullAllocator::deallocate(Blk b) noexcept
 	{
-		ASSERT(b.ptr == nullptr);
+		EXPECTS(b.ptr == nullptr);
 	}
 
 	void NullAllocator::deallocateAll() noexcept
