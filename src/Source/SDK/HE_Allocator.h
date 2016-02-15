@@ -506,6 +506,77 @@ namespace HE
 
 	template<class Parent, class PrefixType, class SuffixType>
 	AffixAllocator<Parent, PrefixType, SuffixType> Private::AffixParentImpl<Parent, PrefixType, SuffixType, std::enable_if_t<StateSize<Parent>::value == 0>>::it;
+	
+	template < size_t Threshold, class SmallAllocator, class LargeAllocator >
+	class SegregateAllocator;
 
+	namespace Private
+	{
+		template < size_t Threshold, class SmallAllocator, class LargeAllocator, class Enable = void>
+		struct SegregateAllocatorImpl {	};
 
+		template< class SmallAllocator, class LargeAllocator >
+		using SegregateAllocatorStatelessCond = std::enable_if_t<
+			and_<
+			equal_<StateSize<SmallAllocator>, std::integral_constant<size_t, 0>>,
+			equal_<StateSize<LargeAllocator>, std::integral_constant<size_t, 0>>
+			>::value
+		>;
+
+		template < size_t Threshold, class SmallAllocator, class LargeAllocator >
+		struct SegregateAllocatorImpl<Threshold, SmallAllocator, LargeAllocator,
+			SegregateAllocatorStatelessCond<SmallAllocator, LargeAllocator> >
+		{
+			static SegregateAllocator<Threshold, SmallAllocator, LargeAllocator> it;
+		};
+	}
+
+	// Seggregator
+	template<size_t Threshold,
+		class SmallAllocator,
+		class LargeAllocator >
+	class SegregateAllocator
+		: private SmallAllocator,
+		private LargeAllocator
+	{
+	public:
+		constexpr static size_t alignment = Math::Min(SmallAllocator::alignment, LargeAllocator::alignment);
+
+		Blk allocate(size_t n)
+		{
+			return allocate_Impl(n);
+		}
+
+		Blk allocate(size_t n, size_t alignment_requirement)
+		{
+			EXPECTS(alignment_requirement >= alignment && Math::IsPow2(alignment_requirement));
+			return allocate_Impl(n, alignment_requirement);
+		}
+
+		bool owns(Blk b)
+		{
+			return n <= Threshold ? SmallAllocator::owns(b) : LargeAllocator::owns(b);
+		}
+
+		void deallocate(Blk b)
+		{
+			return n <= Threshold ? SmallAllocator::deallocate(b) : LargeAllocator::deallocate(b);
+		}
+
+		void deallocateAll()
+		{
+			SmallAllocator::deallocateAll();
+			LargeAllocator::deallocateAll();
+		}
+
+	private:
+		template<class... Args>
+		Blk allocate_Impl(size_t n, Args... args)
+		{
+			return n <= Threshold ? SmallAllocator::allocate(n, args...) : LargeAllocator::allocate(n, args...);
+		}
+	};
+
+	template < size_t Threshold, class SmallAllocator, class LargeAllocator >
+	SegregateAllocator<Threshold, SmallAllocator, LargeAllocator> Private::SegregateAllocatorImpl<Threshold, SmallAllocator, LargeAllocator, Private::SegregateAllocatorStatelessCond<SmallAllocator, LargeAllocator>>::it;
 }
