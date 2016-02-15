@@ -15,7 +15,19 @@ namespace HE
 		}
 
 		template<class T1, class T2>
-		constexpr auto Min(const T1& a, const T2& b) noexcept
+		constexpr auto& Min(T1& a, T2& b) noexcept
+		{
+			return a < b ? a : b;
+		}
+
+		template<class T1, class T2, class... Tr>
+		constexpr auto& Min(T1& a, T2& b, Tr&... rest) noexcept
+		{
+			return Min(a, Min(b, rest...));
+		}
+
+		template<class T1, class T2>
+		constexpr const auto& Min(const T1& a, const T2& b) noexcept
 		{
 			return a < b ? a : b;
 		}
@@ -24,6 +36,18 @@ namespace HE
 		constexpr auto Min(const T1& a, const T2& b, const Tr&... rest) noexcept
 		{
 			return Min(a, Min(b, rest...));
+		}
+
+		template<class T1, class T2>
+		constexpr auto& Max(T1& a, T2& b) noexcept
+		{
+			return a > b ? a : b;
+		}
+
+		template<class T1, class T2, class... Tr>
+		constexpr auto& Max(T1& a, T2& b, Tr&... rest) noexcept
+		{
+			return Min(a, Max(b, rest...));
 		}
 
 		template<class T1, class T2>
