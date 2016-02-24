@@ -63,15 +63,15 @@ namespace vk
 		ret.pNext = pNext;
 		ret.flags = 0;
 		ret.pApplicationInfo = pApplicationInfo;
-		ret.enabledLayerCount = static_cast<uint32_t>(pEnabledLayerNames.size());
-		ret.ppEnabledLayerNames = pEnabledLayerNames.size() != 0 ? &*pEnabledLayerNames.begin() : nullptr;
-		ret.enabledExtensionCount = static_cast<uint32_t>(pEnabledExtensionNames.size());
-		ret.ppEnabledExtensionNames = pEnabledExtensionNames.size() != 0  ? &*pEnabledExtensionNames.begin() : nullptr;
+		ret.enabledLayerCount = gsl::narrow_cast<uint32_t>(enabledLayerNames.size());
+		ret.ppEnabledLayerNames = enabledLayerNames.data();
+		ret.enabledExtensionCount = gsl::narrow_cast<uint32_t>(enabledExtensionNames.size());
+		ret.ppEnabledExtensionNames = enabledExtensionNames.data();
 
 		return ret;
 	}
 
-	VkApplicationInfo MakeApplicationInfo(const char* pApplicationName, uint32_t applicationVersion, const void* pNext) noexcept
+	VkApplicationInfo MakeApplicationInfo(gsl::czstring<> pApplicationName, uint32_t applicationVersion, const void* pNext) noexcept
 	{
 		VkApplicationInfo ret;
 		ret.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -142,12 +142,12 @@ namespace vk
 		ret.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		ret.pNext = pNext;
 		ret.flags = 0;
-		ret.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
-		ret.pQueueCreateInfos = queueCreateInfos.size() != 0 ? &*queueCreateInfos.begin() : nullptr;
-		ret.enabledLayerCount = static_cast<uint32_t>(enabledLayerNames.size());
-		ret.ppEnabledLayerNames = enabledLayerNames.size() != 0 ? &*enabledLayerNames.begin() : nullptr;
-		ret.enabledExtensionCount = static_cast<uint32_t>(enabledExtensionNames.size());
-		ret.ppEnabledExtensionNames = enabledExtensionNames.size() != 0 ? &*enabledExtensionNames.begin() : nullptr;
+		ret.queueCreateInfoCount = gsl::narrow_cast<uint32_t>(queueCreateInfos.size());
+		ret.pQueueCreateInfos = queueCreateInfos.data();
+		ret.enabledLayerCount = gsl::narrow_cast<uint32_t>(enabledLayerNames.size());
+		ret.ppEnabledLayerNames = enabledLayerNames.data();
+		ret.enabledExtensionCount = gsl::narrow_cast<uint32_t>(enabledExtensionNames.size());
+		ret.ppEnabledExtensionNames = enabledExtensionNames.data();
 		ret.pEnabledFeatures = &enabledFeatures;
 
 		return ret;
