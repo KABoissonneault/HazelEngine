@@ -55,26 +55,27 @@ namespace vk
 
 	VkInstanceCreateInfo MakeInstanceCreateInfo(const VkApplicationInfo* pApplicationInfo, 
 		gsl::span<const char* const> pEnabledLayerNames, 
-		gsl::span<const char* const> pEnabledExtensionNames)
+		gsl::span<const char* const> pEnabledExtensionNames,
+		const void* pNext) noexcept
 	{
 		VkInstanceCreateInfo ret;
 		ret.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-		ret.pNext = nullptr;
+		ret.pNext = pNext;
 		ret.flags = 0;
 		ret.pApplicationInfo = pApplicationInfo;
 		ret.enabledLayerCount = static_cast<uint32_t>(pEnabledLayerNames.size());
-		ret.ppEnabledExtensionNames = &*pEnabledLayerNames.begin();
+		ret.ppEnabledLayerNames = pEnabledLayerNames.size() != 0 ? &*pEnabledLayerNames.begin() : nullptr;
 		ret.enabledExtensionCount = static_cast<uint32_t>(pEnabledExtensionNames.size());
-		ret.ppEnabledExtensionNames = &*pEnabledExtensionNames.begin();
+		ret.ppEnabledExtensionNames = pEnabledExtensionNames.size() != 0  ? &*pEnabledExtensionNames.begin() : nullptr;
 
 		return ret;
 	}
 
-	VkApplicationInfo MakeApplicationInfo(const char* pApplicationName, uint32_t applicationVersion)
+	VkApplicationInfo MakeApplicationInfo(const char* pApplicationName, uint32_t applicationVersion, const void* pNext) noexcept
 	{
 		VkApplicationInfo ret;
 		ret.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		ret.pNext = nullptr;
+		ret.pNext = pNext;
 		ret.pApplicationName = pApplicationName;
 		ret.applicationVersion = applicationVersion;
 		ret.pEngineName = "HazelEngine";
@@ -98,7 +99,85 @@ namespace vk
 	{
 		vkDestroyInstance(instance, pAllocator);
 	}
-}
+
+	std::vector<VkPhysicalDevice> EnumeratePhysicalDevices(VkInstance instance)
+	{
+		uint32_t physicalDeviceCount;
+		auto const err1 = vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, nullptr);
+		CheckError<VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_OUT_OF_DEVICE_MEMORY, VK_ERROR_INITIALIZATION_FAILED>(err1, "EnumeratePhysicalDevices");
+
+		std::vector<VkPhysicalDevice> devices(physicalDeviceCount);
+		auto const err2 = vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, devices.data());
+		CheckError<VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_OUT_OF_DEVICE_MEMORY, VK_ERROR_INITIALIZATION_FAILED>(err2, "EnumeratePhysicalDevices");
+
+		return devices;
+	}
+
+	VkPhysicalDeviceProperties GetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice) noexcept
+	{
+		VkPhysicalDeviceProperties props;
+		vkGetPhysicalDeviceProperties(physicalDevice, &props);
+		return props;
+	}
+
+	std::vector<VkQueueFamilyProperties> GetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice) noexcept
+	{
+		uint32_t physicalDeviceCount;
+		vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &physicalDeviceCount, nullptr);
+
+		std::vector<VkQueueFamilyProperties> deviceQueueFamilyProperties(physicalDeviceCount);
+		vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &physicalDeviceCount, deviceQueueFamilyProperties.data());
+
+		return deviceQueueFamilyProperties;
+	}
+
+	VkDeviceCreateInfo MakeDeviceCreateInfo( gsl::span<const VkDeviceQueueCreateInfo> queueCreateInfos,
+		gsl::span<char const* const> enabledLayerNames,
+		gsl::span<char const* const> enabledExtensionNames,
+		VkPhysicalDeviceFeatures const& enabledFeatures,
+		const void* pNext
+		) noexcept
+	{
+		VkDeviceCreateInfo ret;
+		ret.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		ret.pNext = pNext;
+		ret.flags = 0;
+		ret.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+		ret.pQueueCreateInfos = queueCreateInfos.size() != 0 ? &*queueCreateInfos.begin() : nullptr;
+		ret.enabledLayerCount = static_cast<uint32_t>(enabledLayerNames.size());
+		ret.ppEnabledLayerNames = enabledLayerNames.size() != 0 ? &*enabledLayerNames.begin() : nullptr;
+		ret.enabledExtensionCount = static_cast<uint32_t>(enabledExtensionNames.size());
+		ret.ppEnabledExtensionNames = enabledExtensionNames.size() != 0 ? &*enabledExtensionNames.begin() : nullptr;
+		ret.pEnabledFeatures = &enabledFeatures;
+
+		return ret;
+	}
+
+	VkDevice CreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo& createInfo, const VkAllocationCallbacks* pAllocator)
+	{
+		VkDevice device;
+
+		auto const err = vkCreateDevice(physicalDevice, &createInfo, pAllocator, &device);
+		CheckError<VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_OUT_OF_DEVICE_MEMORY,
+			VK_ERROR_INITIALIZATION_FAILED, VK_ERROR_LAYER_NOT_PRESENT,
+			VK_ERROR_EXTENSION_NOT_PRESENT, VK_ERROR_FEATURE_NOT_PRESENT,
+			VK_ERROR_TOO_MANY_OBJECTS, VK_ERROR_DEVICE_LOST>(err);
+
+		return device;
+	}
+
+	void DestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) noexcept
+	{
+		vkDestroyDevice(device, pAllocator);
+	}
+
+	void DeviceWaitIdle(VkDevice device)
+	{
+		auto const err = vkDeviceWaitIdle(device);
+		CheckError<VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_OUT_OF_DEVICE_MEMORY,
+			VK_ERROR_DEVICE_LOST>(err);
+	}
+
 	namespace PhysicalDeviceType
 	{
 		namespace
