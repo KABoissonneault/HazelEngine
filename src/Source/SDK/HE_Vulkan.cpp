@@ -54,8 +54,8 @@ namespace vk
 	}
 
 	VkInstanceCreateInfo MakeInstanceCreateInfo(const VkApplicationInfo* pApplicationInfo, 
-		gsl::span<const char* const> pEnabledLayerNames, 
-		gsl::span<const char* const> pEnabledExtensionNames,
+		gsl::span<gsl::czstring<> const> enabledLayerNames,
+		gsl::span<gsl::czstring<> const> enabledExtensionNames,
 		const void* pNext) noexcept
 	{
 		VkInstanceCreateInfo ret;

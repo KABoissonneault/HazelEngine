@@ -16,7 +16,7 @@ namespace vk
 			gsl::span<char const* const>enabledExtensionNames = {},
 			const void* pNext = nullptr);
 
-		Instantiates a valid instance of the VkInstanceCreateInfo structure
+		Makes a valid instance of the VkInstanceCreateInfo structure
 
 		• pApplicationInfo is NULL or a pointer to an instance of VkApplicationInfo. If not NULL, this information
 		helps implementations recognize behavior inherent to classes of applications. VkApplicationInfo is defined in
@@ -40,14 +40,14 @@ namespace vk
 		extension must be enabled to enable that extension
 	*/
 	VkInstanceCreateInfo MakeInstanceCreateInfo(VkApplicationInfo const* pApplicationInfo,
-		gsl::span<char const* const> pEnabledLayerNames = {},
-		gsl::span<char const* const> pEnabledExtensionNames = {},
+		gsl::span<gsl::czstring<> const> pEnabledLayerNames = {},
+		gsl::span<gsl::czstring<> const> pEnabledExtensionNames = {},
 		const void* pNext = nullptr) noexcept;
 
 	/*
 		VkApplicationInfo MakeApplicationInfo(char const* pApplicationName, uint32_t applicationVersion, const void* pNext = nullptr);
 
-		Instantiates a valid instance of the VkApplicationInfo structure
+		Makes a valid instance of the VkApplicationInfo structure
 
 		• pApplicationName is a pointer to a null-terminated UTF-8 string containing the name of the application.
 		• applicationVersion is an unsigned integer variable containing the developer-supplied version number of the
@@ -59,7 +59,7 @@ namespace vk
 		Valid Usage:
 		• If pApplicationName is not NULL, pApplicationName must be a null-terminated string
 	*/
-	VkApplicationInfo MakeApplicationInfo(char const* pApplicationName, uint32_t applicationVersion, const void* pNext = nullptr) noexcept;
+	VkApplicationInfo MakeApplicationInfo(gsl::czstring<> pApplicationName, uint32_t applicationVersion, const void* pNext = nullptr) noexcept;
 	
 	/*
 		VkInstance CreateInstance(VkInstanceCreateInfo const& createInfo, VkAllocationCallbacks const* pAllocator = nullptr);
@@ -158,7 +158,7 @@ namespace vk
 			const void* pNext = nullptr
 			);
 
-		Instantiates a valid instance of the VkDeviceCreateInfo structure
+		Makes a valid instance of the VkDeviceCreateInfo structure
 
 		• QueueCreateInfos is an array of VkDeviceQueueCreateInfo structures describing the queues
 		that are requested to be created along with the logical device.
@@ -186,8 +186,8 @@ namespace vk
 		queueCreateInfos
 	*/
 	VkDeviceCreateInfo MakeDeviceCreateInfo(gsl::span<const VkDeviceQueueCreateInfo> queueCreateInfos,
-		gsl::span<char const* const> enabledLayerNames,
-		gsl::span<char const* const> enabledExtensionNames,
+		gsl::span<gsl::czstring<> const> enabledLayerNames,
+		gsl::span<gsl::czstring<> const> enabledExtensionNames,
 		VkPhysicalDeviceFeatures const& enabledFeatures,
 		const void* pNext = nullptr
 		) noexcept;
