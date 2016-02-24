@@ -36,3 +36,4 @@ src/Visual Studio/ipch/
 *.log
 *.cache
 *.ilk
+src/Visual Studio/packages/
