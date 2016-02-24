@@ -77,20 +77,43 @@ int main(int const argc, char const* const argv[])
 		auto const applicationInfo = vk::MakeApplicationInfo("VulkanTest", VK_MAKE_VERSION(0, 0, 1));
 		auto const instanceCreateInfo = vk::MakeInstanceCreateInfo(&applicationInfo);
 		auto const instance = vk::CreateInstance(instanceCreateInfo);
-		auto const destroyInstance = gsl::finally([&instance]() { vk::DestroyInstance(instance); });
+		auto const destroyInstance = gsl::finally([instance]() { vk::DestroyInstance(instance); });
 
 		auto const physicalDevices = vk::EnumeratePhysicalDevices(instance);
 
-		if (s_bPrintPhysicalDevices)
+		for (std::size_t i = 0; i < physicalDevices.size(); ++i)
 		{
-			int i = 1;
-			for (auto const& physicalDevice : physicalDevices)
+			auto const& physicalDevice = physicalDevices[i];
+
+			if (s_bPrintPhysicalDevices)
 			{
-				std::cout << "Physical Device #" << i << ":" << std::endl;
+				std::cout << "Physical Device #" << i + 1 << ":" << std::endl;
 				Print(physicalDevice);
-				++i;
 			}
+
+			auto const physicalDeviceQueueFamilyProperties = vk::GetPhysicalDeviceQueueFamilyProperties(physicalDevice);
+			auto const familyCount = physicalDeviceQueueFamilyProperties.size();
+			auto const deviceQueueCreateInfos = [&physicalDeviceQueueFamilyProperties, familyCount]()
+			{
+				std::vector<VkDeviceQueueCreateInfo> ret(familyCount);
+				for (uint32_t j = 0; j < familyCount; ++j)
+				{
+					std::vector<float> const priorities(physicalDeviceQueueFamilyProperties[j].queueCount, 1.0f);
+					ret[j] = vk::MakeDeviceQueueCreateInfo(j, gsl::as_span(priorities));
+				}
+
+				return ret;
+			}();
+
+			auto const physicalDeviceFeatures = vk::GetPhysicalDeviceFeatures(physicalDevice);
+			auto const deviceCreateInfo = vk::MakeDeviceCreateInfo(gsl::as_span(deviceQueueCreateInfos), {}, {}, physicalDeviceFeatures);
+			
+			auto const device = vk::CreateDevice(physicalDevice, deviceCreateInfo);
+			auto const destroyDevice = gsl::finally([device]() { vk::DeviceWaitIdle(device, std::nothrow); vk::DestroyDevice(device); });
+
+
 		}
+
 	}
 	catch (const vk::ResultErrorException& e)
 	{
