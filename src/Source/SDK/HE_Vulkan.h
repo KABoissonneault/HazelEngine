@@ -5,10 +5,6 @@
 #include <exception>
 #include <string_span.h>
 
-
-#include "HE_String.h"
-#include "TMP_Helper.h"
-
 namespace vk
 {
 	/*
@@ -88,52 +84,16 @@ namespace vk
 
 
 
-	using namespace std::string_literals;
 	class ResultErrorException : public std::exception
 	{
 	public:
-		ResultErrorException(VkResult e) : m_sMessage{ "Vulkan returned error "s + to_string(e)} { }
-		ResultErrorException(VkResult e, gsl::cstring_span<> sContext)
-			: m_sMessage{ HE::Format("Vulkan returned error {0} from: {1}", e, sContext) } 
-		{ }
+		ResultErrorException(VkResult e);
+		ResultErrorException(VkResult e, gsl::cstring_span<> sContext);
 
-		virtual const char* what() const override
-		{
-			return m_sMessage.c_str();
-		}
+		virtual const char* what() const override;
 
 	private:
 		std::string m_sMessage;
 	};
-
-	namespace Private
-	{
-		template<typename... String>
-		void CheckErrorImpl(VkResult result, std::initializer_list<VkResult> results, String... s)
-		{
-			auto const pError = std::find(begin(results), end(results), result);
-			if (pError != end(results))
-			{
-				throw ResultErrorException{ result, s... };
-			}
-		}
-
-		template<VkResult... Errors>
-		void CheckError(VkResult err)
-		{
-			if (err != VK_SUCCESS)
-			{
-				CheckErrorImpl(err, { Errors... });
-			}
-		}
-
-		template<VkResult... Errors>
-		void CheckError(VkResult err, gsl::cstring_span<> sContext)
-		{
-			if (err != VK_SUCCESS)
-			{
-				CheckErrorImpl(err, { Errors... }, sContext);
-			}
-		}
-	}
 }
+
