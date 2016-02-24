@@ -214,6 +214,13 @@ namespace vk
 		vkQueueWaitIdle(queue);
 	}
 
+	VkPhysicalDeviceFeatures GetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice) noexcept
+	{
+		VkPhysicalDeviceFeatures features;
+		vkGetPhysicalDeviceFeatures(physicalDevice, &features);
+		return features;
+	}
+
 	namespace PhysicalDeviceType
 	{
 		namespace

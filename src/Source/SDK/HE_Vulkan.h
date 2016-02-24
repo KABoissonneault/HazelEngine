@@ -321,6 +321,19 @@ namespace vk
 	void QueueWaitIdle(VkQueue queue);
 	void QueueWaitIdle(VkQueue queue, std::nothrow_t) noexcept;
 
+	///Features
+	/*
+		VkPhysicalDeviceFeatures GetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice) noexcept;
+
+		Queries the supported features of the physical device. See the VkPhysicalDeviceFeatures structure
+
+		• physicalDevice is the physical device from which to query the supported features.
+
+		Valid Usage
+		• physicalDevice must be a valid VkPhysicalDevice handle
+	*/
+	VkPhysicalDeviceFeatures GetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice) noexcept;
+
 	namespace PhysicalDeviceType
 	{
 		gsl::cstring_span<> String(VkPhysicalDeviceType e);
