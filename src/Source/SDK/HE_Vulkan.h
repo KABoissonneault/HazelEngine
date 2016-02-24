@@ -237,7 +237,7 @@ namespace vk
 		Host Synchronization
 		• Host access to device must be externally synchronized
 	*/
-	void DestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) noexcept;
+	void DestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator = nullptr) noexcept;
 
 	/*
 		void DeviceWaitIdle(VkDevice device);
