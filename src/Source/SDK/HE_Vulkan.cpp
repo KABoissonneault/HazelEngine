@@ -178,6 +178,42 @@ namespace vk
 			VK_ERROR_DEVICE_LOST>(err);
 	}
 
+	void DeviceWaitIdle(VkDevice device, std::nothrow_t) noexcept
+	{
+		vkDeviceWaitIdle(device);
+	}
+
+	VkDeviceQueueCreateInfo MakeDeviceQueueCreateInfo(uint32_t queueFamilyIndex, gsl::span<float const> queuePriorities, void const* pNext) noexcept
+	{
+		VkDeviceQueueCreateInfo ret;
+		ret.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		ret.pNext = pNext;
+		ret.flags = 0;
+		ret.queueFamilyIndex = queueFamilyIndex;
+		ret.queueCount = gsl::narrow_cast<uint32_t>(queuePriorities.size());
+		ret.pQueuePriorities = queuePriorities.data();
+
+		return ret;
+	}
+
+	VkQueue GetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex) noexcept
+	{
+		VkQueue queue;
+		vkGetDeviceQueue(device, queueFamilyIndex, queueIndex, &queue);
+		return queue;
+	}
+
+	void QueueWaitIdle(VkQueue queue)
+	{
+		auto const err = vkQueueWaitIdle(queue);
+		CheckError<VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_OUT_OF_DEVICE_MEMORY, VK_ERROR_DEVICE_LOST>(err);
+	}
+
+	void QueueWaitIdle(VkQueue queue, std::nothrow_t) noexcept
+	{
+		vkQueueWaitIdle(queue);
+	}
+
 	namespace PhysicalDeviceType
 	{
 		namespace

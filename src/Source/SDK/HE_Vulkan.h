@@ -258,6 +258,68 @@ namespace vk
 		� VK_ERROR_DEVICE_LOST
 	*/
 	void DeviceWaitIdle(VkDevice device);
+	/// Queues
+	/*
+		VkDeviceQueueCreateInfo MakeDeviceQueueCreateInfo(uint32_t queueFamilyIndex, gsl::span<float const> queuePriorities, void const* pNext = nullptr);
+
+		Makes a valid instance of the VkDeviceQueueCreateInfo structure
+
+		• queueFamilyIndex is an unsigned integer indicating the index of the queue family to create on this device. The
+		value of this index corresponds to the index of an element of the array that was returned
+		by GetPhysicalDeviceQueueFamilyProperties.
+		• queuePriorities is an array of normalized floating point values, both specifying the number of queues to be
+		created and specifying priorities of work that will be submitted to each created queue.
+		• pNext is NULL or a pointer to an extension-specific structure.
+
+		Valid Usage
+		• The size of queuePriorities must be greater than 0
+		• queueFamilyIndex must be less than the number of elements returned by
+		GetPhysicalDeviceQueueFamilyProperties
+		• The size of queuePriorities must be less than or equal to the value of the queueCount member of the
+		VkQueueFamilyProperties structure, as returned in the "queueFamilyIndex"th element of GetPhysicalDeviceQueueFamilyProperties
+		• The value of any given element of pQueuePriorities must be between 0.0 and 1.0 inclusive
+	*/
+	VkDeviceQueueCreateInfo MakeDeviceQueueCreateInfo(uint32_t queueFamilyIndex, gsl::span<float const> queuePriorities, void const* pNext = nullptr) noexcept;
+
+	/*
+		VkQueue GetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex) noexcept;
+
+		Retrieves a handle to a VkQueue object
+
+		• device is the logical device that owns the queue.
+		• queueFamilyIndex is the index of the queue family to which the queue belongs.
+		• queueIndex is the index within this queue family of the queue to retrieve.
+
+		Valid Usage
+		• device must be a valid VkDevice handle
+		• queueFamilyIndex must be one of the queue family indexes specified when device was created, via the
+		VkDeviceQueueCreateInfo structure
+		• queueIndex must be less than the number of queues created for the specified queue family index when device
+		was created, via the queueCount member of the VkDeviceQueueCreateInfo structure
+	*/
+	VkQueue GetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex) noexcept;
+
+	/*
+		void QueueWaitIdle(VkQueue queue);
+		void QueueWaitIdle(VkQueue queue, std::nothrow_t);
+
+		Waits on the completion of all work within the queue
+
+		• queue is the queue on which to wait.
+
+		Valid Usage
+		• queue must be a valid VkQueue handle
+
+		Command Properties
+			Supported Queue Types: Any
+
+		Failure
+		• VK_ERROR_OUT_OF_HOST_MEMORY
+		• VK_ERROR_OUT_OF_DEVICE_MEMORY
+		• VK_ERROR_DEVICE_LOST
+	*/
+	void QueueWaitIdle(VkQueue queue);
+	void QueueWaitIdle(VkQueue queue, std::nothrow_t) noexcept;
 
 	namespace PhysicalDeviceType
 	{
