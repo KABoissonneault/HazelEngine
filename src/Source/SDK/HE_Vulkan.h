@@ -2,6 +2,7 @@
 
 #include <vulkan\vulkan.h>
 
+#include <string>
 #include <exception>
 #include <string_span.h>
 
@@ -83,6 +84,10 @@ namespace vk
 	void DestroyInstance(VkInstance instance, const VkAllocationCallbacks* pAllocator = nullptr) noexcept;
 
 
+	namespace PhysicalDeviceType
+	{
+		gsl::cstring_span<> String(VkPhysicalDeviceType e);
+	}
 
 	class ResultErrorException : public std::exception
 	{
@@ -97,3 +102,4 @@ namespace vk
 	};
 }
 
+std::string to_string(VkPhysicalDeviceType e);

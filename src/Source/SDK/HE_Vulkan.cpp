@@ -1,5 +1,8 @@
 #include "HE_Vulkan.h"
 
+#include <map>
+#include <string>
+
 #include "HE_String.h"
 
 using namespace std::string_literals;
@@ -96,3 +99,24 @@ namespace vk
 		vkDestroyInstance(instance, pAllocator);
 	}
 }
+	namespace PhysicalDeviceType
+	{
+		namespace
+		{
+			std::map<VkPhysicalDeviceType, std::string> const s_sPhysicalDeviceTypes{
+				{VK_PHYSICAL_DEVICE_TYPE_OTHER, "Other"},
+				{VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU, "Integrated GPU"},
+				{VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU, "Discrete GPU"},
+				{VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU, "Virtual GPU"},
+				{VK_PHYSICAL_DEVICE_TYPE_CPU, "CPU"}
+			};
+		}
+
+		gsl::cstring_span<> String(VkPhysicalDeviceType e)
+		{
+			return s_sPhysicalDeviceTypes.at(e);
+		}
+	}
+}
+
+std::string to_string(VkPhysicalDeviceType e) { auto const s = vk::PhysicalDeviceType::String(e); return{ s.begin(), s.end() }; }
