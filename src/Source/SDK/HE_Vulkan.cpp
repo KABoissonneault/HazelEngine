@@ -221,6 +221,87 @@ namespace vk
 		return features;
 	}
 
+	VkCommandPoolCreateInfo MakeCommandPoolCreateInfo(VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex, void const* pNext) noexcept
+	{
+		VkCommandPoolCreateInfo ret;
+
+		ret.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		ret.pNext = pNext;
+		ret.flags = flags;
+		ret.queueFamilyIndex = queueFamilyIndex;
+
+		return ret;
+	}
+
+	VkCommandPool CreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo& createInfo, const VkAllocationCallbacks* pAllocator)
+	{
+		VkCommandPool commandPool;
+		auto const err = vkCreateCommandPool(device, &createInfo, pAllocator, &commandPool);
+		CheckError<VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_OUT_OF_DEVICE_MEMORY>(err);
+
+		return commandPool;
+	}
+
+	void ResetCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags)
+	{
+		auto const err = vkResetCommandPool(device, commandPool, flags);
+		CheckError<VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_OUT_OF_DEVICE_MEMORY>(err);
+	}
+
+	void DestroyCommandPool(VkDevice device, VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator) noexcept
+	{
+		vkDestroyCommandPool(device, commandPool, pAllocator);
+	}
+
+	VkCommandBufferAllocateInfo MakeCommandBufferAllocateInfo(VkCommandPool commandPool, VkCommandBufferLevel level, uint32_t commandBufferCount, void const* pNext) noexcept
+	{
+		VkCommandBufferAllocateInfo ret;
+		ret.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		ret.pNext = pNext;
+		ret.commandPool = commandPool;
+		ret.level = level;
+		ret.commandBufferCount = commandBufferCount;
+
+		return ret;
+	}
+
+	std::vector<VkCommandBuffer> AllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo& allocateInfo)
+	{
+		std::vector<VkCommandBuffer> commandBuffers(allocateInfo.commandBufferCount);
+		auto const err = vkAllocateCommandBuffers(device, &allocateInfo, commandBuffers.data());
+		CheckError<VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_OUT_OF_DEVICE_MEMORY>(err);
+
+		return commandBuffers;
+	}
+
+	void ResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags)
+	{
+		auto const err = vkResetCommandBuffer(commandBuffer, flags);
+		CheckError<VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_OUT_OF_DEVICE_MEMORY>(err);
+	}
+
+	void FreeCommandBuffers(VkDevice device, VkCommandPool commandPool, gsl::span<VkCommandBuffer const> commandBuffers) noexcept
+	{
+		vkFreeCommandBuffers(device, commandPool, gsl::narrow_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+	}
+
+	VkCommandBufferBeginInfo MakeCommandBufferBeginInfo(VkCommandBufferUsageFlags flags, VkCommandBufferInheritanceInfo const* pInheritanceInfo, void const* pNext = nullptr) noexcept
+	{
+		VkCommandBufferBeginInfo ret;
+		ret.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		ret.pNext = pNext;
+		ret.flags = flags;
+		ret.pInheritanceInfo = pInheritanceInfo;
+
+		return ret;
+	}
+
+	void BeginCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferBeginInfo& beginInfo)
+	{
+		auto const err = vkBeginCommandBuffer(commandBuffer, &beginInfo);
+		CheckError<VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_OUT_OF_DEVICE_MEMORY>(err);
+	}
+
 	namespace PhysicalDeviceType
 	{
 		namespace

@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <exception>
-#include <string_span.h>
+#include <gsl.h>
 
 namespace vk
 {
@@ -148,6 +148,18 @@ namespace vk
 		• physicalDevice must be a valid VkPhysicalDevice handle
 	*/
 	std::vector<VkQueueFamilyProperties> GetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice) noexcept;
+
+	/*
+	VkPhysicalDeviceFeatures GetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice) noexcept;
+
+	Queries the supported features of the physical device. See the VkPhysicalDeviceFeatures structure
+
+	• physicalDevice is the physical device from which to query the supported features.
+
+	Valid Usage
+	• physicalDevice must be a valid VkPhysicalDevice handle
+	*/
+	VkPhysicalDeviceFeatures GetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice) noexcept;
 
 	/// Devices
 	/*
@@ -326,18 +338,293 @@ namespace vk
 	void QueueWaitIdle(VkQueue queue);
 	void QueueWaitIdle(VkQueue queue, std::nothrow_t) noexcept;
 
-	///Features
+	/// Command Pools
 	/*
-		VkPhysicalDeviceFeatures GetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice) noexcept;
+		VkCommandPoolCreateInfo MakeCommandPoolCreateInfo(VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex, void const* pNext = nullptr) noexcept;
 
-		Queries the supported features of the physical device. See the VkPhysicalDeviceFeatures structure
+		Makes an instance of the VkCommandPoolCreateInfo structure
 
-		• physicalDevice is the physical device from which to query the supported features.
+		• flags is a combination of bitfield flags indicating usage behavior for the pool and command buffers allocated from it.
+		Possible values include:
+			typedef enum VkCommandPoolCreateFlagBits {
+				VK_COMMAND_POOL_CREATE_TRANSIENT_BIT = 0x00000001,
+				VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT = 0x00000002,
+			} VkCommandPoolCreateFlagBits;
+		• queueFamilyIndex designates a queue family
 
 		Valid Usage
-		• physicalDevice must be a valid VkPhysicalDevice handle
+		• flags must be a valid combination of VkCommandPoolCreateFlagBits values
+		• queueFamilyIndex must be the index of a queue family available in the calling command’s device parameter
+
 	*/
-	VkPhysicalDeviceFeatures GetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice) noexcept;
+	VkCommandPoolCreateInfo MakeCommandPoolCreateInfo(VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex, void const* pNext = nullptr) noexcept;
+
+	/*
+		VkCommandPool CreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo& createInfo, const VkAllocationCallbacks* pAllocator = nullptr);
+
+		Creates a command pool
+
+		• device is the logical device that creates the command pool.
+		• createInfo contains information used to create the command pool.
+		• pAllocator controls host memory allocation
+
+		Valid Usage
+		• device must be a valid VkDevice handle
+		• createInfo must refer to a valid VkCommandPoolCreateInfo structure
+		• If pAllocator is not NULL, pAllocator must be a pointer to a valid VkAllocationCallbacks structure
+
+		Failure
+		• VK_ERROR_OUT_OF_HOST_MEMORY
+		• VK_ERROR_OUT_OF_DEVICE_MEMORY
+	*/
+	VkCommandPool CreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo& createInfo, const VkAllocationCallbacks* pAllocator = nullptr);
+
+	/*
+		void ResetCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags);
+
+		Resets a command pool entirely. Essential for command pools not marked as VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT
+
+		• device is the logical device that owns the command pool.
+		• commandPool is the command pool to reset.
+		• flags contains additional flags controlling the behavior of the reset.
+
+		Valid Usage
+		• device must be a valid VkDevice handle
+		• commandPool must be a valid VkCommandPool handle
+		• flags must be a valid combination of VkCommandPoolResetFlagBits values
+		• commandPool must have been created, allocated or retrieved from device
+		• Each of device and commandPool must have been created, allocated or retrieved from the same
+		VkPhysicalDevice
+		• All VkCommandBuffer objects allocated from commandPool must not currently be pending execution
+
+		Host Synchronization
+		• Host access to commandPool must be externally synchronized
+
+		Failure
+		• VK_ERROR_OUT_OF_HOST_MEMORY
+		• VK_ERROR_OUT_OF_DEVICE_MEMORY
+	*/
+	void ResetCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags);
+
+	/*
+		void DestroyCommandPool(VkDevice device, VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator = nullptr) noexcept;
+
+		Destroys a command pool
+
+		• device is the logical device that destroys the command pool.
+		• commandPool is the handle of the command pool to destroy.
+		• pAllocator controls host memory allocation
+
+		Valid Usage
+		• device must be a valid VkDevice handle
+		• If commandPool is not VK_NULL_HANDLE, commandPool must be a valid VkCommandPool handle
+		• If pAllocator is not NULL, pAllocator must be a pointer to a valid VkAllocationCallbacks structure
+		• If commandPool is a valid handle, it must have been created, allocated or retrieved from device
+		• Each of device and commandPool that are valid handles must have been created, allocated or retrieved from the
+		same VkPhysicalDevice
+		• All VkCommandBuffer objects allocated from commandPool must not be pending execution
+		• If VkAllocationCallbacks were provided when commandPool was created, a compatible set of callbacks
+		must be provided here
+		• If no VkAllocationCallbacks were provided when commandPool was created, pAllocator must be
+		NULL
+
+		Host Synchronization
+		• Host access to commandPool must be externally synchronized
+	*/
+	void DestroyCommandPool(VkDevice device, VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator = nullptr) noexcept;
+
+	/// Command buffers
+	/*
+		VkCommandBufferAllocateInfo MakeCommandBufferAllocateInfo(VkCommandPool commandPool, VkCommandBufferLevel level, uint32_t commandBufferCount, void const* pNext = nullptr) noexcept;
+
+		Makes an instance of the VkCommandBufferAllocateInfo
+
+		• commandPool is the name of the command pool that the command buffers allocate their memory from.
+		• level determines whether the command buffers are primary or secondary command buffers. Possible values include:
+		typedef enum VkCommandBufferLevel {
+		VK_COMMAND_BUFFER_LEVEL_PRIMARY = 0,
+		VK_COMMAND_BUFFER_LEVEL_SECONDARY = 1,
+		} VkCommandBufferLevel;
+		• commandBufferCount is the number of command buffers to allocate from the pool.
+		• pNext is NULL or a pointer to an extension-specific structure.
+
+		Valid Usage
+		• commandPool must be a valid VkCommandPool handle
+		• level must be a valid VkCommandBufferLevel value
+	*/
+	VkCommandBufferAllocateInfo MakeCommandBufferAllocateInfo(VkCommandPool commandPool, VkCommandBufferLevel level, uint32_t commandBufferCount, void const* pNext = nullptr) noexcept;
+
+	/*
+		std::vector<VkCommandBuffer> AllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo& allocateInfo);
+
+		Allocates command buffers. Each allocated command buffer begins in the initial state.
+
+		• device is the logical device that owns the command pool.
+		• allocateInfo refers to an instance of the VkCommandBufferAllocateInfo structure which defines additional
+		information about creating the pool.
+
+		Valid Usage
+		• device must be a valid VkDevice handle
+		• allocateInfo must refer to a valid VkCommandBufferAllocateInfo structure
+
+		Host Synchronization
+		• Host access to allocateInfo.commandPool must be externally synchronized
+
+		Failure
+		• VK_ERROR_OUT_OF_HOST_MEMORY
+		• VK_ERROR_OUT_OF_DEVICE_MEMORY
+	*/
+	std::vector<VkCommandBuffer> AllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo& allocateInfo);
+
+	/*
+		void ResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags);
+
+		Resets a command buffer
+
+		• commandBuffer is the command buffer to reset. The command buffer can be in any state, and is put in the initial state.
+		• flags is of type VkCommandBufferResetFlags:
+			typedef enum VkCommandBufferResetFlagBits {
+				VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT = 0x00000001,
+			} VkCommandBufferResetFlagBits;
+
+		Valid Usage
+		• commandBuffer must be a valid VkCommandBuffer handle
+		• flags must be a valid combination of VkCommandBufferResetFlagBits values
+		• commandBuffer must not currently be pending execution
+		• commandBuffer must have been allocated from a pool that was created with the VK_COMMAND_POOL_
+		CREATE_RESET_COMMAND_BUFFER_BIT
+
+		Host Synchronization
+		• Host access to commandBuffer must be externally synchronized
+
+		Failure
+		• VK_ERROR_OUT_OF_HOST_MEMORY
+		• VK_ERROR_OUT_OF_DEVICE_MEMORY
+	*/
+	void ResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags);
+
+	/*
+		void FreeCommandBuffers(VkDevice device, VkCommandPool commandPool, gsl::span<VkCommandBuffer const> commandBuffers) noexcept;
+
+		Frees command buffers
+
+		• device is the logical device that owns the command pool.
+		• commandPool is the handle of the command pool that the command buffers were allocated from.
+		• commandBuffers is an array of handles of command buffers to free.
+
+		Valid Usage
+		• device must be a valid VkDevice handle
+		• commandPool must be a valid VkCommandPool handle
+		• The size of commandBuffers must be greater than 0
+		• commandPool must have been created, allocated or retrieved from device
+		• Each element of commandBuffers that is a valid handle must have been created, allocated or retrieved from
+		commandPool
+		• Each of device, commandPool and the elements of commandBuffers that are valid handles must have been
+		created, allocated or retrieved from the same VkPhysicalDevice
+		• All elements of commandBuffers must not be pending execution
+		• Each element of commandBuffers must either be a valid handle or VK_NULL_HANDLE
+
+		Host Synchronization
+		• Host access to commandPool must be externally synchronized
+		• Host access to each member of pCommandBuffers must be externally synchronized
+	*/
+	void FreeCommandBuffers(VkDevice device, VkCommandPool commandPool, gsl::span<VkCommandBuffer const> commandBuffers) noexcept;
+
+	/*
+		VkCommandBufferInheritanceInfo MakeCommandBufferInheritanceInfo(VkRenderPass renderPass, uint32_t subpass, VkFramebuffer framebuffer, 
+			VkBool32 occlusionQueryEnable, VkQueryControlFlags queryFlags, VkQueryPipelineStatisticFlags pipelineStatistics);
+
+		• renderPass is a VkRenderPass object that must be compatible with the one that is bound when the
+		VkCommandBuffer is executed if the command buffer was allocated with the VK_COMMAND_BUFFER_USAGE_
+		RENDER_PASS_CONTINUE_BIT set.
+		• subpass is the index of the subpass within renderPass that the VkCommandBuffer will be rendering against if it
+		was allocated with the VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT set.
+		• framebuffer refers to the VkFramebuffer object that the VkCommandBuffer will be rendering to if it was
+		allocated with the VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT set. It can be VK_NULL_
+		HANDLE if the framebuffer is not known.
+		• occlusionQueryEnable indicates whether the command buffer can be executed while an occlusion query is active
+		in the primary command buffer. If this is VK_TRUE, then this command buffer can be executed whether the primary
+		command buffer has an occlusion query active or not. If this is VK_FALSE, then the primary command buffer must not
+		have an occlusion query active.
+		• queryFlags indicates the query flags that can be used by an active occlusion query in the primary command buffer
+		when this secondary command buffer is executed. If this value includes the VK_QUERY_CONTROL_PRECISE_BIT
+		bit, then the active query can return boolean results or actual sample counts. If this bit is not set, then the active query
+		must not use the VK_QUERY_CONTROL_PRECISE_BIT bit. If this is a primary command buffer, then this value is
+		ignored.
+		• pipelineStatistics indicates the set of pipeline statistics that can be counted by an active query in the primary
+		command buffer when this secondary command buffer is executed. If this value includes a given bit, then this
+		command buffer can be executed whether the primary command buffer has a pipeline statistics query active that
+		includes this bit or not. If this value excludes a given bit, then the active pipeline statistics query must not be from a
+		query pool that counts that statistic.
+
+		Valid Usage
+		• Each of renderPass and framebuffer that are valid handles must have been created, allocated or retrieved
+		from the same VkDevice
+		• If the inherited queries feature is not enabled, occlusionQueryEnable must be VK_FALSE
+		• If the inherited queries feature is enabled, queryFlags must be a valid combination of
+		VkQueryControlFlagBits values
+		• If the pipeline statistics queries feature is not enabled, pipelineStatistics must be 0
+
+
+	*/
+	VkCommandBufferInheritanceInfo MakeCommandBufferInheritanceInfo(VkRenderPass renderPass, uint32_t subpass, VkFramebuffer framebuffer, 
+		VkBool32 occlusionQueryEnable, VkQueryControlFlags queryFlags, VkQueryPipelineStatisticFlags pipelineStatistics, void const* pNext = nullptr);
+
+	/*
+		VkCommandBufferBeginInfo MakeCommandBufferBeginInfo(VkCommandBufferUsageFlags flags, VkCommandBufferInheritanceInfo const* pInheritanceInfo, void const* pNext = nullptr) noexcept;
+
+		Makes an instance of the VkCommandBufferBeginInfo structure
+
+		• flags is a combination of bitfield flags indicating usage behavior for the command buffer. Possible values include:
+			typedef enum VkCommandBufferUsageFlagBits {
+				VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT = 0x00000001,
+				VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT = 0x00000002,
+				VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT = 0x00000004,
+			} VkCommandBufferUsageFlagBits;
+		• pInheritanceInfo points to a VkCommandBufferInheritanceInfo structure, which is used if
+		commandBuffer is a secondary command buffer. If this is a primary command buffer, then this value is ignored.
+		• pNext is NULL or a pointer to an extension-specific structure.
+
+		Valid Usage
+		• flags must be a valid combination of VkCommandBufferUsageFlagBits values
+		• If flags contains VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT, the renderPass
+		member of pInheritanceInfo must be a valid VkRenderPass
+		• If flags contains VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT, the subpass member
+		of pInheritanceInfo must be a valid subpass index within the renderPass member of pInheritanceInfo
+		• If flags contains VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT, the framebuffer
+		member of pInheritanceInfo must be either VK_NULL_HANDLE, or a valid VkFramebuffer that is
+		compatible with the renderPass member of pInheritanceInfo
+	*/
+	VkCommandBufferBeginInfo MakeCommandBufferBeginInfo(VkCommandBufferUsageFlags flags, VkCommandBufferInheritanceInfo const* pInheritanceInfo, void const* pNext = nullptr) noexcept;
+
+	/*
+		void BeginCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferBeginInfo& beginInfo);
+
+		• commandBuffer is the handle of the command buffer which is to be put in the recording state.
+		• beginInfo refers to an instance of the VkCommandBufferBeginInfo structure, which defines additional information
+		about how the command buffer begins recording.
+
+		Valid Usage
+		• commandBuffer must be a valid VkCommandBuffer handle
+		• beginInfo must refer to a valid VkCommandBufferBeginInfo structure
+		• commandBuffer must not be in the recording state
+		• If commandBuffer was allocated from a VkCommandPool which did not have the VK_COMMAND_POOL_
+		CREATE_RESET_COMMAND_BUFFER_BIT flag set, commandBuffer must be in the initial state.
+		• If commandBuffer is a secondary command buffer, the pInheritanceInfo member of beginInfo must be a
+		valid VkCommandBufferInheritanceInfo structure
+		• If commandBuffer is a secondary command buffer and either the occlusionQueryEnable member of the
+		pInheritanceInfo member of beginInfo is VK_FALSE, or the precise occlusion queries feature is not
+		enabled, the queryFlags member of the pInheritanceInfo member pBeginInfo must not contain VK_
+		QUERY_CONTROL_PRECISE_BIT
+
+		Host Synchronization
+		• Host access to commandBuffer must be externally synchronized
+
+		Failure
+		• VK_ERROR_OUT_OF_HOST_MEMORY
+		• VK_ERROR_OUT_OF_DEVICE_MEMORY
+	*/
+	void BeginCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferBeginInfo& beginInfo);
 
 	namespace PhysicalDeviceType
 	{
