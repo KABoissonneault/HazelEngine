@@ -10,3 +10,6 @@
 [submodule "lib/ChaiScript"]
 	path = lib/ChaiScript
 	url = https://github.com/ChaiScript/ChaiScript.git
+[submodule "lib/vkcpp"]
+	path = lib/vkcpp
+	url = https://github.com/KABoissonneault/vkcpp
