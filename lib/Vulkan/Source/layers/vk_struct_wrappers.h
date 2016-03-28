@@ -1178,6 +1178,7 @@ public:
     void set_enabledLayerCount(uint32_t inValue) { m_struct.enabledLayerCount = inValue; }
     uint32_t get_enabledExtensionCount() { return m_struct.enabledExtensionCount; }
     void set_enabledExtensionCount(uint32_t inValue) { m_struct.enabledExtensionCount = inValue; }
+    const VkPhysicalDeviceFeatures* get_pEnabledFeatures() { return m_struct.pEnabledFeatures; }
 
 
 private:
@@ -1672,8 +1673,6 @@ public:
     void display_full_txt();
 
     void set_indent(uint32_t indent) { m_indent = indent; }
-    char get_extensionName() { return m_struct.extensionName; }
-    void set_extensionName(char inValue) { m_struct.extensionName = inValue; }
     uint32_t get_specVersion() { return m_struct.specVersion; }
     void set_specVersion(uint32_t inValue) { m_struct.specVersion = inValue; }
 
@@ -2353,14 +2352,10 @@ public:
     void display_full_txt();
 
     void set_indent(uint32_t indent) { m_indent = indent; }
-    char get_layerName() { return m_struct.layerName; }
-    void set_layerName(char inValue) { m_struct.layerName = inValue; }
     uint32_t get_specVersion() { return m_struct.specVersion; }
     void set_specVersion(uint32_t inValue) { m_struct.specVersion = inValue; }
     uint32_t get_implementationVersion() { return m_struct.implementationVersion; }
     void set_implementationVersion(uint32_t inValue) { m_struct.implementationVersion = inValue; }
-    char get_description() { return m_struct.description; }
-    void set_description(char inValue) { m_struct.description = inValue; }
 
 
 private:
@@ -3092,8 +3087,6 @@ public:
     void set_deviceID(uint32_t inValue) { m_struct.deviceID = inValue; }
     VkPhysicalDeviceType get_deviceType() { return m_struct.deviceType; }
     void set_deviceType(VkPhysicalDeviceType inValue) { m_struct.deviceType = inValue; }
-    char get_deviceName() { return m_struct.deviceName; }
-    void set_deviceName(char inValue) { m_struct.deviceName = inValue; }
     VkPhysicalDeviceLimits get_limits() { return m_struct.limits; }
     void set_limits(VkPhysicalDeviceLimits inValue) { m_struct.limits = inValue; }
     VkPhysicalDeviceSparseProperties get_sparseProperties() { return m_struct.sparseProperties; }

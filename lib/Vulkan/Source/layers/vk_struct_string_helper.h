@@ -1303,7 +1303,7 @@ char* vk_print_vkextensionproperties(const VkExtensionProperties* pStruct, const
     size_t len;
     len = sizeof(char)*1024;
     str = (char*)malloc(len);
-    snprintf(str, len, "%sextensionName = %p\n%sspecVersion = %u\n", prefix, (pStruct->extensionName), prefix, (pStruct->specVersion));
+    snprintf(str, len, "%sextensionName = %s\n%sspecVersion = %u\n", prefix, (pStruct->extensionName), prefix, (pStruct->specVersion));
     return str;
 }
 char* vk_print_vkextent2d(const VkExtent2D* pStruct, const char* prefix)
@@ -1824,7 +1824,7 @@ char* vk_print_vklayerproperties(const VkLayerProperties* pStruct, const char* p
     size_t len;
     len = sizeof(char)*1024;
     str = (char*)malloc(len);
-    snprintf(str, len, "%slayerName = %p\n%sspecVersion = %u\n%simplementationVersion = %u\n%sdescription = %p\n", prefix, (pStruct->layerName), prefix, (pStruct->specVersion), prefix, (pStruct->implementationVersion), prefix, (pStruct->description));
+    snprintf(str, len, "%slayerName = %s\n%sspecVersion = %u\n%simplementationVersion = %u\n%sdescription = %s\n", prefix, (pStruct->layerName), prefix, (pStruct->specVersion), prefix, (pStruct->implementationVersion), prefix, (pStruct->description));
     return str;
 }
 char* vk_print_vkmappedmemoryrange(const VkMappedMemoryRange* pStruct, const char* prefix)
@@ -2058,7 +2058,7 @@ char* vk_print_vkphysicaldeviceproperties(const VkPhysicalDeviceProperties* pStr
     snprintf(stp_strs[1], len, " %ssparseProperties (%p)\n%s", prefix, (void*)&pStruct->sparseProperties, tmpStr);
     len = strlen(stp_strs[0]) + strlen(stp_strs[1]) + sizeof(char)*1024;
     str = (char*)malloc(len);
-    snprintf(str, len, "%sapiVersion = %u\n%sdriverVersion = %u\n%svendorID = %u\n%sdeviceID = %u\n%sdeviceType = %s\n%sdeviceName = %p\n%spipelineCacheUUID = %p\n%slimits = %p\n%ssparseProperties = %p\n", prefix, (pStruct->apiVersion), prefix, (pStruct->driverVersion), prefix, (pStruct->vendorID), prefix, (pStruct->deviceID), prefix, string_VkPhysicalDeviceType(pStruct->deviceType), prefix, (pStruct->deviceName), prefix, (void*)(pStruct->pipelineCacheUUID), prefix, (void*)&(pStruct->limits), prefix, (void*)&(pStruct->sparseProperties));
+    snprintf(str, len, "%sapiVersion = %u\n%sdriverVersion = %u\n%svendorID = %u\n%sdeviceID = %u\n%sdeviceType = %s\n%sdeviceName = %s\n%spipelineCacheUUID = %p\n%slimits = %p\n%ssparseProperties = %p\n", prefix, (pStruct->apiVersion), prefix, (pStruct->driverVersion), prefix, (pStruct->vendorID), prefix, (pStruct->deviceID), prefix, string_VkPhysicalDeviceType(pStruct->deviceType), prefix, (pStruct->deviceName), prefix, (void*)(pStruct->pipelineCacheUUID), prefix, (void*)&(pStruct->limits), prefix, (void*)&(pStruct->sparseProperties));
     for (int32_t stp_index = 1; stp_index >= 0; stp_index--) {
         if (0 < strlen(stp_strs[stp_index])) {
             strncat(str, stp_strs[stp_index], strlen(stp_strs[stp_index]));
@@ -3480,11 +3480,6 @@ char* dynamic_display(const void* pStruct, const char* prefix)
         case VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET:
         {
             return vk_print_vkcopydescriptorset((VkCopyDescriptorSet*)pStruct, indent);
-        }
-        break;
-        case VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT:
-        {
-            return vk_print_vkdebugreportcallbackcreateinfoext((VkDebugReportCallbackCreateInfoEXT*)pStruct, indent);
         }
         break;
         case VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO:

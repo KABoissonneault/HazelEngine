@@ -94,9 +94,7 @@ static unsigned int convertStringEnumVal(const char *_enum) {
     return stringToDbgReportFlags(_enum);
 }
 
-const char *getLayerOption(const char *_option) {
-    return g_configFileObj.getOption(_option);
-}
+const char *getLayerOption(const char *_option) { return g_configFileObj.getOption(_option); }
 
 // If option is NULL or stdout, return stdout, otherwise try to open option
 //  as a filename. If successful, return file handle, otherwise stdout
@@ -108,18 +106,17 @@ FILE *getLayerLogOutput(const char *_option, const char *layerName) {
         log_output = fopen(_option, "w");
         if (log_output == NULL) {
             if (_option)
-                std::cout << std::endl << layerName
-                          << " ERROR: Bad output filename specified: "
-                          << _option << ". Writing to STDOUT instead"
-                          << std::endl << std::endl;
+                std::cout << std::endl
+                          << layerName << " ERROR: Bad output filename specified: " << _option << ". Writing to STDOUT instead"
+                          << std::endl
+                          << std::endl;
             log_output = stdout;
         }
     }
     return log_output;
 }
 
-VkDebugReportFlagsEXT getLayerOptionFlags(const char *_option,
-                                          uint32_t optionDefault) {
+VkDebugReportFlagsEXT getLayerOptionFlags(const char *_option, uint32_t optionDefault) {
     VkDebugReportFlagsEXT flags = optionDefault;
     const char *option = (g_configFileObj.getOption(_option));
 
@@ -174,9 +171,7 @@ void setLayerOptionEnum(const char *_option, const char *_valEnum) {
     g_configFileObj.setOption(_option, strVal);
 }
 
-void setLayerOption(const char *_option, const char *_val) {
-    g_configFileObj.setOption(_option, _val);
-}
+void setLayerOption(const char *_option, const char *_val) { g_configFileObj.setOption(_option, _val); }
 
 ConfigFile::ConfigFile() : m_fileIsParsed(false) {}
 
@@ -194,8 +189,7 @@ const char *ConfigFile::getOption(const std::string &_option) {
         return it->second.c_str();
 }
 
-void ConfigFile::setOption(const std::string &_option,
-                           const std::string &_val) {
+void ConfigFile::setOption(const std::string &_option, const std::string &_val) {
     if (!m_fileIsParsed) {
         parseFile("vk_layer_settings.txt");
     }

@@ -33,10 +33,8 @@
  * Author: Tony Barbour <tony@LunarG.com>
  */
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1428
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1475
 #include "unique_objects.h"
-
-static LOADER_PLATFORM_THREAD_ONCE_DECLARATION(initOnce);
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance)
 {
@@ -48,37 +46,37 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice p
     return explicit_CreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #354
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #363
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceExtensionProperties(const char *pLayerName, uint32_t *pCount,  VkExtensionProperties* pProperties)
 {
     return util_GetExtensionProperties(0, NULL, pCount, pProperties);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #377
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #386
 static const VkLayerProperties globalLayerProps[] = {
     {
         "VK_LAYER_GOOGLE_unique_objects",
         VK_API_VERSION, // specVersion
         1, // implementationVersion
-        "layer: unique_objects",
+        "Google Validation Layer"
     }
 };
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #390
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #402
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceLayerProperties(uint32_t *pCount,  VkLayerProperties* pProperties)
 {
     return util_GetLayerProperties(ARRAY_SIZE(globalLayerProps), globalLayerProps, pCount, pProperties);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #400
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #412
 static const VkLayerProperties deviceLayerProps[] = {
     {
         "VK_LAYER_GOOGLE_unique_objects",
-        VK_API_VERSION,
-        1,
-        "layer: unique_objects",
+        VK_API_VERSION, // specVersion
+        1, // implementationVersion
+        "Google Validation Layer"
     }
 };
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice, uint32_t *pCount, VkLayerProperties* pProperties)
@@ -89,60 +87,46 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pSubmits[submitCount]': {'pSignalSemaphores[signalSemaphoreCount]': 'VkSemaphore', 'pWaitSemaphores[waitSemaphoreCount]': 'VkSemaphore'}, 'fence': 'VkFence'}
-    std::vector<VkSemaphore> original_pSignalSemaphores = {};
-    std::vector<VkSemaphore> original_pWaitSemaphores = {};
+//LOCAL DECLS:{'pSubmits': 'VkSubmitInfo*'}
+    safe_VkSubmitInfo* local_pSubmits = NULL;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (fence) {
         VkFence* pfence = (VkFence*)&fence;
         *pfence = (VkFence)((VkUniqueObject*)fence)->actualObject;
     }
     if (pSubmits) {
+        local_pSubmits = new safe_VkSubmitInfo[submitCount];
         for (uint32_t idx0=0; idx0<submitCount; ++idx0) {
-            if (pSubmits[idx0].pSignalSemaphores) {
+            local_pSubmits[idx0].initialize(&pSubmits[idx0]);
+            if (local_pSubmits[idx0].pSignalSemaphores) {
                 for (uint32_t idx1=0; idx1<pSubmits[idx0].signalSemaphoreCount; ++idx1) {
-                    VkSemaphore* pSemaphore = (VkSemaphore*)&(pSubmits[idx0].pSignalSemaphores[idx1]);
-                    original_pSignalSemaphores.push_back(pSubmits[idx0].pSignalSemaphores[idx1]);
-                    *(pSemaphore) = (VkSemaphore)((VkUniqueObject*)pSubmits[idx0].pSignalSemaphores[idx1])->actualObject;
+                    local_pSubmits[idx0].pSignalSemaphores[idx1] = (VkSemaphore)((VkUniqueObject*)pSubmits[idx0].pSignalSemaphores[idx1])->actualObject;
                 }
             }
-            if (pSubmits[idx0].pWaitSemaphores) {
+            if (local_pSubmits[idx0].pWaitSemaphores) {
                 for (uint32_t idx2=0; idx2<pSubmits[idx0].waitSemaphoreCount; ++idx2) {
-                    VkSemaphore* pSemaphore = (VkSemaphore*)&(pSubmits[idx0].pWaitSemaphores[idx2]);
-                    original_pWaitSemaphores.push_back(pSubmits[idx0].pWaitSemaphores[idx2]);
-                    *(pSemaphore) = (VkSemaphore)((VkUniqueObject*)pSubmits[idx0].pWaitSemaphores[idx2])->actualObject;
+                    local_pSubmits[idx0].pWaitSemaphores[idx2] = (VkSemaphore)((VkUniqueObject*)pSubmits[idx0].pWaitSemaphores[idx2])->actualObject;
                 }
             }
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, queue)->QueueSubmit(queue, submitCount, pSubmits, fence);
-    if (pSubmits) {
-        for (uint32_t idx0=0; idx0<submitCount; ++idx0) {
-            if (pSubmits[idx0].pSignalSemaphores) {
-                for (uint32_t idx1=0; idx1<pSubmits[idx0].signalSemaphoreCount; ++idx1) {
-                    VkSemaphore* pSemaphore = (VkSemaphore*)&(pSubmits[idx0].pSignalSemaphores[idx1]);
-                    *(pSemaphore) = original_pSignalSemaphores.front();
-                    original_pSignalSemaphores.erase(original_pSignalSemaphores.begin());
-                }
-            }
-            if (pSubmits[idx0].pWaitSemaphores) {
-                for (uint32_t idx2=0; idx2<pSubmits[idx0].waitSemaphoreCount; ++idx2) {
-                    VkSemaphore* pSemaphore = (VkSemaphore*)&(pSubmits[idx0].pWaitSemaphores[idx2]);
-                    *(pSemaphore) = original_pWaitSemaphores.front();
-                    original_pWaitSemaphores.erase(original_pWaitSemaphores.begin());
-                }
-            }
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, queue)->QueueSubmit(queue, submitCount, (const VkSubmitInfo*)local_pSubmits, fence);
+    if (local_pSubmits)
+        delete[] local_pSubmits;
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAllocateMemory(VkDevice device, const VkMemoryAllocateInfo* pAllocateInfo, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory)
 {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->AllocateMemory(device, pAllocateInfo, pAllocator, pMemory);
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueDeviceMemory = new VkUniqueObject();
         uniqueDeviceMemory->actualObject = (uint64_t)*pMemory;
         *pMemory = (VkDeviceMemory)uniqueDeviceMemory;
@@ -150,339 +134,278 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAllocateMemory(VkDevice device,
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkFreeMemory(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'memory': 'VkDeviceMemory'}
     VkDeviceMemory local_memory = memory;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (memory) {
         VkDeviceMemory* pmemory = (VkDeviceMemory*)&memory;
         *pmemory = (VkDeviceMemory)((VkUniqueObject*)memory)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->FreeMemory(device, memory, pAllocator);
     delete (VkUniqueObject*)local_memory;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkMapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ppData)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'memory': 'VkDeviceMemory'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (memory) {
         VkDeviceMemory* pmemory = (VkDeviceMemory*)&memory;
         *pmemory = (VkDeviceMemory)((VkUniqueObject*)memory)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->MapMemory(device, memory, offset, size, flags, ppData);
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkUnmapMemory(VkDevice device, VkDeviceMemory memory)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'memory': 'VkDeviceMemory'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (memory) {
         VkDeviceMemory* pmemory = (VkDeviceMemory*)&memory;
         *pmemory = (VkDeviceMemory)((VkUniqueObject*)memory)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->UnmapMemory(device, memory);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkFlushMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pMemoryRanges[memoryRangeCount]': {'memory': 'VkDeviceMemory'}}
-    std::vector<VkDeviceMemory> original_memory = {};
+//LOCAL DECLS:{'pMemoryRanges': 'VkMappedMemoryRange*'}
+    safe_VkMappedMemoryRange* local_pMemoryRanges = NULL;
     if (pMemoryRanges) {
+        local_pMemoryRanges = new safe_VkMappedMemoryRange[memoryRangeCount];
         for (uint32_t idx0=0; idx0<memoryRangeCount; ++idx0) {
+            local_pMemoryRanges[idx0].initialize(&pMemoryRanges[idx0]);
             if (pMemoryRanges[idx0].memory) {
-                VkDeviceMemory* pDeviceMemory = (VkDeviceMemory*)&(pMemoryRanges[idx0].memory);
-                original_memory.push_back(pMemoryRanges[idx0].memory);
-                *(pDeviceMemory) = (VkDeviceMemory)((VkUniqueObject*)pMemoryRanges[idx0].memory)->actualObject;
+                local_pMemoryRanges[idx0].memory = (VkDeviceMemory)((VkUniqueObject*)pMemoryRanges[idx0].memory)->actualObject;
             }
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->FlushMappedMemoryRanges(device, memoryRangeCount, pMemoryRanges);
-    if (pMemoryRanges) {
-        for (uint32_t idx0=0; idx0<memoryRangeCount; ++idx0) {
-            if (pMemoryRanges[idx0].memory) {
-                VkDeviceMemory* pDeviceMemory = (VkDeviceMemory*)&(pMemoryRanges[idx0].memory);
-                *(pDeviceMemory) = original_memory.front();
-                original_memory.erase(original_memory.begin());
-            }
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->FlushMappedMemoryRanges(device, memoryRangeCount, (const VkMappedMemoryRange*)local_pMemoryRanges);
+    if (local_pMemoryRanges)
+        delete[] local_pMemoryRanges;
     return result;
 }
+
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkInvalidateMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pMemoryRanges[memoryRangeCount]': {'memory': 'VkDeviceMemory'}}
-    std::vector<VkDeviceMemory> original_memory = {};
+//LOCAL DECLS:{'pMemoryRanges': 'VkMappedMemoryRange*'}
+    safe_VkMappedMemoryRange* local_pMemoryRanges = NULL;
     if (pMemoryRanges) {
+        local_pMemoryRanges = new safe_VkMappedMemoryRange[memoryRangeCount];
         for (uint32_t idx0=0; idx0<memoryRangeCount; ++idx0) {
+            local_pMemoryRanges[idx0].initialize(&pMemoryRanges[idx0]);
             if (pMemoryRanges[idx0].memory) {
-                VkDeviceMemory* pDeviceMemory = (VkDeviceMemory*)&(pMemoryRanges[idx0].memory);
-                original_memory.push_back(pMemoryRanges[idx0].memory);
-                *(pDeviceMemory) = (VkDeviceMemory)((VkUniqueObject*)pMemoryRanges[idx0].memory)->actualObject;
+                local_pMemoryRanges[idx0].memory = (VkDeviceMemory)((VkUniqueObject*)pMemoryRanges[idx0].memory)->actualObject;
             }
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->InvalidateMappedMemoryRanges(device, memoryRangeCount, pMemoryRanges);
-    if (pMemoryRanges) {
-        for (uint32_t idx0=0; idx0<memoryRangeCount; ++idx0) {
-            if (pMemoryRanges[idx0].memory) {
-                VkDeviceMemory* pDeviceMemory = (VkDeviceMemory*)&(pMemoryRanges[idx0].memory);
-                *(pDeviceMemory) = original_memory.front();
-                original_memory.erase(original_memory.begin());
-            }
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->InvalidateMappedMemoryRanges(device, memoryRangeCount, (const VkMappedMemoryRange*)local_pMemoryRanges);
+    if (local_pMemoryRanges)
+        delete[] local_pMemoryRanges;
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetDeviceMemoryCommitment(VkDevice device, VkDeviceMemory memory, VkDeviceSize* pCommittedMemoryInBytes)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'memory': 'VkDeviceMemory'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (memory) {
         VkDeviceMemory* pmemory = (VkDeviceMemory*)&memory;
         *pmemory = (VkDeviceMemory)((VkUniqueObject*)memory)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->GetDeviceMemoryCommitment(device, memory, pCommittedMemoryInBytes);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset)
 {
-// STRUCT USES:{'memory': 'VkDeviceMemory', 'buffer': 'VkBuffer'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// STRUCT USES:{'buffer': 'VkBuffer', 'memory': 'VkDeviceMemory'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (buffer) {
         VkBuffer* pbuffer = (VkBuffer*)&buffer;
         *pbuffer = (VkBuffer)((VkUniqueObject*)buffer)->actualObject;
     }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (memory) {
         VkDeviceMemory* pmemory = (VkDeviceMemory*)&memory;
         *pmemory = (VkDeviceMemory)((VkUniqueObject*)memory)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->BindBufferMemory(device, buffer, memory, memoryOffset);
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'memory': 'VkDeviceMemory', 'image': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (image) {
         VkImage* pimage = (VkImage*)&image;
         *pimage = (VkImage)((VkUniqueObject*)image)->actualObject;
     }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (memory) {
         VkDeviceMemory* pmemory = (VkDeviceMemory*)&memory;
         *pmemory = (VkDeviceMemory)((VkUniqueObject*)memory)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->BindImageMemory(device, image, memory, memoryOffset);
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetBufferMemoryRequirements(VkDevice device, VkBuffer buffer, VkMemoryRequirements* pMemoryRequirements)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'buffer': 'VkBuffer'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (buffer) {
         VkBuffer* pbuffer = (VkBuffer*)&buffer;
         *pbuffer = (VkBuffer)((VkUniqueObject*)buffer)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->GetBufferMemoryRequirements(device, buffer, pMemoryRequirements);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetImageMemoryRequirements(VkDevice device, VkImage image, VkMemoryRequirements* pMemoryRequirements)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'image': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (image) {
         VkImage* pimage = (VkImage*)&image;
         *pimage = (VkImage)((VkUniqueObject*)image)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->GetImageMemoryRequirements(device, image, pMemoryRequirements);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetImageSparseMemoryRequirements(VkDevice device, VkImage image, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements* pSparseMemoryRequirements)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'image': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (image) {
         VkImage* pimage = (VkImage*)&image;
         *pimage = (VkImage)((VkUniqueObject*)image)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->GetImageSparseMemoryRequirements(device, image, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence)
 {
-// STRUCT USES:{'pBindInfo[bindInfoCount]': {'pImageOpaqueBinds[imageOpaqueBindCount]': {'pBinds[bindCount]': {'memory': 'VkDeviceMemory'}, 'image': 'VkImage'}, 'pImageBinds[imageBindCount]': {'pBinds[bindCount]': {'memory': 'VkDeviceMemory'}, 'image': 'VkImage'}, 'pWaitSemaphores[waitSemaphoreCount]': 'VkSemaphore', 'pSignalSemaphores[signalSemaphoreCount]': 'VkSemaphore', 'pBufferBinds[bufferBindCount]': {'pBinds[bindCount]': {'memory': 'VkDeviceMemory'}, 'buffer': 'VkBuffer'}}, 'fence': 'VkFence'}
-    std::vector<VkBuffer> original_buffer = {};
-    std::vector<VkDeviceMemory> original_memory = {};
-    std::vector<VkImage> original_image = {};
-    std::vector<VkSemaphore> original_pSignalSemaphores = {};
-    std::vector<VkSemaphore> original_pWaitSemaphores = {};
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// STRUCT USES:{'pBindInfo[bindInfoCount]': {'pBufferBinds[bufferBindCount]': {'buffer': 'VkBuffer', 'pBinds[bindCount]': {'memory': 'VkDeviceMemory'}}, 'pImageBinds[imageBindCount]': {'pBinds[bindCount]': {'memory': 'VkDeviceMemory'}, 'image': 'VkImage'}, 'pSignalSemaphores[signalSemaphoreCount]': 'VkSemaphore', 'pWaitSemaphores[waitSemaphoreCount]': 'VkSemaphore', 'pImageOpaqueBinds[imageOpaqueBindCount]': {'pBinds[bindCount]': {'memory': 'VkDeviceMemory'}, 'image': 'VkImage'}}, 'fence': 'VkFence'}
+//LOCAL DECLS:{'pBindInfo': 'VkBindSparseInfo*'}
+    safe_VkBindSparseInfo* local_pBindInfo = NULL;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (fence) {
         VkFence* pfence = (VkFence*)&fence;
         *pfence = (VkFence)((VkUniqueObject*)fence)->actualObject;
     }
     if (pBindInfo) {
+        local_pBindInfo = new safe_VkBindSparseInfo[bindInfoCount];
         for (uint32_t idx0=0; idx0<bindInfoCount; ++idx0) {
-            if (pBindInfo[idx0].pBufferBinds) {
+            local_pBindInfo[idx0].initialize(&pBindInfo[idx0]);
+            if (local_pBindInfo[idx0].pBufferBinds) {
                 for (uint32_t idx1=0; idx1<pBindInfo[idx0].bufferBindCount; ++idx1) {
                     if (pBindInfo[idx0].pBufferBinds[idx1].buffer) {
-                        VkBuffer* pBuffer = (VkBuffer*)&(pBindInfo[idx0].pBufferBinds[idx1].buffer);
-                        original_buffer.push_back(pBindInfo[idx0].pBufferBinds[idx1].buffer);
-                        *(pBuffer) = (VkBuffer)((VkUniqueObject*)pBindInfo[idx0].pBufferBinds[idx1].buffer)->actualObject;
+                        local_pBindInfo[idx0].pBufferBinds[idx1].buffer = (VkBuffer)((VkUniqueObject*)pBindInfo[idx0].pBufferBinds[idx1].buffer)->actualObject;
                     }
-                    if (pBindInfo[idx0].pBufferBinds[idx1].pBinds) {
+                    if (local_pBindInfo[idx0].pBufferBinds[idx1].pBinds) {
                         for (uint32_t idx2=0; idx2<pBindInfo[idx0].pBufferBinds[idx1].bindCount; ++idx2) {
                             if (pBindInfo[idx0].pBufferBinds[idx1].pBinds[idx2].memory) {
-                                VkDeviceMemory* pDeviceMemory = (VkDeviceMemory*)&(pBindInfo[idx0].pBufferBinds[idx1].pBinds[idx2].memory);
-                                original_memory.push_back(pBindInfo[idx0].pBufferBinds[idx1].pBinds[idx2].memory);
-                                *(pDeviceMemory) = (VkDeviceMemory)((VkUniqueObject*)pBindInfo[idx0].pBufferBinds[idx1].pBinds[idx2].memory)->actualObject;
+                                local_pBindInfo[idx0].pBufferBinds[idx1].pBinds[idx2].memory = (VkDeviceMemory)((VkUniqueObject*)pBindInfo[idx0].pBufferBinds[idx1].pBinds[idx2].memory)->actualObject;
                             }
                         }
                     }
                 }
             }
-            if (pBindInfo[idx0].pImageBinds) {
+            if (local_pBindInfo[idx0].pImageBinds) {
                 for (uint32_t idx2=0; idx2<pBindInfo[idx0].imageBindCount; ++idx2) {
                     if (pBindInfo[idx0].pImageBinds[idx2].image) {
-                        VkImage* pImage = (VkImage*)&(pBindInfo[idx0].pImageBinds[idx2].image);
-                        original_image.push_back(pBindInfo[idx0].pImageBinds[idx2].image);
-                        *(pImage) = (VkImage)((VkUniqueObject*)pBindInfo[idx0].pImageBinds[idx2].image)->actualObject;
+                        local_pBindInfo[idx0].pImageBinds[idx2].image = (VkImage)((VkUniqueObject*)pBindInfo[idx0].pImageBinds[idx2].image)->actualObject;
                     }
-                    if (pBindInfo[idx0].pImageBinds[idx2].pBinds) {
+                    if (local_pBindInfo[idx0].pImageBinds[idx2].pBinds) {
                         for (uint32_t idx3=0; idx3<pBindInfo[idx0].pImageBinds[idx2].bindCount; ++idx3) {
                             if (pBindInfo[idx0].pImageBinds[idx2].pBinds[idx3].memory) {
-                                VkDeviceMemory* pDeviceMemory = (VkDeviceMemory*)&(pBindInfo[idx0].pImageBinds[idx2].pBinds[idx3].memory);
-                                original_memory.push_back(pBindInfo[idx0].pImageBinds[idx2].pBinds[idx3].memory);
-                                *(pDeviceMemory) = (VkDeviceMemory)((VkUniqueObject*)pBindInfo[idx0].pImageBinds[idx2].pBinds[idx3].memory)->actualObject;
+                                local_pBindInfo[idx0].pImageBinds[idx2].pBinds[idx3].memory = (VkDeviceMemory)((VkUniqueObject*)pBindInfo[idx0].pImageBinds[idx2].pBinds[idx3].memory)->actualObject;
                             }
                         }
                     }
                 }
             }
-            if (pBindInfo[idx0].pImageOpaqueBinds) {
+            if (local_pBindInfo[idx0].pImageOpaqueBinds) {
                 for (uint32_t idx3=0; idx3<pBindInfo[idx0].imageOpaqueBindCount; ++idx3) {
                     if (pBindInfo[idx0].pImageOpaqueBinds[idx3].image) {
-                        VkImage* pImage = (VkImage*)&(pBindInfo[idx0].pImageOpaqueBinds[idx3].image);
-                        original_image.push_back(pBindInfo[idx0].pImageOpaqueBinds[idx3].image);
-                        *(pImage) = (VkImage)((VkUniqueObject*)pBindInfo[idx0].pImageOpaqueBinds[idx3].image)->actualObject;
+                        local_pBindInfo[idx0].pImageOpaqueBinds[idx3].image = (VkImage)((VkUniqueObject*)pBindInfo[idx0].pImageOpaqueBinds[idx3].image)->actualObject;
                     }
-                    if (pBindInfo[idx0].pImageOpaqueBinds[idx3].pBinds) {
+                    if (local_pBindInfo[idx0].pImageOpaqueBinds[idx3].pBinds) {
                         for (uint32_t idx4=0; idx4<pBindInfo[idx0].pImageOpaqueBinds[idx3].bindCount; ++idx4) {
                             if (pBindInfo[idx0].pImageOpaqueBinds[idx3].pBinds[idx4].memory) {
-                                VkDeviceMemory* pDeviceMemory = (VkDeviceMemory*)&(pBindInfo[idx0].pImageOpaqueBinds[idx3].pBinds[idx4].memory);
-                                original_memory.push_back(pBindInfo[idx0].pImageOpaqueBinds[idx3].pBinds[idx4].memory);
-                                *(pDeviceMemory) = (VkDeviceMemory)((VkUniqueObject*)pBindInfo[idx0].pImageOpaqueBinds[idx3].pBinds[idx4].memory)->actualObject;
+                                local_pBindInfo[idx0].pImageOpaqueBinds[idx3].pBinds[idx4].memory = (VkDeviceMemory)((VkUniqueObject*)pBindInfo[idx0].pImageOpaqueBinds[idx3].pBinds[idx4].memory)->actualObject;
                             }
                         }
                     }
                 }
             }
-            if (pBindInfo[idx0].pSignalSemaphores) {
+            if (local_pBindInfo[idx0].pSignalSemaphores) {
                 for (uint32_t idx4=0; idx4<pBindInfo[idx0].signalSemaphoreCount; ++idx4) {
-                    VkSemaphore* pSemaphore = (VkSemaphore*)&(pBindInfo[idx0].pSignalSemaphores[idx4]);
-                    original_pSignalSemaphores.push_back(pBindInfo[idx0].pSignalSemaphores[idx4]);
-                    *(pSemaphore) = (VkSemaphore)((VkUniqueObject*)pBindInfo[idx0].pSignalSemaphores[idx4])->actualObject;
+                    local_pBindInfo[idx0].pSignalSemaphores[idx4] = (VkSemaphore)((VkUniqueObject*)pBindInfo[idx0].pSignalSemaphores[idx4])->actualObject;
                 }
             }
-            if (pBindInfo[idx0].pWaitSemaphores) {
+            if (local_pBindInfo[idx0].pWaitSemaphores) {
                 for (uint32_t idx5=0; idx5<pBindInfo[idx0].waitSemaphoreCount; ++idx5) {
-                    VkSemaphore* pSemaphore = (VkSemaphore*)&(pBindInfo[idx0].pWaitSemaphores[idx5]);
-                    original_pWaitSemaphores.push_back(pBindInfo[idx0].pWaitSemaphores[idx5]);
-                    *(pSemaphore) = (VkSemaphore)((VkUniqueObject*)pBindInfo[idx0].pWaitSemaphores[idx5])->actualObject;
+                    local_pBindInfo[idx0].pWaitSemaphores[idx5] = (VkSemaphore)((VkUniqueObject*)pBindInfo[idx0].pWaitSemaphores[idx5])->actualObject;
                 }
             }
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, queue)->QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
-    if (pBindInfo) {
-        for (uint32_t idx0=0; idx0<bindInfoCount; ++idx0) {
-            if (pBindInfo[idx0].pBufferBinds) {
-                for (uint32_t idx1=0; idx1<pBindInfo[idx0].bufferBindCount; ++idx1) {
-                    if (pBindInfo[idx0].pBufferBinds[idx1].buffer) {
-                        VkBuffer* pBuffer = (VkBuffer*)&(pBindInfo[idx0].pBufferBinds[idx1].buffer);
-                        *(pBuffer) = original_buffer.front();
-                        original_buffer.erase(original_buffer.begin());
-                    }
-                    if (pBindInfo[idx0].pBufferBinds[idx1].pBinds) {
-                        for (uint32_t idx2=0; idx2<pBindInfo[idx0].pBufferBinds[idx1].bindCount; ++idx2) {
-                            if (pBindInfo[idx0].pBufferBinds[idx1].pBinds[idx2].memory) {
-                                VkDeviceMemory* pDeviceMemory = (VkDeviceMemory*)&(pBindInfo[idx0].pBufferBinds[idx1].pBinds[idx2].memory);
-                                *(pDeviceMemory) = original_memory.front();
-                                original_memory.erase(original_memory.begin());
-                            }
-                        }
-                    }
-                }
-            }
-            if (pBindInfo[idx0].pImageBinds) {
-                for (uint32_t idx2=0; idx2<pBindInfo[idx0].imageBindCount; ++idx2) {
-                    if (pBindInfo[idx0].pImageBinds[idx2].image) {
-                        VkImage* pImage = (VkImage*)&(pBindInfo[idx0].pImageBinds[idx2].image);
-                        *(pImage) = original_image.front();
-                        original_image.erase(original_image.begin());
-                    }
-                    if (pBindInfo[idx0].pImageBinds[idx2].pBinds) {
-                        for (uint32_t idx3=0; idx3<pBindInfo[idx0].pImageBinds[idx2].bindCount; ++idx3) {
-                            if (pBindInfo[idx0].pImageBinds[idx2].pBinds[idx3].memory) {
-                                VkDeviceMemory* pDeviceMemory = (VkDeviceMemory*)&(pBindInfo[idx0].pImageBinds[idx2].pBinds[idx3].memory);
-                                *(pDeviceMemory) = original_memory.front();
-                                original_memory.erase(original_memory.begin());
-                            }
-                        }
-                    }
-                }
-            }
-            if (pBindInfo[idx0].pImageOpaqueBinds) {
-                for (uint32_t idx3=0; idx3<pBindInfo[idx0].imageOpaqueBindCount; ++idx3) {
-                    if (pBindInfo[idx0].pImageOpaqueBinds[idx3].image) {
-                        VkImage* pImage = (VkImage*)&(pBindInfo[idx0].pImageOpaqueBinds[idx3].image);
-                        *(pImage) = original_image.front();
-                        original_image.erase(original_image.begin());
-                    }
-                    if (pBindInfo[idx0].pImageOpaqueBinds[idx3].pBinds) {
-                        for (uint32_t idx4=0; idx4<pBindInfo[idx0].pImageOpaqueBinds[idx3].bindCount; ++idx4) {
-                            if (pBindInfo[idx0].pImageOpaqueBinds[idx3].pBinds[idx4].memory) {
-                                VkDeviceMemory* pDeviceMemory = (VkDeviceMemory*)&(pBindInfo[idx0].pImageOpaqueBinds[idx3].pBinds[idx4].memory);
-                                *(pDeviceMemory) = original_memory.front();
-                                original_memory.erase(original_memory.begin());
-                            }
-                        }
-                    }
-                }
-            }
-            if (pBindInfo[idx0].pSignalSemaphores) {
-                for (uint32_t idx4=0; idx4<pBindInfo[idx0].signalSemaphoreCount; ++idx4) {
-                    VkSemaphore* pSemaphore = (VkSemaphore*)&(pBindInfo[idx0].pSignalSemaphores[idx4]);
-                    *(pSemaphore) = original_pSignalSemaphores.front();
-                    original_pSignalSemaphores.erase(original_pSignalSemaphores.begin());
-                }
-            }
-            if (pBindInfo[idx0].pWaitSemaphores) {
-                for (uint32_t idx5=0; idx5<pBindInfo[idx0].waitSemaphoreCount; ++idx5) {
-                    VkSemaphore* pSemaphore = (VkSemaphore*)&(pBindInfo[idx0].pWaitSemaphores[idx5]);
-                    *(pSemaphore) = original_pWaitSemaphores.front();
-                    original_pWaitSemaphores.erase(original_pWaitSemaphores.begin());
-                }
-            }
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, queue)->QueueBindSparse(queue, bindInfoCount, (const VkBindSparseInfo*)local_pBindInfo, fence);
+    if (local_pBindInfo)
+        delete[] local_pBindInfo;
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateFence(VkDevice device, const VkFenceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence)
 {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateFence(device, pCreateInfo, pAllocator, pFence);
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueFence = new VkUniqueObject();
         uniqueFence->actualObject = (uint64_t)*pFence;
         *pFence = (VkFence)uniqueFence;
@@ -490,83 +413,85 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateFence(VkDevice device, co
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyFence(VkDevice device, VkFence fence, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'fence': 'VkFence'}
     VkFence local_fence = fence;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (fence) {
         VkFence* pfence = (VkFence*)&fence;
         *pfence = (VkFence)((VkUniqueObject*)fence)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroyFence(device, fence, pAllocator);
     delete (VkUniqueObject*)local_fence;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pFences[fenceCount]': 'VkFence'}
-    std::vector<VkFence> original_pFences = {};
+//LOCAL DECLS:{'pFences': 'VkFence*'}
+    VkFence* local_pFences = NULL;
     if (pFences) {
+        local_pFences = new VkFence[fenceCount];
         for (uint32_t idx0=0; idx0<fenceCount; ++idx0) {
-            VkFence* pFence = (VkFence*)&(pFences[idx0]);
-            original_pFences.push_back(pFences[idx0]);
-            *(pFence) = (VkFence)((VkUniqueObject*)pFences[idx0])->actualObject;
+            local_pFences[idx0] = (VkFence)((VkUniqueObject*)pFences[idx0])->actualObject;
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->ResetFences(device, fenceCount, pFences);
-    if (pFences) {
-        for (uint32_t idx0=0; idx0<fenceCount; ++idx0) {
-            VkFence* pFence = (VkFence*)&(pFences[idx0]);
-            *(pFence) = original_pFences.front();
-            original_pFences.erase(original_pFences.begin());
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->ResetFences(device, fenceCount, (const VkFence*)local_pFences);
+    if (local_pFences)
+        delete[] local_pFences;
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetFenceStatus(VkDevice device, VkFence fence)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'fence': 'VkFence'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (fence) {
         VkFence* pfence = (VkFence*)&fence;
         *pfence = (VkFence)((VkUniqueObject*)fence)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->GetFenceStatus(device, fence);
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences, VkBool32 waitAll, uint64_t timeout)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pFences[fenceCount]': 'VkFence'}
-    std::vector<VkFence> original_pFences = {};
+//LOCAL DECLS:{'pFences': 'VkFence*'}
+    VkFence* local_pFences = NULL;
     if (pFences) {
+        local_pFences = new VkFence[fenceCount];
         for (uint32_t idx0=0; idx0<fenceCount; ++idx0) {
-            VkFence* pFence = (VkFence*)&(pFences[idx0]);
-            original_pFences.push_back(pFences[idx0]);
-            *(pFence) = (VkFence)((VkUniqueObject*)pFences[idx0])->actualObject;
+            local_pFences[idx0] = (VkFence)((VkUniqueObject*)pFences[idx0])->actualObject;
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->WaitForFences(device, fenceCount, pFences, waitAll, timeout);
-    if (pFences) {
-        for (uint32_t idx0=0; idx0<fenceCount; ++idx0) {
-            VkFence* pFence = (VkFence*)&(pFences[idx0]);
-            *(pFence) = original_pFences.front();
-            original_pFences.erase(original_pFences.begin());
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->WaitForFences(device, fenceCount, (const VkFence*)local_pFences, waitAll, timeout);
+    if (local_pFences)
+        delete[] local_pFences;
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSemaphore(VkDevice device, const VkSemaphoreCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore)
 {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateSemaphore(device, pCreateInfo, pAllocator, pSemaphore);
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueSemaphore = new VkUniqueObject();
         uniqueSemaphore->actualObject = (uint64_t)*pSemaphore;
         *pSemaphore = (VkSemaphore)uniqueSemaphore;
@@ -574,25 +499,30 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSemaphore(VkDevice device
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'semaphore': 'VkSemaphore'}
     VkSemaphore local_semaphore = semaphore;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (semaphore) {
         VkSemaphore* psemaphore = (VkSemaphore*)&semaphore;
         *psemaphore = (VkSemaphore)((VkUniqueObject*)semaphore)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroySemaphore(device, semaphore, pAllocator);
     delete (VkUniqueObject*)local_semaphore;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateEvent(VkDevice device, const VkEventCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkEvent* pEvent)
 {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateEvent(device, pCreateInfo, pAllocator, pEvent);
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueEvent = new VkUniqueObject();
         uniqueEvent->actualObject = (uint64_t)*pEvent;
         *pEvent = (VkEvent)uniqueEvent;
@@ -600,61 +530,75 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateEvent(VkDevice device, co
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyEvent(VkDevice device, VkEvent event, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'event': 'VkEvent'}
     VkEvent local_event = event;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (event) {
         VkEvent* pevent = (VkEvent*)&event;
         *pevent = (VkEvent)((VkUniqueObject*)event)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroyEvent(device, event, pAllocator);
     delete (VkUniqueObject*)local_event;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetEventStatus(VkDevice device, VkEvent event)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'event': 'VkEvent'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (event) {
         VkEvent* pevent = (VkEvent*)&event;
         *pevent = (VkEvent)((VkUniqueObject*)event)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->GetEventStatus(device, event);
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkSetEvent(VkDevice device, VkEvent event)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'event': 'VkEvent'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (event) {
         VkEvent* pevent = (VkEvent*)&event;
         *pevent = (VkEvent)((VkUniqueObject*)event)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->SetEvent(device, event);
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetEvent(VkDevice device, VkEvent event)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'event': 'VkEvent'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (event) {
         VkEvent* pevent = (VkEvent*)&event;
         *pevent = (VkEvent)((VkUniqueObject*)event)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->ResetEvent(device, event);
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateQueryPool(VkDevice device, const VkQueryPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool)
 {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateQueryPool(device, pCreateInfo, pAllocator, pQueryPool);
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueQueryPool = new VkUniqueObject();
         uniqueQueryPool->actualObject = (uint64_t)*pQueryPool;
         *pQueryPool = (VkQueryPool)uniqueQueryPool;
@@ -662,37 +606,45 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateQueryPool(VkDevice device
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyQueryPool(VkDevice device, VkQueryPool queryPool, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'queryPool': 'VkQueryPool'}
     VkQueryPool local_queryPool = queryPool;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (queryPool) {
         VkQueryPool* pqueryPool = (VkQueryPool*)&queryPool;
         *pqueryPool = (VkQueryPool)((VkUniqueObject*)queryPool)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroyQueryPool(device, queryPool, pAllocator);
     delete (VkUniqueObject*)local_queryPool;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride, VkQueryResultFlags flags)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'queryPool': 'VkQueryPool'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (queryPool) {
         VkQueryPool* pqueryPool = (VkQueryPool*)&queryPool;
         *pqueryPool = (VkQueryPool)((VkUniqueObject*)queryPool)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->GetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateBuffer(VkDevice device, const VkBufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer)
 {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateBuffer(device, pCreateInfo, pAllocator, pBuffer);
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueBuffer = new VkUniqueObject();
         uniqueBuffer->actualObject = (uint64_t)*pBuffer;
         *pBuffer = (VkBuffer)uniqueBuffer;
@@ -700,40 +652,42 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateBuffer(VkDevice device, c
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyBuffer(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'buffer': 'VkBuffer'}
     VkBuffer local_buffer = buffer;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (buffer) {
         VkBuffer* pbuffer = (VkBuffer*)&buffer;
         *pbuffer = (VkBuffer)((VkUniqueObject*)buffer)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroyBuffer(device, buffer, pAllocator);
     delete (VkUniqueObject*)local_buffer;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateBufferView(VkDevice device, const VkBufferViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBufferView* pView)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pCreateInfo': {'buffer': 'VkBuffer'}}
-    VkBuffer local_buffer = VK_NULL_HANDLE;
+//LOCAL DECLS:{'pCreateInfo': 'VkBufferViewCreateInfo*'}
+    safe_VkBufferViewCreateInfo* local_pCreateInfo = NULL;
     if (pCreateInfo) {
-        local_buffer = pCreateInfo->buffer;
+        local_pCreateInfo = new safe_VkBufferViewCreateInfo(pCreateInfo);
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
         if (pCreateInfo->buffer) {
-            VkBuffer* pbuffer = (VkBuffer*)&pCreateInfo->buffer;
-            *pbuffer = (VkBuffer)((VkUniqueObject*)pCreateInfo->buffer)->actualObject;
+            local_pCreateInfo->buffer = (VkBuffer)((VkUniqueObject*)pCreateInfo->buffer)->actualObject;
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateBufferView(device, pCreateInfo, pAllocator, pView);
-    if (pCreateInfo) {
-        if (pCreateInfo->buffer) {
-            VkBuffer* pbuffer = (VkBuffer*)&pCreateInfo->buffer;
-            *pbuffer = local_buffer;
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateBufferView(device, (const VkBufferViewCreateInfo*)local_pCreateInfo, pAllocator, pView);
+    if (local_pCreateInfo)
+        delete local_pCreateInfo;
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueBufferView = new VkUniqueObject();
         uniqueBufferView->actualObject = (uint64_t)*pView;
         *pView = (VkBufferView)uniqueBufferView;
@@ -741,25 +695,30 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateBufferView(VkDevice devic
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyBufferView(VkDevice device, VkBufferView bufferView, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'bufferView': 'VkBufferView'}
     VkBufferView local_bufferView = bufferView;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (bufferView) {
         VkBufferView* pbufferView = (VkBufferView*)&bufferView;
         *pbufferView = (VkBufferView)((VkUniqueObject*)bufferView)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroyBufferView(device, bufferView, pAllocator);
     delete (VkUniqueObject*)local_bufferView;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateImage(VkDevice device, const VkImageCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImage* pImage)
 {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateImage(device, pCreateInfo, pAllocator, pImage);
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueImage = new VkUniqueObject();
         uniqueImage->actualObject = (uint64_t)*pImage;
         *pImage = (VkImage)uniqueImage;
@@ -767,51 +726,56 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateImage(VkDevice device, co
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyImage(VkDevice device, VkImage image, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'image': 'VkImage'}
     VkImage local_image = image;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (image) {
         VkImage* pimage = (VkImage*)&image;
         *pimage = (VkImage)((VkUniqueObject*)image)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroyImage(device, image, pAllocator);
     delete (VkUniqueObject*)local_image;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetImageSubresourceLayout(VkDevice device, VkImage image, const VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'image': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (image) {
         VkImage* pimage = (VkImage*)&image;
         *pimage = (VkImage)((VkUniqueObject*)image)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->GetImageSubresourceLayout(device, image, pSubresource, pLayout);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateImageView(VkDevice device, const VkImageViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImageView* pView)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pCreateInfo': {'image': 'VkImage'}}
-    VkImage local_image = VK_NULL_HANDLE;
+//LOCAL DECLS:{'pCreateInfo': 'VkImageViewCreateInfo*'}
+    safe_VkImageViewCreateInfo* local_pCreateInfo = NULL;
     if (pCreateInfo) {
-        local_image = pCreateInfo->image;
+        local_pCreateInfo = new safe_VkImageViewCreateInfo(pCreateInfo);
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
         if (pCreateInfo->image) {
-            VkImage* pimage = (VkImage*)&pCreateInfo->image;
-            *pimage = (VkImage)((VkUniqueObject*)pCreateInfo->image)->actualObject;
+            local_pCreateInfo->image = (VkImage)((VkUniqueObject*)pCreateInfo->image)->actualObject;
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateImageView(device, pCreateInfo, pAllocator, pView);
-    if (pCreateInfo) {
-        if (pCreateInfo->image) {
-            VkImage* pimage = (VkImage*)&pCreateInfo->image;
-            *pimage = local_image;
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateImageView(device, (const VkImageViewCreateInfo*)local_pCreateInfo, pAllocator, pView);
+    if (local_pCreateInfo)
+        delete local_pCreateInfo;
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueImageView = new VkUniqueObject();
         uniqueImageView->actualObject = (uint64_t)*pView;
         *pView = (VkImageView)uniqueImageView;
@@ -819,25 +783,30 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateImageView(VkDevice device
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyImageView(VkDevice device, VkImageView imageView, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'imageView': 'VkImageView'}
     VkImageView local_imageView = imageView;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (imageView) {
         VkImageView* pimageView = (VkImageView*)&imageView;
         *pimageView = (VkImageView)((VkUniqueObject*)imageView)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroyImageView(device, imageView, pAllocator);
     delete (VkUniqueObject*)local_imageView;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule)
 {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateShaderModule(device, pCreateInfo, pAllocator, pShaderModule);
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueShaderModule = new VkUniqueObject();
         uniqueShaderModule->actualObject = (uint64_t)*pShaderModule;
         *pShaderModule = (VkShaderModule)uniqueShaderModule;
@@ -845,25 +814,30 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateShaderModule(VkDevice dev
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyShaderModule(VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'shaderModule': 'VkShaderModule'}
     VkShaderModule local_shaderModule = shaderModule;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (shaderModule) {
         VkShaderModule* pshaderModule = (VkShaderModule*)&shaderModule;
         *pshaderModule = (VkShaderModule)((VkUniqueObject*)shaderModule)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroyShaderModule(device, shaderModule, pAllocator);
     delete (VkUniqueObject*)local_shaderModule;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineCache(VkDevice device, const VkPipelineCacheCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineCache* pPipelineCache)
 {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreatePipelineCache(device, pCreateInfo, pAllocator, pPipelineCache);
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniquePipelineCache = new VkUniqueObject();
         uniquePipelineCache->actualObject = (uint64_t)*pPipelineCache;
         *pPipelineCache = (VkPipelineCache)uniquePipelineCache;
@@ -871,57 +845,62 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineCache(VkDevice de
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyPipelineCache(VkDevice device, VkPipelineCache pipelineCache, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pipelineCache': 'VkPipelineCache'}
     VkPipelineCache local_pipelineCache = pipelineCache;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (pipelineCache) {
         VkPipelineCache* ppipelineCache = (VkPipelineCache*)&pipelineCache;
         *ppipelineCache = (VkPipelineCache)((VkUniqueObject*)pipelineCache)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroyPipelineCache(device, pipelineCache, pAllocator);
     delete (VkUniqueObject*)local_pipelineCache;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineCacheData(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pipelineCache': 'VkPipelineCache'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (pipelineCache) {
         VkPipelineCache* ppipelineCache = (VkPipelineCache*)&pipelineCache;
         *ppipelineCache = (VkPipelineCache)((VkUniqueObject*)pipelineCache)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->GetPipelineCacheData(device, pipelineCache, pDataSize, pData);
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkMergePipelineCaches(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches)
 {
-// STRUCT USES:{'dstCache': 'VkPipelineCache', 'pSrcCaches[srcCacheCount]': 'VkPipelineCache'}
-    std::vector<VkPipelineCache> original_pSrcCaches = {};
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// STRUCT USES:{'pSrcCaches[srcCacheCount]': 'VkPipelineCache', 'dstCache': 'VkPipelineCache'}
+//LOCAL DECLS:{'pSrcCaches': 'VkPipelineCache*'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (dstCache) {
         VkPipelineCache* pdstCache = (VkPipelineCache*)&dstCache;
         *pdstCache = (VkPipelineCache)((VkUniqueObject*)dstCache)->actualObject;
     }
+    VkPipelineCache* local_pSrcCaches = NULL;
     if (pSrcCaches) {
+        local_pSrcCaches = new VkPipelineCache[srcCacheCount];
         for (uint32_t idx0=0; idx0<srcCacheCount; ++idx0) {
-            VkPipelineCache* pPipelineCache = (VkPipelineCache*)&(pSrcCaches[idx0]);
-            original_pSrcCaches.push_back(pSrcCaches[idx0]);
-            *(pPipelineCache) = (VkPipelineCache)((VkUniqueObject*)pSrcCaches[idx0])->actualObject;
+            local_pSrcCaches[idx0] = (VkPipelineCache)((VkUniqueObject*)pSrcCaches[idx0])->actualObject;
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->MergePipelineCaches(device, dstCache, srcCacheCount, pSrcCaches);
-    if (pSrcCaches) {
-        for (uint32_t idx0=0; idx0<srcCacheCount; ++idx0) {
-            VkPipelineCache* pPipelineCache = (VkPipelineCache*)&(pSrcCaches[idx0]);
-            *(pPipelineCache) = original_pSrcCaches.front();
-            original_pSrcCaches.erase(original_pSrcCaches.begin());
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->MergePipelineCaches(device, dstCache, srcCacheCount, (const VkPipelineCache*)local_pSrcCaches);
+    if (local_pSrcCaches)
+        delete[] local_pSrcCaches;
     return result;
 }
+
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkGraphicsPipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines)
 {
@@ -935,43 +914,40 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateComputePipelines(VkDevice
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pipeline': 'VkPipeline'}
     VkPipeline local_pipeline = pipeline;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (pipeline) {
         VkPipeline* ppipeline = (VkPipeline*)&pipeline;
         *ppipeline = (VkPipeline)((VkUniqueObject*)pipeline)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroyPipeline(device, pipeline, pAllocator);
     delete (VkUniqueObject*)local_pipeline;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineLayout(VkDevice device, const VkPipelineLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineLayout* pPipelineLayout)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pCreateInfo': {'pSetLayouts[setLayoutCount]': 'VkDescriptorSetLayout'}}
-    std::vector<VkDescriptorSetLayout> original_pSetLayouts = {};
+//LOCAL DECLS:{'pCreateInfo': 'VkPipelineLayoutCreateInfo*'}
+    safe_VkPipelineLayoutCreateInfo* local_pCreateInfo = NULL;
     if (pCreateInfo) {
-        if (pCreateInfo->pSetLayouts) {
+        local_pCreateInfo = new safe_VkPipelineLayoutCreateInfo(pCreateInfo);
+        if (local_pCreateInfo->pSetLayouts) {
             for (uint32_t idx0=0; idx0<pCreateInfo->setLayoutCount; ++idx0) {
-                VkDescriptorSetLayout* pDescriptorSetLayout = (VkDescriptorSetLayout*)&(pCreateInfo->pSetLayouts[idx0]);
-                original_pSetLayouts.push_back(pCreateInfo->pSetLayouts[idx0]);
-                *(pDescriptorSetLayout) = (VkDescriptorSetLayout)((VkUniqueObject*)pCreateInfo->pSetLayouts[idx0])->actualObject;
+                local_pCreateInfo->pSetLayouts[idx0] = (VkDescriptorSetLayout)((VkUniqueObject*)pCreateInfo->pSetLayouts[idx0])->actualObject;
             }
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreatePipelineLayout(device, pCreateInfo, pAllocator, pPipelineLayout);
-    if (pCreateInfo) {
-        if (pCreateInfo->pSetLayouts) {
-            for (uint32_t idx0=0; idx0<pCreateInfo->setLayoutCount; ++idx0) {
-                VkDescriptorSetLayout* pDescriptorSetLayout = (VkDescriptorSetLayout*)&(pCreateInfo->pSetLayouts[idx0]);
-                *(pDescriptorSetLayout) = original_pSetLayouts.front();
-                original_pSetLayouts.erase(original_pSetLayouts.begin());
-            }
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreatePipelineLayout(device, (const VkPipelineLayoutCreateInfo*)local_pCreateInfo, pAllocator, pPipelineLayout);
+    if (local_pCreateInfo)
+        delete local_pCreateInfo;
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniquePipelineLayout = new VkUniqueObject();
         uniquePipelineLayout->actualObject = (uint64_t)*pPipelineLayout;
         *pPipelineLayout = (VkPipelineLayout)uniquePipelineLayout;
@@ -979,25 +955,30 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineLayout(VkDevice d
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyPipelineLayout(VkDevice device, VkPipelineLayout pipelineLayout, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pipelineLayout': 'VkPipelineLayout'}
     VkPipelineLayout local_pipelineLayout = pipelineLayout;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (pipelineLayout) {
         VkPipelineLayout* ppipelineLayout = (VkPipelineLayout*)&pipelineLayout;
         *ppipelineLayout = (VkPipelineLayout)((VkUniqueObject*)pipelineLayout)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroyPipelineLayout(device, pipelineLayout, pAllocator);
     delete (VkUniqueObject*)local_pipelineLayout;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSampler(VkDevice device, const VkSamplerCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSampler* pSampler)
 {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateSampler(device, pCreateInfo, pAllocator, pSampler);
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueSampler = new VkUniqueObject();
         uniqueSampler->actualObject = (uint64_t)*pSampler;
         *pSampler = (VkSampler)uniqueSampler;
@@ -1005,53 +986,47 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSampler(VkDevice device, 
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySampler(VkDevice device, VkSampler sampler, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'sampler': 'VkSampler'}
     VkSampler local_sampler = sampler;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (sampler) {
         VkSampler* psampler = (VkSampler*)&sampler;
         *psampler = (VkSampler)((VkUniqueObject*)sampler)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroySampler(device, sampler, pAllocator);
     delete (VkUniqueObject*)local_sampler;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorSetLayout(VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorSetLayout* pSetLayout)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pCreateInfo': {'pBindings[bindingCount]': {'pImmutableSamplers[descriptorCount]': 'VkSampler'}}}
-    std::vector<VkSampler> original_pImmutableSamplers = {};
+//LOCAL DECLS:{'pCreateInfo': 'VkDescriptorSetLayoutCreateInfo*'}
+    safe_VkDescriptorSetLayoutCreateInfo* local_pCreateInfo = NULL;
     if (pCreateInfo) {
-        if (pCreateInfo->pBindings) {
+        local_pCreateInfo = new safe_VkDescriptorSetLayoutCreateInfo(pCreateInfo);
+        if (local_pCreateInfo->pBindings) {
             for (uint32_t idx0=0; idx0<pCreateInfo->bindingCount; ++idx0) {
-                if (pCreateInfo->pBindings[idx0].pImmutableSamplers) {
+                if (local_pCreateInfo->pBindings[idx0].pImmutableSamplers) {
                     for (uint32_t idx1=0; idx1<pCreateInfo->pBindings[idx0].descriptorCount; ++idx1) {
-                        VkSampler* pSampler = (VkSampler*)&(pCreateInfo->pBindings[idx0].pImmutableSamplers[idx1]);
-                        original_pImmutableSamplers.push_back(pCreateInfo->pBindings[idx0].pImmutableSamplers[idx1]);
-                        *(pSampler) = (VkSampler)((VkUniqueObject*)pCreateInfo->pBindings[idx0].pImmutableSamplers[idx1])->actualObject;
+                        local_pCreateInfo->pBindings[idx0].pImmutableSamplers[idx1] = (VkSampler)((VkUniqueObject*)pCreateInfo->pBindings[idx0].pImmutableSamplers[idx1])->actualObject;
                     }
                 }
             }
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateDescriptorSetLayout(device, pCreateInfo, pAllocator, pSetLayout);
-    if (pCreateInfo) {
-        if (pCreateInfo->pBindings) {
-            for (uint32_t idx0=0; idx0<pCreateInfo->bindingCount; ++idx0) {
-                if (pCreateInfo->pBindings[idx0].pImmutableSamplers) {
-                    for (uint32_t idx1=0; idx1<pCreateInfo->pBindings[idx0].descriptorCount; ++idx1) {
-                        VkSampler* pSampler = (VkSampler*)&(pCreateInfo->pBindings[idx0].pImmutableSamplers[idx1]);
-                        *(pSampler) = original_pImmutableSamplers.front();
-                        original_pImmutableSamplers.erase(original_pImmutableSamplers.begin());
-                    }
-                }
-            }
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateDescriptorSetLayout(device, (const VkDescriptorSetLayoutCreateInfo*)local_pCreateInfo, pAllocator, pSetLayout);
+    if (local_pCreateInfo)
+        delete local_pCreateInfo;
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueDescriptorSetLayout = new VkUniqueObject();
         uniqueDescriptorSetLayout->actualObject = (uint64_t)*pSetLayout;
         *pSetLayout = (VkDescriptorSetLayout)uniqueDescriptorSetLayout;
@@ -1059,25 +1034,30 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorSetLayout(VkDev
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout descriptorSetLayout, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'descriptorSetLayout': 'VkDescriptorSetLayout'}
     VkDescriptorSetLayout local_descriptorSetLayout = descriptorSetLayout;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (descriptorSetLayout) {
         VkDescriptorSetLayout* pdescriptorSetLayout = (VkDescriptorSetLayout*)&descriptorSetLayout;
         *pdescriptorSetLayout = (VkDescriptorSetLayout)((VkUniqueObject*)descriptorSetLayout)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroyDescriptorSetLayout(device, descriptorSetLayout, pAllocator);
     delete (VkUniqueObject*)local_descriptorSetLayout;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorPool(VkDevice device, const VkDescriptorPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorPool* pDescriptorPool)
 {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateDescriptorPool(device, pCreateInfo, pAllocator, pDescriptorPool);
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueDescriptorPool = new VkUniqueObject();
         uniqueDescriptorPool->actualObject = (uint64_t)*pDescriptorPool;
         *pDescriptorPool = (VkDescriptorPool)uniqueDescriptorPool;
@@ -1085,67 +1065,62 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorPool(VkDevice d
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'descriptorPool': 'VkDescriptorPool'}
     VkDescriptorPool local_descriptorPool = descriptorPool;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (descriptorPool) {
         VkDescriptorPool* pdescriptorPool = (VkDescriptorPool*)&descriptorPool;
         *pdescriptorPool = (VkDescriptorPool)((VkUniqueObject*)descriptorPool)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroyDescriptorPool(device, descriptorPool, pAllocator);
     delete (VkUniqueObject*)local_descriptorPool;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'descriptorPool': 'VkDescriptorPool'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (descriptorPool) {
         VkDescriptorPool* pdescriptorPool = (VkDescriptorPool*)&descriptorPool;
         *pdescriptorPool = (VkDescriptorPool)((VkUniqueObject*)descriptorPool)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->ResetDescriptorPool(device, descriptorPool, flags);
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAllocateDescriptorSets(VkDevice device, const VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets)
 {
-// STRUCT USES:{'pAllocateInfo': {'descriptorPool': 'VkDescriptorPool', 'pSetLayouts[descriptorSetCount]': 'VkDescriptorSetLayout'}}
-    VkDescriptorPool local_descriptorPool = VK_NULL_HANDLE;
-    std::vector<VkDescriptorSetLayout> original_pSetLayouts = {};
-    if (pAllocateInfo) {
-        local_descriptorPool = pAllocateInfo->descriptorPool;
-        if (pAllocateInfo->descriptorPool) {
-            VkDescriptorPool* pdescriptorPool = (VkDescriptorPool*)&pAllocateInfo->descriptorPool;
-            *pdescriptorPool = (VkDescriptorPool)((VkUniqueObject*)pAllocateInfo->descriptorPool)->actualObject;
-        }
-        if (pAllocateInfo->pSetLayouts) {
-            for (uint32_t idx0=0; idx0<pAllocateInfo->descriptorSetCount; ++idx0) {
-                VkDescriptorSetLayout* pDescriptorSetLayout = (VkDescriptorSetLayout*)&(pAllocateInfo->pSetLayouts[idx0]);
-                original_pSetLayouts.push_back(pAllocateInfo->pSetLayouts[idx0]);
-                *(pDescriptorSetLayout) = (VkDescriptorSetLayout)((VkUniqueObject*)pAllocateInfo->pSetLayouts[idx0])->actualObject;
-            }
-        }
-    }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->AllocateDescriptorSets(device, pAllocateInfo, pDescriptorSets);
-    if (pAllocateInfo) {
-        if (pAllocateInfo->descriptorPool) {
-            VkDescriptorPool* pdescriptorPool = (VkDescriptorPool*)&pAllocateInfo->descriptorPool;
-            *pdescriptorPool = local_descriptorPool;
-        }
-        if (pAllocateInfo->pSetLayouts) {
-            for (uint32_t idx0=0; idx0<pAllocateInfo->descriptorSetCount; ++idx0) {
-                VkDescriptorSetLayout* pDescriptorSetLayout = (VkDescriptorSetLayout*)&(pAllocateInfo->pSetLayouts[idx0]);
-                *(pDescriptorSetLayout) = original_pSetLayouts.front();
-                original_pSetLayouts.erase(original_pSetLayouts.begin());
-            }
-        }
-    }
-    if (VK_SUCCESS == result) {
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// STRUCT USES:{'pAllocateInfo': {'descriptorPool': 'VkDescriptorPool', 'pSetLayouts[descriptorSetCount]': 'VkDescriptorSetLayout'}}
+//LOCAL DECLS:{'pAllocateInfo': 'VkDescriptorSetAllocateInfo*'}
+    safe_VkDescriptorSetAllocateInfo* local_pAllocateInfo = NULL;
+    if (pAllocateInfo) {
+        local_pAllocateInfo = new safe_VkDescriptorSetAllocateInfo(pAllocateInfo);
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
+        if (pAllocateInfo->descriptorPool) {
+            local_pAllocateInfo->descriptorPool = (VkDescriptorPool)((VkUniqueObject*)pAllocateInfo->descriptorPool)->actualObject;
+        }
+        if (local_pAllocateInfo->pSetLayouts) {
+            for (uint32_t idx0=0; idx0<pAllocateInfo->descriptorSetCount; ++idx0) {
+                local_pAllocateInfo->pSetLayouts[idx0] = (VkDescriptorSetLayout)((VkUniqueObject*)pAllocateInfo->pSetLayouts[idx0])->actualObject;
+            }
+        }
+    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->AllocateDescriptorSets(device, (const VkDescriptorSetAllocateInfo*)local_pAllocateInfo, pDescriptorSets);
+    if (local_pAllocateInfo)
+        delete local_pAllocateInfo;
+    if (VK_SUCCESS == result) {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1662
         std::vector<VkUniqueObject*> uniqueDescriptorSets = {};
         for (uint32_t i=0; i<pAllocateInfo->descriptorSetCount; ++i) {
             uniqueDescriptorSets.push_back(new VkUniqueObject());
@@ -1156,189 +1131,114 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAllocateDescriptorSets(VkDevice
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkFreeDescriptorSets(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'descriptorPool': 'VkDescriptorPool', 'pDescriptorSets[descriptorSetCount]': 'VkDescriptorSet'}
-    std::vector<VkDescriptorSet> original_pDescriptorSets = {};
+//LOCAL DECLS:{'pDescriptorSets': 'VkDescriptorSet*'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (descriptorPool) {
         VkDescriptorPool* pdescriptorPool = (VkDescriptorPool*)&descriptorPool;
         *pdescriptorPool = (VkDescriptorPool)((VkUniqueObject*)descriptorPool)->actualObject;
     }
+    VkDescriptorSet* local_pDescriptorSets = NULL;
     if (pDescriptorSets) {
+        local_pDescriptorSets = new VkDescriptorSet[descriptorSetCount];
         for (uint32_t idx0=0; idx0<descriptorSetCount; ++idx0) {
-            VkDescriptorSet* pDescriptorSet = (VkDescriptorSet*)&(pDescriptorSets[idx0]);
-            original_pDescriptorSets.push_back(pDescriptorSets[idx0]);
-            *(pDescriptorSet) = (VkDescriptorSet)((VkUniqueObject*)pDescriptorSets[idx0])->actualObject;
+            local_pDescriptorSets[idx0] = (VkDescriptorSet)((VkUniqueObject*)pDescriptorSets[idx0])->actualObject;
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->FreeDescriptorSets(device, descriptorPool, descriptorSetCount, pDescriptorSets);
-    if (pDescriptorSets) {
-        for (uint32_t idx0=0; idx0<descriptorSetCount; ++idx0) {
-            VkDescriptorSet* pDescriptorSet = (VkDescriptorSet*)&(pDescriptorSets[idx0]);
-            *(pDescriptorSet) = original_pDescriptorSets.front();
-            original_pDescriptorSets.erase(original_pDescriptorSets.begin());
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->FreeDescriptorSets(device, descriptorPool, descriptorSetCount, (const VkDescriptorSet*)local_pDescriptorSets);
+    if (local_pDescriptorSets)
+        delete[] local_pDescriptorSets;
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkUpdateDescriptorSets(VkDevice device, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites, uint32_t descriptorCopyCount, const VkCopyDescriptorSet* pDescriptorCopies)
 {
-// STRUCT USES:{'pDescriptorCopies[descriptorCopyCount]': {'srcSet': 'VkDescriptorSet', 'dstSet': 'VkDescriptorSet'}, 'pDescriptorWrites[descriptorWriteCount]': {'pTexelBufferView[descriptorCount]': 'VkBufferView', 'pBufferInfo[descriptorCount]': {'buffer': 'VkBuffer'}, 'dstSet': 'VkDescriptorSet', 'pImageInfo[descriptorCount]': {'imageView': 'VkImageView', 'sampler': 'VkSampler'}}}
-    std::vector<VkDescriptorSet> original_dstSet = {};
-    std::vector<VkDescriptorSet> original_srcSet = {};
-    std::vector<VkBuffer> original_buffer = {};
-    std::vector<VkImageView> original_imageView = {};
-    std::vector<VkSampler> original_sampler = {};
-    std::vector<VkBufferView> original_pTexelBufferView = {};
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// STRUCT USES:{'pDescriptorWrites[descriptorWriteCount]': {'pTexelBufferView[descriptorCount]': 'VkBufferView', 'pImageInfo[descriptorCount]': {'sampler': 'VkSampler', 'imageView': 'VkImageView'}, 'pBufferInfo[descriptorCount]': {'buffer': 'VkBuffer'}, 'dstSet': 'VkDescriptorSet'}, 'pDescriptorCopies[descriptorCopyCount]': {'dstSet': 'VkDescriptorSet', 'srcSet': 'VkDescriptorSet'}}
+//LOCAL DECLS:{'pDescriptorWrites': 'VkWriteDescriptorSet*', 'pDescriptorCopies': 'VkCopyDescriptorSet*'}
+    safe_VkWriteDescriptorSet* local_pDescriptorWrites = NULL;
+    safe_VkCopyDescriptorSet* local_pDescriptorCopies = NULL;
     if (pDescriptorCopies) {
+        local_pDescriptorCopies = new safe_VkCopyDescriptorSet[descriptorCopyCount];
         for (uint32_t idx0=0; idx0<descriptorCopyCount; ++idx0) {
+            local_pDescriptorCopies[idx0].initialize(&pDescriptorCopies[idx0]);
             if (pDescriptorCopies[idx0].dstSet) {
-                VkDescriptorSet* pDescriptorSet = (VkDescriptorSet*)&(pDescriptorCopies[idx0].dstSet);
-                original_dstSet.push_back(pDescriptorCopies[idx0].dstSet);
-                *(pDescriptorSet) = (VkDescriptorSet)((VkUniqueObject*)pDescriptorCopies[idx0].dstSet)->actualObject;
+                local_pDescriptorCopies[idx0].dstSet = (VkDescriptorSet)((VkUniqueObject*)pDescriptorCopies[idx0].dstSet)->actualObject;
             }
             if (pDescriptorCopies[idx0].srcSet) {
-                VkDescriptorSet* pDescriptorSet = (VkDescriptorSet*)&(pDescriptorCopies[idx0].srcSet);
-                original_srcSet.push_back(pDescriptorCopies[idx0].srcSet);
-                *(pDescriptorSet) = (VkDescriptorSet)((VkUniqueObject*)pDescriptorCopies[idx0].srcSet)->actualObject;
+                local_pDescriptorCopies[idx0].srcSet = (VkDescriptorSet)((VkUniqueObject*)pDescriptorCopies[idx0].srcSet)->actualObject;
             }
         }
     }
     if (pDescriptorWrites) {
+        local_pDescriptorWrites = new safe_VkWriteDescriptorSet[descriptorWriteCount];
         for (uint32_t idx1=0; idx1<descriptorWriteCount; ++idx1) {
+            local_pDescriptorWrites[idx1].initialize(&pDescriptorWrites[idx1]);
             if (pDescriptorWrites[idx1].dstSet) {
-                VkDescriptorSet* pDescriptorSet = (VkDescriptorSet*)&(pDescriptorWrites[idx1].dstSet);
-                original_dstSet.push_back(pDescriptorWrites[idx1].dstSet);
-                *(pDescriptorSet) = (VkDescriptorSet)((VkUniqueObject*)pDescriptorWrites[idx1].dstSet)->actualObject;
+                local_pDescriptorWrites[idx1].dstSet = (VkDescriptorSet)((VkUniqueObject*)pDescriptorWrites[idx1].dstSet)->actualObject;
             }
-            if (pDescriptorWrites[idx1].pBufferInfo) {
+            if (local_pDescriptorWrites[idx1].pBufferInfo) {
                 for (uint32_t idx2=0; idx2<pDescriptorWrites[idx1].descriptorCount; ++idx2) {
                     if (pDescriptorWrites[idx1].pBufferInfo[idx2].buffer) {
-                        VkBuffer* pBuffer = (VkBuffer*)&(pDescriptorWrites[idx1].pBufferInfo[idx2].buffer);
-                        original_buffer.push_back(pDescriptorWrites[idx1].pBufferInfo[idx2].buffer);
-                        *(pBuffer) = (VkBuffer)((VkUniqueObject*)pDescriptorWrites[idx1].pBufferInfo[idx2].buffer)->actualObject;
+                        local_pDescriptorWrites[idx1].pBufferInfo[idx2].buffer = (VkBuffer)((VkUniqueObject*)pDescriptorWrites[idx1].pBufferInfo[idx2].buffer)->actualObject;
                     }
                 }
             }
-            if (pDescriptorWrites[idx1].pImageInfo) {
+            if (local_pDescriptorWrites[idx1].pImageInfo) {
                 for (uint32_t idx3=0; idx3<pDescriptorWrites[idx1].descriptorCount; ++idx3) {
                     if (pDescriptorWrites[idx1].pImageInfo[idx3].imageView) {
-                        VkImageView* pImageView = (VkImageView*)&(pDescriptorWrites[idx1].pImageInfo[idx3].imageView);
-                        original_imageView.push_back(pDescriptorWrites[idx1].pImageInfo[idx3].imageView);
-                        *(pImageView) = (VkImageView)((VkUniqueObject*)pDescriptorWrites[idx1].pImageInfo[idx3].imageView)->actualObject;
+                        local_pDescriptorWrites[idx1].pImageInfo[idx3].imageView = (VkImageView)((VkUniqueObject*)pDescriptorWrites[idx1].pImageInfo[idx3].imageView)->actualObject;
                     }
                     if (pDescriptorWrites[idx1].pImageInfo[idx3].sampler) {
-                        VkSampler* pSampler = (VkSampler*)&(pDescriptorWrites[idx1].pImageInfo[idx3].sampler);
-                        original_sampler.push_back(pDescriptorWrites[idx1].pImageInfo[idx3].sampler);
-                        *(pSampler) = (VkSampler)((VkUniqueObject*)pDescriptorWrites[idx1].pImageInfo[idx3].sampler)->actualObject;
+                        local_pDescriptorWrites[idx1].pImageInfo[idx3].sampler = (VkSampler)((VkUniqueObject*)pDescriptorWrites[idx1].pImageInfo[idx3].sampler)->actualObject;
                     }
                 }
             }
-            if (pDescriptorWrites[idx1].pTexelBufferView) {
+            if (local_pDescriptorWrites[idx1].pTexelBufferView) {
                 for (uint32_t idx4=0; idx4<pDescriptorWrites[idx1].descriptorCount; ++idx4) {
-                    VkBufferView* pBufferView = (VkBufferView*)&(pDescriptorWrites[idx1].pTexelBufferView[idx4]);
-                    original_pTexelBufferView.push_back(pDescriptorWrites[idx1].pTexelBufferView[idx4]);
-                    *(pBufferView) = (VkBufferView)((VkUniqueObject*)pDescriptorWrites[idx1].pTexelBufferView[idx4])->actualObject;
+                    local_pDescriptorWrites[idx1].pTexelBufferView[idx4] = (VkBufferView)((VkUniqueObject*)pDescriptorWrites[idx1].pTexelBufferView[idx4])->actualObject;
                 }
             }
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    get_dispatch_table(unique_objects_device_table_map, device)->UpdateDescriptorSets(device, descriptorWriteCount, pDescriptorWrites, descriptorCopyCount, pDescriptorCopies);
-    if (pDescriptorCopies) {
-        for (uint32_t idx0=0; idx0<descriptorCopyCount; ++idx0) {
-            if (pDescriptorCopies[idx0].dstSet) {
-                VkDescriptorSet* pDescriptorSet = (VkDescriptorSet*)&(pDescriptorCopies[idx0].dstSet);
-                *(pDescriptorSet) = original_dstSet.front();
-                original_dstSet.erase(original_dstSet.begin());
-            }
-            if (pDescriptorCopies[idx0].srcSet) {
-                VkDescriptorSet* pDescriptorSet = (VkDescriptorSet*)&(pDescriptorCopies[idx0].srcSet);
-                *(pDescriptorSet) = original_srcSet.front();
-                original_srcSet.erase(original_srcSet.begin());
-            }
-        }
-    }
-    if (pDescriptorWrites) {
-        for (uint32_t idx1=0; idx1<descriptorWriteCount; ++idx1) {
-            if (pDescriptorWrites[idx1].dstSet) {
-                VkDescriptorSet* pDescriptorSet = (VkDescriptorSet*)&(pDescriptorWrites[idx1].dstSet);
-                *(pDescriptorSet) = original_dstSet.front();
-                original_dstSet.erase(original_dstSet.begin());
-            }
-            if (pDescriptorWrites[idx1].pBufferInfo) {
-                for (uint32_t idx2=0; idx2<pDescriptorWrites[idx1].descriptorCount; ++idx2) {
-                    if (pDescriptorWrites[idx1].pBufferInfo[idx2].buffer) {
-                        VkBuffer* pBuffer = (VkBuffer*)&(pDescriptorWrites[idx1].pBufferInfo[idx2].buffer);
-                        *(pBuffer) = original_buffer.front();
-                        original_buffer.erase(original_buffer.begin());
-                    }
-                }
-            }
-            if (pDescriptorWrites[idx1].pImageInfo) {
-                for (uint32_t idx3=0; idx3<pDescriptorWrites[idx1].descriptorCount; ++idx3) {
-                    if (pDescriptorWrites[idx1].pImageInfo[idx3].imageView) {
-                        VkImageView* pImageView = (VkImageView*)&(pDescriptorWrites[idx1].pImageInfo[idx3].imageView);
-                        *(pImageView) = original_imageView.front();
-                        original_imageView.erase(original_imageView.begin());
-                    }
-                    if (pDescriptorWrites[idx1].pImageInfo[idx3].sampler) {
-                        VkSampler* pSampler = (VkSampler*)&(pDescriptorWrites[idx1].pImageInfo[idx3].sampler);
-                        *(pSampler) = original_sampler.front();
-                        original_sampler.erase(original_sampler.begin());
-                    }
-                }
-            }
-            if (pDescriptorWrites[idx1].pTexelBufferView) {
-                for (uint32_t idx4=0; idx4<pDescriptorWrites[idx1].descriptorCount; ++idx4) {
-                    VkBufferView* pBufferView = (VkBufferView*)&(pDescriptorWrites[idx1].pTexelBufferView[idx4]);
-                    *(pBufferView) = original_pTexelBufferView.front();
-                    original_pTexelBufferView.erase(original_pTexelBufferView.begin());
-                }
-            }
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    get_dispatch_table(unique_objects_device_table_map, device)->UpdateDescriptorSets(device, descriptorWriteCount, (const VkWriteDescriptorSet*)local_pDescriptorWrites, descriptorCopyCount, (const VkCopyDescriptorSet*)local_pDescriptorCopies);
+    if (local_pDescriptorCopies)
+        delete[] local_pDescriptorCopies;
+    if (local_pDescriptorWrites)
+        delete[] local_pDescriptorWrites;
 }
+
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateFramebuffer(VkDevice device, const VkFramebufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFramebuffer* pFramebuffer)
 {
-// STRUCT USES:{'pCreateInfo': {'pAttachments[attachmentCount]': 'VkImageView', 'renderPass': 'VkRenderPass'}}
-    std::vector<VkImageView> original_pAttachments = {};
-    std::vector<VkRenderPass> original_renderPass = {};
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// STRUCT USES:{'pCreateInfo': {'renderPass': 'VkRenderPass', 'pAttachments[attachmentCount]': 'VkImageView'}}
+//LOCAL DECLS:{'pCreateInfo': 'VkFramebufferCreateInfo*'}
+    safe_VkFramebufferCreateInfo* local_pCreateInfo = NULL;
     if (pCreateInfo) {
-        if (pCreateInfo->pAttachments) {
+        local_pCreateInfo = new safe_VkFramebufferCreateInfo(pCreateInfo);
+        if (local_pCreateInfo->pAttachments) {
             for (uint32_t idx0=0; idx0<pCreateInfo->attachmentCount; ++idx0) {
-                VkImageView* pImageView = (VkImageView*)&(pCreateInfo->pAttachments[idx0]);
-                original_pAttachments.push_back(pCreateInfo->pAttachments[idx0]);
-                *(pImageView) = (VkImageView)((VkUniqueObject*)pCreateInfo->pAttachments[idx0])->actualObject;
+                local_pCreateInfo->pAttachments[idx0] = (VkImageView)((VkUniqueObject*)pCreateInfo->pAttachments[idx0])->actualObject;
             }
         }
         if (pCreateInfo->renderPass) {
-            VkRenderPass* pRenderPass = (VkRenderPass*)&(pCreateInfo->renderPass);
-            original_renderPass.push_back(pCreateInfo->renderPass);
-            *(pRenderPass) = (VkRenderPass)((VkUniqueObject*)pCreateInfo->renderPass)->actualObject;
+            local_pCreateInfo->renderPass = (VkRenderPass)((VkUniqueObject*)pCreateInfo->renderPass)->actualObject;
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateFramebuffer(device, pCreateInfo, pAllocator, pFramebuffer);
-    if (pCreateInfo) {
-        if (pCreateInfo->pAttachments) {
-            for (uint32_t idx0=0; idx0<pCreateInfo->attachmentCount; ++idx0) {
-                VkImageView* pImageView = (VkImageView*)&(pCreateInfo->pAttachments[idx0]);
-                *(pImageView) = original_pAttachments.front();
-                original_pAttachments.erase(original_pAttachments.begin());
-            }
-        }
-        if (pCreateInfo->renderPass) {
-            VkRenderPass* pRenderPass = (VkRenderPass*)&(pCreateInfo->renderPass);
-            *(pRenderPass) = original_renderPass.front();
-            original_renderPass.erase(original_renderPass.begin());
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateFramebuffer(device, (const VkFramebufferCreateInfo*)local_pCreateInfo, pAllocator, pFramebuffer);
+    if (local_pCreateInfo)
+        delete local_pCreateInfo;
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueFramebuffer = new VkUniqueObject();
         uniqueFramebuffer->actualObject = (uint64_t)*pFramebuffer;
         *pFramebuffer = (VkFramebuffer)uniqueFramebuffer;
@@ -1346,25 +1246,30 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateFramebuffer(VkDevice devi
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyFramebuffer(VkDevice device, VkFramebuffer framebuffer, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'framebuffer': 'VkFramebuffer'}
     VkFramebuffer local_framebuffer = framebuffer;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (framebuffer) {
         VkFramebuffer* pframebuffer = (VkFramebuffer*)&framebuffer;
         *pframebuffer = (VkFramebuffer)((VkUniqueObject*)framebuffer)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroyFramebuffer(device, framebuffer, pAllocator);
     delete (VkUniqueObject*)local_framebuffer;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateRenderPass(VkDevice device, const VkRenderPassCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass)
 {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateRenderPass(device, pCreateInfo, pAllocator, pRenderPass);
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueRenderPass = new VkUniqueObject();
         uniqueRenderPass->actualObject = (uint64_t)*pRenderPass;
         *pRenderPass = (VkRenderPass)uniqueRenderPass;
@@ -1372,36 +1277,44 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateRenderPass(VkDevice devic
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyRenderPass(VkDevice device, VkRenderPass renderPass, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'renderPass': 'VkRenderPass'}
     VkRenderPass local_renderPass = renderPass;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (renderPass) {
         VkRenderPass* prenderPass = (VkRenderPass*)&renderPass;
         *prenderPass = (VkRenderPass)((VkUniqueObject*)renderPass)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroyRenderPass(device, renderPass, pAllocator);
     delete (VkUniqueObject*)local_renderPass;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetRenderAreaGranularity(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'renderPass': 'VkRenderPass'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (renderPass) {
         VkRenderPass* prenderPass = (VkRenderPass*)&renderPass;
         *prenderPass = (VkRenderPass)((VkUniqueObject*)renderPass)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->GetRenderAreaGranularity(device, renderPass, pGranularity);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool)
 {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateCommandPool(device, pCreateInfo, pAllocator, pCommandPool);
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueCommandPool = new VkUniqueObject();
         uniqueCommandPool->actualObject = (uint64_t)*pCommandPool;
         *pCommandPool = (VkCommandPool)uniqueCommandPool;
@@ -1409,657 +1322,700 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateCommandPool(VkDevice devi
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyCommandPool(VkDevice device, VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'commandPool': 'VkCommandPool'}
     VkCommandPool local_commandPool = commandPool;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (commandPool) {
         VkCommandPool* pcommandPool = (VkCommandPool*)&commandPool;
         *pcommandPool = (VkCommandPool)((VkUniqueObject*)commandPool)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroyCommandPool(device, commandPool, pAllocator);
     delete (VkUniqueObject*)local_commandPool;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'commandPool': 'VkCommandPool'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (commandPool) {
         VkCommandPool* pcommandPool = (VkCommandPool*)&commandPool;
         *pcommandPool = (VkCommandPool)((VkUniqueObject*)commandPool)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->ResetCommandPool(device, commandPool, flags);
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pAllocateInfo': {'commandPool': 'VkCommandPool'}}
-    VkCommandPool local_commandPool = VK_NULL_HANDLE;
+//LOCAL DECLS:{'pAllocateInfo': 'VkCommandBufferAllocateInfo*'}
+    safe_VkCommandBufferAllocateInfo* local_pAllocateInfo = NULL;
     if (pAllocateInfo) {
-        local_commandPool = pAllocateInfo->commandPool;
+        local_pAllocateInfo = new safe_VkCommandBufferAllocateInfo(pAllocateInfo);
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
         if (pAllocateInfo->commandPool) {
-            VkCommandPool* pcommandPool = (VkCommandPool*)&pAllocateInfo->commandPool;
-            *pcommandPool = (VkCommandPool)((VkUniqueObject*)pAllocateInfo->commandPool)->actualObject;
+            local_pAllocateInfo->commandPool = (VkCommandPool)((VkUniqueObject*)pAllocateInfo->commandPool)->actualObject;
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->AllocateCommandBuffers(device, pAllocateInfo, pCommandBuffers);
-    if (pAllocateInfo) {
-        if (pAllocateInfo->commandPool) {
-            VkCommandPool* pcommandPool = (VkCommandPool*)&pAllocateInfo->commandPool;
-            *pcommandPool = local_commandPool;
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->AllocateCommandBuffers(device, (const VkCommandBufferAllocateInfo*)local_pAllocateInfo, pCommandBuffers);
+    if (local_pAllocateInfo)
+        delete local_pAllocateInfo;
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkFreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'commandPool': 'VkCommandPool'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (commandPool) {
         VkCommandPool* pcommandPool = (VkCommandPool*)&commandPool;
         *pcommandPool = (VkCommandPool)((VkUniqueObject*)commandPool)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->FreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkBeginCommandBuffer(VkCommandBuffer commandBuffer, const VkCommandBufferBeginInfo* pBeginInfo)
 {
-// STRUCT USES:{'pBeginInfo': {'pInheritanceInfo': {'framebuffer': 'VkFramebuffer', 'renderPass': 'VkRenderPass'}}}
-    VkFramebuffer local_framebuffer = VK_NULL_HANDLE;
-    VkRenderPass local_renderPass = VK_NULL_HANDLE;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// STRUCT USES:{'pBeginInfo': {'pInheritanceInfo': {'renderPass': 'VkRenderPass', 'framebuffer': 'VkFramebuffer'}}}
+//LOCAL DECLS:{'pBeginInfo': 'VkCommandBufferBeginInfo*'}
+    safe_VkCommandBufferBeginInfo* local_pBeginInfo = NULL;
     if (pBeginInfo) {
-        if (pBeginInfo->pInheritanceInfo) {
-            local_renderPass = pBeginInfo->pInheritanceInfo->renderPass;
-            local_framebuffer = pBeginInfo->pInheritanceInfo->framebuffer;
+        local_pBeginInfo = new safe_VkCommandBufferBeginInfo(pBeginInfo);
+        if (local_pBeginInfo->pInheritanceInfo) {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
             if (pBeginInfo->pInheritanceInfo->framebuffer) {
-                VkFramebuffer* pframebuffer = (VkFramebuffer*)&pBeginInfo->pInheritanceInfo->framebuffer;
-                *pframebuffer = (VkFramebuffer)((VkUniqueObject*)pBeginInfo->pInheritanceInfo->framebuffer)->actualObject;
+                local_pBeginInfo->pInheritanceInfo->framebuffer = (VkFramebuffer)((VkUniqueObject*)pBeginInfo->pInheritanceInfo->framebuffer)->actualObject;
             }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
             if (pBeginInfo->pInheritanceInfo->renderPass) {
-                VkRenderPass* prenderPass = (VkRenderPass*)&pBeginInfo->pInheritanceInfo->renderPass;
-                *prenderPass = (VkRenderPass)((VkUniqueObject*)pBeginInfo->pInheritanceInfo->renderPass)->actualObject;
+                local_pBeginInfo->pInheritanceInfo->renderPass = (VkRenderPass)((VkUniqueObject*)pBeginInfo->pInheritanceInfo->renderPass)->actualObject;
             }
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, commandBuffer)->BeginCommandBuffer(commandBuffer, pBeginInfo);
-    if (pBeginInfo) {
-        if (pBeginInfo->pInheritanceInfo) {
-            if (pBeginInfo->pInheritanceInfo->framebuffer) {
-                VkFramebuffer* pframebuffer = (VkFramebuffer*)&pBeginInfo->pInheritanceInfo->framebuffer;
-                *pframebuffer = local_framebuffer;
-            }
-            if (pBeginInfo->pInheritanceInfo->renderPass) {
-                VkRenderPass* prenderPass = (VkRenderPass*)&pBeginInfo->pInheritanceInfo->renderPass;
-                *prenderPass = local_renderPass;
-            }
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, commandBuffer)->BeginCommandBuffer(commandBuffer, (const VkCommandBufferBeginInfo*)local_pBeginInfo);
+    if (local_pBeginInfo)
+        delete local_pBeginInfo;
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pipeline': 'VkPipeline'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (pipeline) {
         VkPipeline* ppipeline = (VkPipeline*)&pipeline;
         *ppipeline = (VkPipeline)((VkUniqueObject*)pipeline)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'layout': 'VkPipelineLayout', 'pDescriptorSets[descriptorSetCount]': 'VkDescriptorSet'}
-    std::vector<VkDescriptorSet> original_pDescriptorSets = {};
+//LOCAL DECLS:{'pDescriptorSets': 'VkDescriptorSet*'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (layout) {
         VkPipelineLayout* playout = (VkPipelineLayout*)&layout;
         *playout = (VkPipelineLayout)((VkUniqueObject*)layout)->actualObject;
     }
+    VkDescriptorSet* local_pDescriptorSets = NULL;
     if (pDescriptorSets) {
+        local_pDescriptorSets = new VkDescriptorSet[descriptorSetCount];
         for (uint32_t idx0=0; idx0<descriptorSetCount; ++idx0) {
-            VkDescriptorSet* pDescriptorSet = (VkDescriptorSet*)&(pDescriptorSets[idx0]);
-            original_pDescriptorSets.push_back(pDescriptorSets[idx0]);
-            *(pDescriptorSet) = (VkDescriptorSet)((VkUniqueObject*)pDescriptorSets[idx0])->actualObject;
+            local_pDescriptorSets[idx0] = (VkDescriptorSet)((VkUniqueObject*)pDescriptorSets[idx0])->actualObject;
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
-    if (pDescriptorSets) {
-        for (uint32_t idx0=0; idx0<descriptorSetCount; ++idx0) {
-            VkDescriptorSet* pDescriptorSet = (VkDescriptorSet*)&(pDescriptorSets[idx0]);
-            *(pDescriptorSet) = original_pDescriptorSets.front();
-            original_pDescriptorSets.erase(original_pDescriptorSets.begin());
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, (const VkDescriptorSet*)local_pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
+    if (local_pDescriptorSets)
+        delete[] local_pDescriptorSets;
 }
+
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkIndexType indexType)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'buffer': 'VkBuffer'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (buffer) {
         VkBuffer* pbuffer = (VkBuffer*)&buffer;
         *pbuffer = (VkBuffer)((VkUniqueObject*)buffer)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pBuffers[bindingCount]': 'VkBuffer'}
-    std::vector<VkBuffer> original_pBuffers = {};
+//LOCAL DECLS:{'pBuffers': 'VkBuffer*'}
+    VkBuffer* local_pBuffers = NULL;
     if (pBuffers) {
+        local_pBuffers = new VkBuffer[bindingCount];
         for (uint32_t idx0=0; idx0<bindingCount; ++idx0) {
-            VkBuffer* pBuffer = (VkBuffer*)&(pBuffers[idx0]);
-            original_pBuffers.push_back(pBuffers[idx0]);
-            *(pBuffer) = (VkBuffer)((VkUniqueObject*)pBuffers[idx0])->actualObject;
+            local_pBuffers[idx0] = (VkBuffer)((VkUniqueObject*)pBuffers[idx0])->actualObject;
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
-    if (pBuffers) {
-        for (uint32_t idx0=0; idx0<bindingCount; ++idx0) {
-            VkBuffer* pBuffer = (VkBuffer*)&(pBuffers[idx0]);
-            *(pBuffer) = original_pBuffers.front();
-            original_pBuffers.erase(original_pBuffers.begin());
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, (const VkBuffer*)local_pBuffers, pOffsets);
+    if (local_pBuffers)
+        delete[] local_pBuffers;
 }
+
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'buffer': 'VkBuffer'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (buffer) {
         VkBuffer* pbuffer = (VkBuffer*)&buffer;
         *pbuffer = (VkBuffer)((VkUniqueObject*)buffer)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'buffer': 'VkBuffer'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (buffer) {
         VkBuffer* pbuffer = (VkBuffer*)&buffer;
         *pbuffer = (VkBuffer)((VkUniqueObject*)buffer)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'buffer': 'VkBuffer'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (buffer) {
         VkBuffer* pbuffer = (VkBuffer*)&buffer;
         *pbuffer = (VkBuffer)((VkUniqueObject*)buffer)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdDispatchIndirect(commandBuffer, buffer, offset);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferCopy* pRegions)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'dstBuffer': 'VkBuffer', 'srcBuffer': 'VkBuffer'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (dstBuffer) {
         VkBuffer* pdstBuffer = (VkBuffer*)&dstBuffer;
         *pdstBuffer = (VkBuffer)((VkUniqueObject*)dstBuffer)->actualObject;
     }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (srcBuffer) {
         VkBuffer* psrcBuffer = (VkBuffer*)&srcBuffer;
         *psrcBuffer = (VkBuffer)((VkUniqueObject*)srcBuffer)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageCopy* pRegions)
 {
-// STRUCT USES:{'srcImage': 'VkImage', 'dstImage': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// STRUCT USES:{'dstImage': 'VkImage', 'srcImage': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (dstImage) {
         VkImage* pdstImage = (VkImage*)&dstImage;
         *pdstImage = (VkImage)((VkUniqueObject*)dstImage)->actualObject;
     }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (srcImage) {
         VkImage* psrcImage = (VkImage*)&srcImage;
         *psrcImage = (VkImage)((VkUniqueObject*)srcImage)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageBlit* pRegions, VkFilter filter)
 {
-// STRUCT USES:{'srcImage': 'VkImage', 'dstImage': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// STRUCT USES:{'dstImage': 'VkImage', 'srcImage': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (dstImage) {
         VkImage* pdstImage = (VkImage*)&dstImage;
         *pdstImage = (VkImage)((VkUniqueObject*)dstImage)->actualObject;
     }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (srcImage) {
         VkImage* psrcImage = (VkImage*)&srcImage;
         *psrcImage = (VkImage)((VkUniqueObject*)srcImage)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions, filter);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkBufferImageCopy* pRegions)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'srcBuffer': 'VkBuffer', 'dstImage': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (dstImage) {
         VkImage* pdstImage = (VkImage*)&dstImage;
         *pdstImage = (VkImage)((VkUniqueObject*)dstImage)->actualObject;
     }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (srcBuffer) {
         VkBuffer* psrcBuffer = (VkBuffer*)&srcBuffer;
         *psrcBuffer = (VkBuffer)((VkUniqueObject*)srcBuffer)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'dstBuffer': 'VkBuffer', 'srcImage': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (dstBuffer) {
         VkBuffer* pdstBuffer = (VkBuffer*)&dstBuffer;
         *pdstBuffer = (VkBuffer)((VkUniqueObject*)dstBuffer)->actualObject;
     }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (srcImage) {
         VkImage* psrcImage = (VkImage*)&srcImage;
         *psrcImage = (VkImage)((VkUniqueObject*)srcImage)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize dataSize, const uint32_t* pData)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'dstBuffer': 'VkBuffer'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (dstBuffer) {
         VkBuffer* pdstBuffer = (VkBuffer*)&dstBuffer;
         *pdstBuffer = (VkBuffer)((VkUniqueObject*)dstBuffer)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'dstBuffer': 'VkBuffer'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (dstBuffer) {
         VkBuffer* pdstBuffer = (VkBuffer*)&dstBuffer;
         *pdstBuffer = (VkBuffer)((VkUniqueObject*)dstBuffer)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearColorValue* pColor, uint32_t rangeCount, const VkImageSubresourceRange* pRanges)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'image': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (image) {
         VkImage* pimage = (VkImage*)&image;
         *pimage = (VkImage)((VkUniqueObject*)image)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearDepthStencilValue* pDepthStencil, uint32_t rangeCount, const VkImageSubresourceRange* pRanges)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'image': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (image) {
         VkImage* pimage = (VkImage*)&image;
         *pimage = (VkImage)((VkUniqueObject*)image)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageResolve* pRegions)
 {
-// STRUCT USES:{'srcImage': 'VkImage', 'dstImage': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// STRUCT USES:{'dstImage': 'VkImage', 'srcImage': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (dstImage) {
         VkImage* pdstImage = (VkImage*)&dstImage;
         *pdstImage = (VkImage)((VkUniqueObject*)dstImage)->actualObject;
     }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (srcImage) {
         VkImage* psrcImage = (VkImage*)&srcImage;
         *psrcImage = (VkImage)((VkUniqueObject*)srcImage)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'event': 'VkEvent'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (event) {
         VkEvent* pevent = (VkEvent*)&event;
         *pevent = (VkEvent)((VkUniqueObject*)event)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdSetEvent(commandBuffer, event, stageMask);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'event': 'VkEvent'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (event) {
         VkEvent* pevent = (VkEvent*)&event;
         *pevent = (VkEvent)((VkUniqueObject*)event)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdResetEvent(commandBuffer, event, stageMask);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers)
 {
-// STRUCT USES:{'pEvents[eventCount]': 'VkEvent', 'pBufferMemoryBarriers[bufferMemoryBarrierCount]': {'buffer': 'VkBuffer'}, 'pImageMemoryBarriers[imageMemoryBarrierCount]': {'image': 'VkImage'}}
-    std::vector<VkBuffer> original_buffer = {};
-    std::vector<VkEvent> original_pEvents = {};
-    std::vector<VkImage> original_image = {};
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// STRUCT USES:{'pBufferMemoryBarriers[bufferMemoryBarrierCount]': {'buffer': 'VkBuffer'}, 'pEvents[eventCount]': 'VkEvent', 'pImageMemoryBarriers[imageMemoryBarrierCount]': {'image': 'VkImage'}}
+//LOCAL DECLS:{'pEvents': 'VkEvent*', 'pBufferMemoryBarriers': 'VkBufferMemoryBarrier*', 'pImageMemoryBarriers': 'VkImageMemoryBarrier*'}
+    safe_VkBufferMemoryBarrier* local_pBufferMemoryBarriers = NULL;
+    safe_VkImageMemoryBarrier* local_pImageMemoryBarriers = NULL;
     if (pBufferMemoryBarriers) {
+        local_pBufferMemoryBarriers = new safe_VkBufferMemoryBarrier[bufferMemoryBarrierCount];
         for (uint32_t idx0=0; idx0<bufferMemoryBarrierCount; ++idx0) {
+            local_pBufferMemoryBarriers[idx0].initialize(&pBufferMemoryBarriers[idx0]);
             if (pBufferMemoryBarriers[idx0].buffer) {
-                VkBuffer* pBuffer = (VkBuffer*)&(pBufferMemoryBarriers[idx0].buffer);
-                original_buffer.push_back(pBufferMemoryBarriers[idx0].buffer);
-                *(pBuffer) = (VkBuffer)((VkUniqueObject*)pBufferMemoryBarriers[idx0].buffer)->actualObject;
+                local_pBufferMemoryBarriers[idx0].buffer = (VkBuffer)((VkUniqueObject*)pBufferMemoryBarriers[idx0].buffer)->actualObject;
             }
         }
     }
+    VkEvent* local_pEvents = NULL;
     if (pEvents) {
+        local_pEvents = new VkEvent[eventCount];
         for (uint32_t idx1=0; idx1<eventCount; ++idx1) {
-            VkEvent* pEvent = (VkEvent*)&(pEvents[idx1]);
-            original_pEvents.push_back(pEvents[idx1]);
-            *(pEvent) = (VkEvent)((VkUniqueObject*)pEvents[idx1])->actualObject;
+            local_pEvents[idx1] = (VkEvent)((VkUniqueObject*)pEvents[idx1])->actualObject;
         }
     }
     if (pImageMemoryBarriers) {
+        local_pImageMemoryBarriers = new safe_VkImageMemoryBarrier[imageMemoryBarrierCount];
         for (uint32_t idx2=0; idx2<imageMemoryBarrierCount; ++idx2) {
+            local_pImageMemoryBarriers[idx2].initialize(&pImageMemoryBarriers[idx2]);
             if (pImageMemoryBarriers[idx2].image) {
-                VkImage* pImage = (VkImage*)&(pImageMemoryBarriers[idx2].image);
-                original_image.push_back(pImageMemoryBarriers[idx2].image);
-                *(pImage) = (VkImage)((VkUniqueObject*)pImageMemoryBarriers[idx2].image)->actualObject;
+                local_pImageMemoryBarriers[idx2].image = (VkImage)((VkUniqueObject*)pImageMemoryBarriers[idx2].image)->actualObject;
             }
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
-    if (pBufferMemoryBarriers) {
-        for (uint32_t idx0=0; idx0<bufferMemoryBarrierCount; ++idx0) {
-            if (pBufferMemoryBarriers[idx0].buffer) {
-                VkBuffer* pBuffer = (VkBuffer*)&(pBufferMemoryBarriers[idx0].buffer);
-                *(pBuffer) = original_buffer.front();
-                original_buffer.erase(original_buffer.begin());
-            }
-        }
-    }
-    if (pEvents) {
-        for (uint32_t idx1=0; idx1<eventCount; ++idx1) {
-            VkEvent* pEvent = (VkEvent*)&(pEvents[idx1]);
-            *(pEvent) = original_pEvents.front();
-            original_pEvents.erase(original_pEvents.begin());
-        }
-    }
-    if (pImageMemoryBarriers) {
-        for (uint32_t idx2=0; idx2<imageMemoryBarrierCount; ++idx2) {
-            if (pImageMemoryBarriers[idx2].image) {
-                VkImage* pImage = (VkImage*)&(pImageMemoryBarriers[idx2].image);
-                *(pImage) = original_image.front();
-                original_image.erase(original_image.begin());
-            }
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdWaitEvents(commandBuffer, eventCount, (const VkEvent*)local_pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, (const VkBufferMemoryBarrier*)local_pBufferMemoryBarriers, imageMemoryBarrierCount, (const VkImageMemoryBarrier*)local_pImageMemoryBarriers);
+    if (local_pBufferMemoryBarriers)
+        delete[] local_pBufferMemoryBarriers;
+    if (local_pEvents)
+        delete[] local_pEvents;
+    if (local_pImageMemoryBarriers)
+        delete[] local_pImageMemoryBarriers;
 }
+
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pBufferMemoryBarriers[bufferMemoryBarrierCount]': {'buffer': 'VkBuffer'}, 'pImageMemoryBarriers[imageMemoryBarrierCount]': {'image': 'VkImage'}}
-    std::vector<VkBuffer> original_buffer = {};
-    std::vector<VkImage> original_image = {};
+//LOCAL DECLS:{'pImageMemoryBarriers': 'VkImageMemoryBarrier*', 'pBufferMemoryBarriers': 'VkBufferMemoryBarrier*'}
+    safe_VkImageMemoryBarrier* local_pImageMemoryBarriers = NULL;
+    safe_VkBufferMemoryBarrier* local_pBufferMemoryBarriers = NULL;
     if (pBufferMemoryBarriers) {
+        local_pBufferMemoryBarriers = new safe_VkBufferMemoryBarrier[bufferMemoryBarrierCount];
         for (uint32_t idx0=0; idx0<bufferMemoryBarrierCount; ++idx0) {
+            local_pBufferMemoryBarriers[idx0].initialize(&pBufferMemoryBarriers[idx0]);
             if (pBufferMemoryBarriers[idx0].buffer) {
-                VkBuffer* pBuffer = (VkBuffer*)&(pBufferMemoryBarriers[idx0].buffer);
-                original_buffer.push_back(pBufferMemoryBarriers[idx0].buffer);
-                *(pBuffer) = (VkBuffer)((VkUniqueObject*)pBufferMemoryBarriers[idx0].buffer)->actualObject;
+                local_pBufferMemoryBarriers[idx0].buffer = (VkBuffer)((VkUniqueObject*)pBufferMemoryBarriers[idx0].buffer)->actualObject;
             }
         }
     }
     if (pImageMemoryBarriers) {
+        local_pImageMemoryBarriers = new safe_VkImageMemoryBarrier[imageMemoryBarrierCount];
         for (uint32_t idx1=0; idx1<imageMemoryBarrierCount; ++idx1) {
+            local_pImageMemoryBarriers[idx1].initialize(&pImageMemoryBarriers[idx1]);
             if (pImageMemoryBarriers[idx1].image) {
-                VkImage* pImage = (VkImage*)&(pImageMemoryBarriers[idx1].image);
-                original_image.push_back(pImageMemoryBarriers[idx1].image);
-                *(pImage) = (VkImage)((VkUniqueObject*)pImageMemoryBarriers[idx1].image)->actualObject;
+                local_pImageMemoryBarriers[idx1].image = (VkImage)((VkUniqueObject*)pImageMemoryBarriers[idx1].image)->actualObject;
             }
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
-    if (pBufferMemoryBarriers) {
-        for (uint32_t idx0=0; idx0<bufferMemoryBarrierCount; ++idx0) {
-            if (pBufferMemoryBarriers[idx0].buffer) {
-                VkBuffer* pBuffer = (VkBuffer*)&(pBufferMemoryBarriers[idx0].buffer);
-                *(pBuffer) = original_buffer.front();
-                original_buffer.erase(original_buffer.begin());
-            }
-        }
-    }
-    if (pImageMemoryBarriers) {
-        for (uint32_t idx1=0; idx1<imageMemoryBarrierCount; ++idx1) {
-            if (pImageMemoryBarriers[idx1].image) {
-                VkImage* pImage = (VkImage*)&(pImageMemoryBarriers[idx1].image);
-                *(pImage) = original_image.front();
-                original_image.erase(original_image.begin());
-            }
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, (const VkBufferMemoryBarrier*)local_pBufferMemoryBarriers, imageMemoryBarrierCount, (const VkImageMemoryBarrier*)local_pImageMemoryBarriers);
+    if (local_pBufferMemoryBarriers)
+        delete[] local_pBufferMemoryBarriers;
+    if (local_pImageMemoryBarriers)
+        delete[] local_pImageMemoryBarriers;
 }
+
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'queryPool': 'VkQueryPool'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (queryPool) {
         VkQueryPool* pqueryPool = (VkQueryPool*)&queryPool;
         *pqueryPool = (VkQueryPool)((VkUniqueObject*)queryPool)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdBeginQuery(commandBuffer, queryPool, query, flags);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'queryPool': 'VkQueryPool'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (queryPool) {
         VkQueryPool* pqueryPool = (VkQueryPool*)&queryPool;
         *pqueryPool = (VkQueryPool)((VkUniqueObject*)queryPool)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdEndQuery(commandBuffer, queryPool, query);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'queryPool': 'VkQueryPool'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (queryPool) {
         VkQueryPool* pqueryPool = (VkQueryPool*)&queryPool;
         *pqueryPool = (VkQueryPool)((VkUniqueObject*)queryPool)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool, uint32_t query)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'queryPool': 'VkQueryPool'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (queryPool) {
         VkQueryPool* pqueryPool = (VkQueryPool*)&queryPool;
         *pqueryPool = (VkQueryPool)((VkUniqueObject*)queryPool)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize stride, VkQueryResultFlags flags)
 {
-// STRUCT USES:{'queryPool': 'VkQueryPool', 'dstBuffer': 'VkBuffer'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// STRUCT USES:{'dstBuffer': 'VkBuffer', 'queryPool': 'VkQueryPool'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (dstBuffer) {
         VkBuffer* pdstBuffer = (VkBuffer*)&dstBuffer;
         *pdstBuffer = (VkBuffer)((VkUniqueObject*)dstBuffer)->actualObject;
     }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (queryPool) {
         VkQueryPool* pqueryPool = (VkQueryPool*)&queryPool;
         *pqueryPool = (VkQueryPool)((VkUniqueObject*)queryPool)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size, const void* pValues)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'layout': 'VkPipelineLayout'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (layout) {
         VkPipelineLayout* playout = (VkPipelineLayout*)&layout;
         *playout = (VkPipelineLayout)((VkUniqueObject*)layout)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBeginRenderPass(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, VkSubpassContents contents)
 {
-// STRUCT USES:{'pRenderPassBegin': {'framebuffer': 'VkFramebuffer', 'renderPass': 'VkRenderPass'}}
-    VkFramebuffer local_framebuffer = VK_NULL_HANDLE;
-    VkRenderPass local_renderPass = VK_NULL_HANDLE;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// STRUCT USES:{'pRenderPassBegin': {'renderPass': 'VkRenderPass', 'framebuffer': 'VkFramebuffer'}}
+//LOCAL DECLS:{'pRenderPassBegin': 'VkRenderPassBeginInfo*'}
+    safe_VkRenderPassBeginInfo* local_pRenderPassBegin = NULL;
     if (pRenderPassBegin) {
-        local_renderPass = pRenderPassBegin->renderPass;
-        local_framebuffer = pRenderPassBegin->framebuffer;
+        local_pRenderPassBegin = new safe_VkRenderPassBeginInfo(pRenderPassBegin);
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
         if (pRenderPassBegin->framebuffer) {
-            VkFramebuffer* pframebuffer = (VkFramebuffer*)&pRenderPassBegin->framebuffer;
-            *pframebuffer = (VkFramebuffer)((VkUniqueObject*)pRenderPassBegin->framebuffer)->actualObject;
+            local_pRenderPassBegin->framebuffer = (VkFramebuffer)((VkUniqueObject*)pRenderPassBegin->framebuffer)->actualObject;
         }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
         if (pRenderPassBegin->renderPass) {
-            VkRenderPass* prenderPass = (VkRenderPass*)&pRenderPassBegin->renderPass;
-            *prenderPass = (VkRenderPass)((VkUniqueObject*)pRenderPassBegin->renderPass)->actualObject;
+            local_pRenderPassBegin->renderPass = (VkRenderPass)((VkUniqueObject*)pRenderPassBegin->renderPass)->actualObject;
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
-    if (pRenderPassBegin) {
-        if (pRenderPassBegin->framebuffer) {
-            VkFramebuffer* pframebuffer = (VkFramebuffer*)&pRenderPassBegin->framebuffer;
-            *pframebuffer = local_framebuffer;
-        }
-        if (pRenderPassBegin->renderPass) {
-            VkRenderPass* prenderPass = (VkRenderPass*)&pRenderPassBegin->renderPass;
-            *prenderPass = local_renderPass;
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    get_dispatch_table(unique_objects_device_table_map, commandBuffer)->CmdBeginRenderPass(commandBuffer, (const VkRenderPassBeginInfo*)local_pRenderPassBegin, contents);
+    if (local_pRenderPassBegin)
+        delete local_pRenderPassBegin;
 }
+
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySurfaceKHR(VkInstance instance, VkSurfaceKHR surface, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'surface': 'VkSurfaceKHR'}
     VkSurfaceKHR local_surface = surface;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (surface) {
         VkSurfaceKHR* psurface = (VkSurfaceKHR*)&surface;
         *psurface = (VkSurfaceKHR)((VkUniqueObject*)surface)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_instance_table_map, instance)->DestroySurfaceKHR(instance, surface, pAllocator);
     delete (VkUniqueObject*)local_surface;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'surface': 'VkSurfaceKHR'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (surface) {
         VkSurfaceKHR* psurface = (VkSurfaceKHR*)&surface;
         *psurface = (VkSurfaceKHR)((VkUniqueObject*)surface)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_instance_table_map, physicalDevice)->GetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, pSupported);
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilitiesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'surface': 'VkSurfaceKHR'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (surface) {
         VkSurfaceKHR* psurface = (VkSurfaceKHR*)&surface;
         *psurface = (VkSurfaceKHR)((VkUniqueObject*)surface)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_instance_table_map, physicalDevice)->GetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, pSurfaceCapabilities);
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceFormatsKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pSurfaceFormatCount, VkSurfaceFormatKHR* pSurfaceFormats)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'surface': 'VkSurfaceKHR'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (surface) {
         VkSurfaceKHR* psurface = (VkSurfaceKHR*)&surface;
         *psurface = (VkSurfaceKHR)((VkUniqueObject*)surface)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_instance_table_map, physicalDevice)->GetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, pSurfaceFormatCount, pSurfaceFormats);
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfacePresentModesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'surface': 'VkSurfaceKHR'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (surface) {
         VkSurfaceKHR* psurface = (VkSurfaceKHR*)&surface;
         *psurface = (VkSurfaceKHR)((VkUniqueObject*)surface)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_instance_table_map, physicalDevice)->GetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, pPresentModeCount, pPresentModes);
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSwapchainKHR(VkDevice device, const VkSwapchainCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain)
 {
-// STRUCT USES:{'pCreateInfo': {'oldSwapchain': 'VkSwapchainKHR', 'surface': 'VkSurfaceKHR'}}
-    VkSwapchainKHR local_oldSwapchain = VK_NULL_HANDLE;
-    VkSurfaceKHR local_surface = VK_NULL_HANDLE;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// STRUCT USES:{'pCreateInfo': {'surface': 'VkSurfaceKHR', 'oldSwapchain': 'VkSwapchainKHR'}}
+//LOCAL DECLS:{'pCreateInfo': 'VkSwapchainCreateInfoKHR*'}
+    safe_VkSwapchainCreateInfoKHR* local_pCreateInfo = NULL;
     if (pCreateInfo) {
-        local_surface = pCreateInfo->surface;
-        local_oldSwapchain = pCreateInfo->oldSwapchain;
+        local_pCreateInfo = new safe_VkSwapchainCreateInfoKHR(pCreateInfo);
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
         if (pCreateInfo->oldSwapchain) {
-            VkSwapchainKHR* poldSwapchain = (VkSwapchainKHR*)&pCreateInfo->oldSwapchain;
-            *poldSwapchain = (VkSwapchainKHR)((VkUniqueObject*)pCreateInfo->oldSwapchain)->actualObject;
+            local_pCreateInfo->oldSwapchain = (VkSwapchainKHR)((VkUniqueObject*)pCreateInfo->oldSwapchain)->actualObject;
         }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
         if (pCreateInfo->surface) {
-            VkSurfaceKHR* psurface = (VkSurfaceKHR*)&pCreateInfo->surface;
-            *psurface = (VkSurfaceKHR)((VkUniqueObject*)pCreateInfo->surface)->actualObject;
+            local_pCreateInfo->surface = (VkSurfaceKHR)((VkUniqueObject*)pCreateInfo->surface)->actualObject;
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateSwapchainKHR(device, pCreateInfo, pAllocator, pSwapchain);
-    if (pCreateInfo) {
-        if (pCreateInfo->oldSwapchain) {
-            VkSwapchainKHR* poldSwapchain = (VkSwapchainKHR*)&pCreateInfo->oldSwapchain;
-            *poldSwapchain = local_oldSwapchain;
-        }
-        if (pCreateInfo->surface) {
-            VkSurfaceKHR* psurface = (VkSurfaceKHR*)&pCreateInfo->surface;
-            *psurface = local_surface;
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->CreateSwapchainKHR(device, (const VkSwapchainCreateInfoKHR*)local_pCreateInfo, pAllocator, pSwapchain);
+    if (local_pCreateInfo)
+        delete local_pCreateInfo;
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueSwapchainKHR = new VkUniqueObject();
         uniqueSwapchainKHR->actualObject = (uint64_t)*pSwapchain;
         *pSwapchain = (VkSwapchainKHR)uniqueSwapchainKHR;
@@ -2067,18 +2023,22 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSwapchainKHR(VkDevice dev
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySwapchainKHR(VkDevice device, VkSwapchainKHR swapchain, const VkAllocationCallbacks* pAllocator)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'swapchain': 'VkSwapchainKHR'}
     VkSwapchainKHR local_swapchain = swapchain;
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (swapchain) {
         VkSwapchainKHR* pswapchain = (VkSwapchainKHR*)&swapchain;
         *pswapchain = (VkSwapchainKHR)((VkUniqueObject*)swapchain)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     get_dispatch_table(unique_objects_device_table_map, device)->DestroySwapchainKHR(device, swapchain, pAllocator);
     delete (VkUniqueObject*)local_swapchain;
 }
+
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetSwapchainImagesKHR(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pSwapchainImageCount, VkImage* pSwapchainImages)
 {
@@ -2087,80 +2047,74 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetSwapchainImagesKHR(VkDevice 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex)
 {
-// STRUCT USES:{'swapchain': 'VkSwapchainKHR', 'semaphore': 'VkSemaphore', 'fence': 'VkFence'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// STRUCT USES:{'semaphore': 'VkSemaphore', 'fence': 'VkFence', 'swapchain': 'VkSwapchainKHR'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (fence) {
         VkFence* pfence = (VkFence*)&fence;
         *pfence = (VkFence)((VkUniqueObject*)fence)->actualObject;
     }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (semaphore) {
         VkSemaphore* psemaphore = (VkSemaphore*)&semaphore;
         *psemaphore = (VkSemaphore)((VkUniqueObject*)semaphore)->actualObject;
     }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1565
     if (swapchain) {
         VkSwapchainKHR* pswapchain = (VkSwapchainKHR*)&swapchain;
         *pswapchain = (VkSwapchainKHR)((VkUniqueObject*)swapchain)->actualObject;
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_device_table_map, device)->AcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex);
     return result;
 }
 
+
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueuePresentKHR(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)
 {
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
 // STRUCT USES:{'pPresentInfo': {'pWaitSemaphores[waitSemaphoreCount]': 'VkSemaphore', 'pSwapchains[swapchainCount]': 'VkSwapchainKHR'}}
-    std::vector<VkSwapchainKHR> original_pSwapchains = {};
-    std::vector<VkSemaphore> original_pWaitSemaphores = {};
+//LOCAL DECLS:{'pPresentInfo': 'VkPresentInfoKHR*'}
+    safe_VkPresentInfoKHR* local_pPresentInfo = NULL;
     if (pPresentInfo) {
-        if (pPresentInfo->pSwapchains) {
+        local_pPresentInfo = new safe_VkPresentInfoKHR(pPresentInfo);
+        if (local_pPresentInfo->pSwapchains) {
             for (uint32_t idx0=0; idx0<pPresentInfo->swapchainCount; ++idx0) {
-                VkSwapchainKHR* pSwapchainKHR = (VkSwapchainKHR*)&(pPresentInfo->pSwapchains[idx0]);
-                original_pSwapchains.push_back(pPresentInfo->pSwapchains[idx0]);
-                *(pSwapchainKHR) = (VkSwapchainKHR)((VkUniqueObject*)pPresentInfo->pSwapchains[idx0])->actualObject;
+                local_pPresentInfo->pSwapchains[idx0] = (VkSwapchainKHR)((VkUniqueObject*)pPresentInfo->pSwapchains[idx0])->actualObject;
             }
         }
-        if (pPresentInfo->pWaitSemaphores) {
+        if (local_pPresentInfo->pWaitSemaphores) {
             for (uint32_t idx1=0; idx1<pPresentInfo->waitSemaphoreCount; ++idx1) {
-                VkSemaphore* pSemaphore = (VkSemaphore*)&(pPresentInfo->pWaitSemaphores[idx1]);
-                original_pWaitSemaphores.push_back(pPresentInfo->pWaitSemaphores[idx1]);
-                *(pSemaphore) = (VkSemaphore)((VkUniqueObject*)pPresentInfo->pWaitSemaphores[idx1])->actualObject;
+                local_pPresentInfo->pWaitSemaphores[idx1] = (VkSemaphore)((VkUniqueObject*)pPresentInfo->pWaitSemaphores[idx1])->actualObject;
             }
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
-    VkResult result = get_dispatch_table(unique_objects_device_table_map, queue)->QueuePresentKHR(queue, pPresentInfo);
-    if (pPresentInfo) {
-        if (pPresentInfo->pSwapchains) {
-            for (uint32_t idx0=0; idx0<pPresentInfo->swapchainCount; ++idx0) {
-                VkSwapchainKHR* pSwapchainKHR = (VkSwapchainKHR*)&(pPresentInfo->pSwapchains[idx0]);
-                *(pSwapchainKHR) = original_pSwapchains.front();
-                original_pSwapchains.erase(original_pSwapchains.begin());
-            }
-        }
-        if (pPresentInfo->pWaitSemaphores) {
-            for (uint32_t idx1=0; idx1<pPresentInfo->waitSemaphoreCount; ++idx1) {
-                VkSemaphore* pSemaphore = (VkSemaphore*)&(pPresentInfo->pWaitSemaphores[idx1]);
-                *(pSemaphore) = original_pWaitSemaphores.front();
-                original_pWaitSemaphores.erase(original_pWaitSemaphores.begin());
-            }
-        }
-    }
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
+    VkResult result = get_dispatch_table(unique_objects_device_table_map, queue)->QueuePresentKHR(queue, (const VkPresentInfoKHR*)local_pPresentInfo);
+    if (local_pPresentInfo)
+        delete local_pPresentInfo;
     return result;
 }
 
+
+#ifdef VK_USE_PLATFORM_WIN32_KHR
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateWin32SurfaceKHR(VkInstance instance, const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
 {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1640
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1604
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1701
     VkResult result = get_dispatch_table(unique_objects_instance_table_map, instance)->CreateWin32SurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
     if (VK_SUCCESS == result) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1615
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1673
         VkUniqueObject* uniqueSurfaceKHR = new VkUniqueObject();
         uniqueSurfaceKHR->actualObject = (uint64_t)*pSurface;
         *pSurface = (VkSurfaceKHR)uniqueSurfaceKHR;
     }
     return result;
 }
+#endif
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #461
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #476
 static inline PFN_vkVoidFunction layer_intercept_proc(const char *name)
 {
     if (!name || name[0] != 'v' || name[1] != 'k')
@@ -2406,7 +2360,7 @@ VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(VkD
         return NULL;
     }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #526
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #541
     layer_data *my_device_data = get_my_data_ptr(get_dispatch_key(device), layer_data_map);
     if (my_device_data->wsi_enabled) {
         if (!strcmp("vkCreateSwapchainKHR", funcName))
@@ -2446,6 +2400,8 @@ VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(V
     VkLayerInstanceDispatchTable* pTable = get_dispatch_table(unique_objects_instance_table_map, instance);
     if (instanceExtMap.size() != 0 && instanceExtMap[pTable].wsi_enabled)
     {
+        if (!strcmp("vkDestroySurfaceKHR", funcName))
+            return reinterpret_cast<PFN_vkVoidFunction>(vkDestroySurfaceKHR);
         if (!strcmp("vkGetPhysicalDeviceSurfaceSupportKHR", funcName))
             return reinterpret_cast<PFN_vkVoidFunction>(vkGetPhysicalDeviceSurfaceSupportKHR);
         if (!strcmp("vkGetPhysicalDeviceSurfaceCapabilitiesKHR", funcName))

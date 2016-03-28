@@ -159,7 +159,9 @@ uint32_t vk_validate_vkswapchaincreateinfokhr(const VkSwapchainCreateInfoKHR* pS
 uint32_t vk_validate_vkvertexinputattributedescription(const VkVertexInputAttributeDescription* pStruct);
 uint32_t vk_validate_vkvertexinputbindingdescription(const VkVertexInputBindingDescription* pStruct);
 uint32_t vk_validate_vkviewport(const VkViewport* pStruct);
+#ifdef VK_USE_PLATFORM_WIN32_KHR
 uint32_t vk_validate_vkwin32surfacecreateinfokhr(const VkWin32SurfaceCreateInfoKHR* pStruct);
+#endif //VK_USE_PLATFORM_WIN32_KHR
 uint32_t vk_validate_vkwritedescriptorset(const VkWriteDescriptorSet* pStruct);
 
 
@@ -1083,12 +1085,14 @@ uint32_t vk_validate_vkviewport(const VkViewport* pStruct)
 {
     return 1;
 }
+#ifdef VK_USE_PLATFORM_WIN32_KHR
 uint32_t vk_validate_vkwin32surfacecreateinfokhr(const VkWin32SurfaceCreateInfoKHR* pStruct)
 {
     if (!validate_VkStructureType(pStruct->sType))
         return 0;
     return 1;
 }
+#endif //VK_USE_PLATFORM_WIN32_KHR
 uint32_t vk_validate_vkwritedescriptorset(const VkWriteDescriptorSet* pStruct)
 {
     if (!validate_VkStructureType(pStruct->sType))

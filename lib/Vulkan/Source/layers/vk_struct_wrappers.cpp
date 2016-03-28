@@ -1597,9 +1597,7 @@ void vkdevicecreateinfo_struct_wrapper::display_struct_members()
     for (i = 0; i<enabledExtensionCount; i++) {
         printf("%*s    %sppEnabledExtensionNames = %s\n", m_indent, "", &m_dummy_prefix, (m_struct.ppEnabledExtensionNames)[0]);
     }
-    for (i = 0; i<enabledExtensionCount; i++) {
-        printf("%*s    %spEnabledFeatures[%u] = %p\n", m_indent, "", &m_dummy_prefix, i, (void*)(m_struct.pEnabledFeatures)[i]);
-    }
+    printf("%*s    %spEnabledFeatures = %p\n", m_indent, "", &m_dummy_prefix, (void*)(m_struct.pEnabledFeatures));
 }
 
 // Output all struct elements, each on their own line
@@ -1614,12 +1612,12 @@ void vkdevicecreateinfo_struct_wrapper::display_full_txt()
 {
     printf("%*sVkDeviceCreateInfo struct contents at %p:\n", m_indent, "", (void*)m_origStructAddr);
     this->display_struct_members();
-    uint32_t i;
-    for (i = 0; i<enabledExtensionCount; i++) {
-            vkphysicaldevicefeatures_struct_wrapper class0(&(m_struct.pEnabledFeatures[i]));
-            class0.set_indent(m_indent + 4);
-            class0.display_full_txt();
+    if (m_struct.pEnabledFeatures) {
+        vkphysicaldevicefeatures_struct_wrapper class0(m_struct.pEnabledFeatures);
+        class0.set_indent(m_indent + 4);
+        class0.display_full_txt();
     }
+    uint32_t i;
     for (i = 0; i<queueCreateInfoCount; i++) {
             vkdevicequeuecreateinfo_struct_wrapper class1(&(m_struct.pQueueCreateInfos[i]));
             class1.set_indent(m_indent + 4);
@@ -2320,7 +2318,10 @@ void vkextensionproperties_struct_wrapper::display_single_txt()
 // Private helper function that displays the members of the wrapped struct
 void vkextensionproperties_struct_wrapper::display_struct_members()
 {
-    printf("%*s    %sextensionName = %p\n", m_indent, "", &m_dummy_prefix, (m_struct.extensionName));
+    uint32_t i;
+    for (i = 0; i<VK_MAX_EXTENSION_NAME_SIZE; i++) {
+        printf("%*s    %sextensionName = %s\n", m_indent, "", &m_dummy_prefix, (m_struct.extensionName));
+    }
     printf("%*s    %sspecVersion = %u\n", m_indent, "", &m_dummy_prefix, (m_struct.specVersion));
 }
 
@@ -3327,10 +3328,15 @@ void vklayerproperties_struct_wrapper::display_single_txt()
 // Private helper function that displays the members of the wrapped struct
 void vklayerproperties_struct_wrapper::display_struct_members()
 {
-    printf("%*s    %slayerName = %p\n", m_indent, "", &m_dummy_prefix, (m_struct.layerName));
+    uint32_t i;
+    for (i = 0; i<VK_MAX_EXTENSION_NAME_SIZE; i++) {
+        printf("%*s    %slayerName = %s\n", m_indent, "", &m_dummy_prefix, (m_struct.layerName));
+    }
     printf("%*s    %sspecVersion = %u\n", m_indent, "", &m_dummy_prefix, (m_struct.specVersion));
     printf("%*s    %simplementationVersion = %u\n", m_indent, "", &m_dummy_prefix, (m_struct.implementationVersion));
-    printf("%*s    %sdescription = %p\n", m_indent, "", &m_dummy_prefix, (m_struct.description));
+    for (i = 0; i<VK_MAX_DESCRIPTION_SIZE; i++) {
+        printf("%*s    %sdescription = %s\n", m_indent, "", &m_dummy_prefix, (m_struct.description));
+    }
 }
 
 // Output all struct elements, each on their own line
@@ -4079,8 +4085,10 @@ void vkphysicaldeviceproperties_struct_wrapper::display_struct_members()
     printf("%*s    %svendorID = %u\n", m_indent, "", &m_dummy_prefix, (m_struct.vendorID));
     printf("%*s    %sdeviceID = %u\n", m_indent, "", &m_dummy_prefix, (m_struct.deviceID));
     printf("%*s    %sdeviceType = %s\n", m_indent, "", &m_dummy_prefix, string_VkPhysicalDeviceType(m_struct.deviceType));
-    printf("%*s    %sdeviceName = %p\n", m_indent, "", &m_dummy_prefix, (m_struct.deviceName));
     uint32_t i;
+    for (i = 0; i<VK_MAX_PHYSICAL_DEVICE_NAME_SIZE; i++) {
+        printf("%*s    %sdeviceName = %s\n", m_indent, "", &m_dummy_prefix, (m_struct.deviceName));
+    }
     for (i = 0; i<VK_UUID_SIZE; i++) {
         printf("%*s    %spipelineCacheUUID[%u] = %hu\n", m_indent, "", &m_dummy_prefix, i, (m_struct.pipelineCacheUUID)[i]);
     }

@@ -30,9 +30,7 @@
 #include <unordered_map>
 #include "vk_layer_table.h"
 
-template <typename DATA_T>
-DATA_T *get_my_data_ptr(void *data_key,
-                        std::unordered_map<void *, DATA_T *> &layer_data_map) {
+template <typename DATA_T> DATA_T *get_my_data_ptr(void *data_key, std::unordered_map<void *, DATA_T *> &layer_data_map) {
     DATA_T *debug_data;
     typename std::unordered_map<void *, DATA_T *>::const_iterator got;
 

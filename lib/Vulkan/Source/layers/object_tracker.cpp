@@ -33,7 +33,7 @@
  * Author: Tony Barbour <tony@LunarG.com>
  */
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #772
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #787
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -51,8 +51,6 @@ using namespace std;
 #include "vk_layer_logging.h"
 
 #include "object_tracker.h"
-
-static LOADER_PLATFORM_THREAD_ONCE_DECLARATION(initOnce);
 
 
 unordered_map<uint64_t, OBJTRACK_NODE*> VkInstanceMap;
@@ -84,7 +82,7 @@ unordered_map<uint64_t, OBJTRACK_NODE*> VkSwapchainKHRMap;
 unordered_map<uint64_t, OBJTRACK_NODE*> VkSurfaceKHRMap;
 unordered_map<uint64_t, OBJTRACK_NODE*> VkDebugReportCallbackEXTMap;
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_instance(VkInstance dispatchable_object, VkInstance vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -92,6 +90,7 @@ static void create_instance(VkInstance dispatchable_object, VkInstance vkObj, Vk
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -101,7 +100,7 @@ static void create_instance(VkInstance dispatchable_object, VkInstance vkObj, Vk
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_instance(VkInstance dispatchable_object, VkInstance object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -125,7 +124,7 @@ static void destroy_instance(VkInstance dispatchable_object, VkInstance object)
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_instance_status(VkInstance dispatchable_object, VkInstance object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -144,7 +143,7 @@ static VkBool32 set_instance_status(VkInstance dispatchable_object, VkInstance o
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_instance_status(
 VkInstance dispatchable_object, VkInstance object,
     VkDebugReportObjectTypeEXT     objType,
@@ -174,7 +173,7 @@ VkInstance dispatchable_object, VkInstance object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_instance_status(VkInstance dispatchable_object, VkInstance object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -191,7 +190,7 @@ static VkBool32 reset_instance_status(VkInstance dispatchable_object, VkInstance
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_physical_device(VkPhysicalDevice dispatchable_object, VkPhysicalDevice vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -199,6 +198,7 @@ static void create_physical_device(VkPhysicalDevice dispatchable_object, VkPhysi
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -208,7 +208,7 @@ static void create_physical_device(VkPhysicalDevice dispatchable_object, VkPhysi
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_physical_device(VkPhysicalDevice dispatchable_object, VkPhysicalDevice object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -232,7 +232,7 @@ static void destroy_physical_device(VkPhysicalDevice dispatchable_object, VkPhys
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_physical_device_status(VkPhysicalDevice dispatchable_object, VkPhysicalDevice object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -251,7 +251,7 @@ static VkBool32 set_physical_device_status(VkPhysicalDevice dispatchable_object,
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_physical_device_status(
 VkPhysicalDevice dispatchable_object, VkPhysicalDevice object,
     VkDebugReportObjectTypeEXT     objType,
@@ -281,7 +281,7 @@ VkPhysicalDevice dispatchable_object, VkPhysicalDevice object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_physical_device_status(VkPhysicalDevice dispatchable_object, VkPhysicalDevice object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -298,7 +298,7 @@ static VkBool32 reset_physical_device_status(VkPhysicalDevice dispatchable_objec
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_device(VkDevice dispatchable_object, VkDevice vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -306,6 +306,7 @@ static void create_device(VkDevice dispatchable_object, VkDevice vkObj, VkDebugR
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -315,7 +316,7 @@ static void create_device(VkDevice dispatchable_object, VkDevice vkObj, VkDebugR
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_device(VkDevice dispatchable_object, VkDevice object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -339,7 +340,7 @@ static void destroy_device(VkDevice dispatchable_object, VkDevice object)
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_device_status(VkDevice dispatchable_object, VkDevice object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -358,7 +359,7 @@ static VkBool32 set_device_status(VkDevice dispatchable_object, VkDevice object,
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_device_status(
 VkDevice dispatchable_object, VkDevice object,
     VkDebugReportObjectTypeEXT     objType,
@@ -388,7 +389,7 @@ VkDevice dispatchable_object, VkDevice object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_device_status(VkDevice dispatchable_object, VkDevice object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -405,7 +406,7 @@ static VkBool32 reset_device_status(VkDevice dispatchable_object, VkDevice objec
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_queue(VkQueue dispatchable_object, VkQueue vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -413,6 +414,7 @@ static void create_queue(VkQueue dispatchable_object, VkQueue vkObj, VkDebugRepo
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -422,7 +424,7 @@ static void create_queue(VkQueue dispatchable_object, VkQueue vkObj, VkDebugRepo
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_queue(VkQueue dispatchable_object, VkQueue object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -446,7 +448,7 @@ static void destroy_queue(VkQueue dispatchable_object, VkQueue object)
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_queue_status(VkQueue dispatchable_object, VkQueue object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -465,7 +467,7 @@ static VkBool32 set_queue_status(VkQueue dispatchable_object, VkQueue object, Vk
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_queue_status(
 VkQueue dispatchable_object, VkQueue object,
     VkDebugReportObjectTypeEXT     objType,
@@ -495,7 +497,7 @@ VkQueue dispatchable_object, VkQueue object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_queue_status(VkQueue dispatchable_object, VkQueue object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -512,7 +514,7 @@ static VkBool32 reset_queue_status(VkQueue dispatchable_object, VkQueue object, 
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_command_buffer(VkCommandBuffer dispatchable_object, VkCommandBuffer vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -520,6 +522,7 @@ static void create_command_buffer(VkCommandBuffer dispatchable_object, VkCommand
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -529,7 +532,7 @@ static void create_command_buffer(VkCommandBuffer dispatchable_object, VkCommand
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_command_buffer(VkCommandBuffer dispatchable_object, VkCommandBuffer object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -553,7 +556,7 @@ static void destroy_command_buffer(VkCommandBuffer dispatchable_object, VkComman
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_command_buffer_status(VkCommandBuffer dispatchable_object, VkCommandBuffer object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -572,7 +575,7 @@ static VkBool32 set_command_buffer_status(VkCommandBuffer dispatchable_object, V
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_command_buffer_status(
 VkCommandBuffer dispatchable_object, VkCommandBuffer object,
     VkDebugReportObjectTypeEXT     objType,
@@ -602,7 +605,7 @@ VkCommandBuffer dispatchable_object, VkCommandBuffer object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_command_buffer_status(VkCommandBuffer dispatchable_object, VkCommandBuffer object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -619,7 +622,7 @@ static VkBool32 reset_command_buffer_status(VkCommandBuffer dispatchable_object,
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_command_pool(VkDevice dispatchable_object, VkCommandPool vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -627,6 +630,7 @@ static void create_command_pool(VkDevice dispatchable_object, VkCommandPool vkOb
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -636,7 +640,7 @@ static void create_command_pool(VkDevice dispatchable_object, VkCommandPool vkOb
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_command_pool(VkDevice dispatchable_object, VkCommandPool object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -660,7 +664,7 @@ static void destroy_command_pool(VkDevice dispatchable_object, VkCommandPool obj
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_command_pool_status(VkDevice dispatchable_object, VkCommandPool object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -679,7 +683,7 @@ static VkBool32 set_command_pool_status(VkDevice dispatchable_object, VkCommandP
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_command_pool_status(
 VkDevice dispatchable_object, VkCommandPool object,
     VkDebugReportObjectTypeEXT     objType,
@@ -709,7 +713,7 @@ VkDevice dispatchable_object, VkCommandPool object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_command_pool_status(VkDevice dispatchable_object, VkCommandPool object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -726,7 +730,7 @@ static VkBool32 reset_command_pool_status(VkDevice dispatchable_object, VkComman
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_fence(VkDevice dispatchable_object, VkFence vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -734,6 +738,7 @@ static void create_fence(VkDevice dispatchable_object, VkFence vkObj, VkDebugRep
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -743,7 +748,7 @@ static void create_fence(VkDevice dispatchable_object, VkFence vkObj, VkDebugRep
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_fence(VkDevice dispatchable_object, VkFence object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -767,7 +772,7 @@ static void destroy_fence(VkDevice dispatchable_object, VkFence object)
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_fence_status(VkDevice dispatchable_object, VkFence object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -786,7 +791,7 @@ static VkBool32 set_fence_status(VkDevice dispatchable_object, VkFence object, V
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_fence_status(
 VkDevice dispatchable_object, VkFence object,
     VkDebugReportObjectTypeEXT     objType,
@@ -816,7 +821,7 @@ VkDevice dispatchable_object, VkFence object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_fence_status(VkDevice dispatchable_object, VkFence object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -833,7 +838,7 @@ static VkBool32 reset_fence_status(VkDevice dispatchable_object, VkFence object,
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_device_memory(VkDevice dispatchable_object, VkDeviceMemory vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -841,6 +846,7 @@ static void create_device_memory(VkDevice dispatchable_object, VkDeviceMemory vk
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -850,7 +856,7 @@ static void create_device_memory(VkDevice dispatchable_object, VkDeviceMemory vk
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_device_memory(VkDevice dispatchable_object, VkDeviceMemory object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -874,7 +880,7 @@ static void destroy_device_memory(VkDevice dispatchable_object, VkDeviceMemory o
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_device_memory_status(VkDevice dispatchable_object, VkDeviceMemory object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -893,7 +899,7 @@ static VkBool32 set_device_memory_status(VkDevice dispatchable_object, VkDeviceM
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_device_memory_status(
 VkDevice dispatchable_object, VkDeviceMemory object,
     VkDebugReportObjectTypeEXT     objType,
@@ -923,7 +929,7 @@ VkDevice dispatchable_object, VkDeviceMemory object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_device_memory_status(VkDevice dispatchable_object, VkDeviceMemory object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -940,7 +946,7 @@ static VkBool32 reset_device_memory_status(VkDevice dispatchable_object, VkDevic
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_buffer(VkDevice dispatchable_object, VkBuffer vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -948,6 +954,7 @@ static void create_buffer(VkDevice dispatchable_object, VkBuffer vkObj, VkDebugR
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -957,7 +964,7 @@ static void create_buffer(VkDevice dispatchable_object, VkBuffer vkObj, VkDebugR
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_buffer(VkDevice dispatchable_object, VkBuffer object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -981,7 +988,7 @@ static void destroy_buffer(VkDevice dispatchable_object, VkBuffer object)
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_buffer_status(VkDevice dispatchable_object, VkBuffer object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -1000,7 +1007,7 @@ static VkBool32 set_buffer_status(VkDevice dispatchable_object, VkBuffer object,
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_buffer_status(
 VkDevice dispatchable_object, VkBuffer object,
     VkDebugReportObjectTypeEXT     objType,
@@ -1030,7 +1037,7 @@ VkDevice dispatchable_object, VkBuffer object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_buffer_status(VkDevice dispatchable_object, VkBuffer object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1047,7 +1054,7 @@ static VkBool32 reset_buffer_status(VkDevice dispatchable_object, VkBuffer objec
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_image(VkDevice dispatchable_object, VkImage vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -1055,6 +1062,7 @@ static void create_image(VkDevice dispatchable_object, VkImage vkObj, VkDebugRep
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -1064,7 +1072,7 @@ static void create_image(VkDevice dispatchable_object, VkImage vkObj, VkDebugRep
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_image(VkDevice dispatchable_object, VkImage object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1088,7 +1096,7 @@ static void destroy_image(VkDevice dispatchable_object, VkImage object)
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_image_status(VkDevice dispatchable_object, VkImage object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -1107,7 +1115,7 @@ static VkBool32 set_image_status(VkDevice dispatchable_object, VkImage object, V
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_image_status(
 VkDevice dispatchable_object, VkImage object,
     VkDebugReportObjectTypeEXT     objType,
@@ -1137,7 +1145,7 @@ VkDevice dispatchable_object, VkImage object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_image_status(VkDevice dispatchable_object, VkImage object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1154,7 +1162,7 @@ static VkBool32 reset_image_status(VkDevice dispatchable_object, VkImage object,
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_semaphore(VkDevice dispatchable_object, VkSemaphore vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -1162,6 +1170,7 @@ static void create_semaphore(VkDevice dispatchable_object, VkSemaphore vkObj, Vk
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -1171,7 +1180,7 @@ static void create_semaphore(VkDevice dispatchable_object, VkSemaphore vkObj, Vk
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_semaphore(VkDevice dispatchable_object, VkSemaphore object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1195,7 +1204,7 @@ static void destroy_semaphore(VkDevice dispatchable_object, VkSemaphore object)
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_semaphore_status(VkDevice dispatchable_object, VkSemaphore object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -1214,7 +1223,7 @@ static VkBool32 set_semaphore_status(VkDevice dispatchable_object, VkSemaphore o
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_semaphore_status(
 VkDevice dispatchable_object, VkSemaphore object,
     VkDebugReportObjectTypeEXT     objType,
@@ -1244,7 +1253,7 @@ VkDevice dispatchable_object, VkSemaphore object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_semaphore_status(VkDevice dispatchable_object, VkSemaphore object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1261,7 +1270,7 @@ static VkBool32 reset_semaphore_status(VkDevice dispatchable_object, VkSemaphore
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_event(VkDevice dispatchable_object, VkEvent vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -1269,6 +1278,7 @@ static void create_event(VkDevice dispatchable_object, VkEvent vkObj, VkDebugRep
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -1278,7 +1288,7 @@ static void create_event(VkDevice dispatchable_object, VkEvent vkObj, VkDebugRep
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_event(VkDevice dispatchable_object, VkEvent object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1302,7 +1312,7 @@ static void destroy_event(VkDevice dispatchable_object, VkEvent object)
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_event_status(VkDevice dispatchable_object, VkEvent object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -1321,7 +1331,7 @@ static VkBool32 set_event_status(VkDevice dispatchable_object, VkEvent object, V
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_event_status(
 VkDevice dispatchable_object, VkEvent object,
     VkDebugReportObjectTypeEXT     objType,
@@ -1351,7 +1361,7 @@ VkDevice dispatchable_object, VkEvent object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_event_status(VkDevice dispatchable_object, VkEvent object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1368,7 +1378,7 @@ static VkBool32 reset_event_status(VkDevice dispatchable_object, VkEvent object,
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_query_pool(VkDevice dispatchable_object, VkQueryPool vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -1376,6 +1386,7 @@ static void create_query_pool(VkDevice dispatchable_object, VkQueryPool vkObj, V
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -1385,7 +1396,7 @@ static void create_query_pool(VkDevice dispatchable_object, VkQueryPool vkObj, V
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_query_pool(VkDevice dispatchable_object, VkQueryPool object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1409,7 +1420,7 @@ static void destroy_query_pool(VkDevice dispatchable_object, VkQueryPool object)
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_query_pool_status(VkDevice dispatchable_object, VkQueryPool object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -1428,7 +1439,7 @@ static VkBool32 set_query_pool_status(VkDevice dispatchable_object, VkQueryPool 
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_query_pool_status(
 VkDevice dispatchable_object, VkQueryPool object,
     VkDebugReportObjectTypeEXT     objType,
@@ -1458,7 +1469,7 @@ VkDevice dispatchable_object, VkQueryPool object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_query_pool_status(VkDevice dispatchable_object, VkQueryPool object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1475,7 +1486,7 @@ static VkBool32 reset_query_pool_status(VkDevice dispatchable_object, VkQueryPoo
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_buffer_view(VkDevice dispatchable_object, VkBufferView vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -1483,6 +1494,7 @@ static void create_buffer_view(VkDevice dispatchable_object, VkBufferView vkObj,
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -1492,7 +1504,7 @@ static void create_buffer_view(VkDevice dispatchable_object, VkBufferView vkObj,
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_buffer_view(VkDevice dispatchable_object, VkBufferView object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1516,7 +1528,7 @@ static void destroy_buffer_view(VkDevice dispatchable_object, VkBufferView objec
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_buffer_view_status(VkDevice dispatchable_object, VkBufferView object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -1535,7 +1547,7 @@ static VkBool32 set_buffer_view_status(VkDevice dispatchable_object, VkBufferVie
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_buffer_view_status(
 VkDevice dispatchable_object, VkBufferView object,
     VkDebugReportObjectTypeEXT     objType,
@@ -1565,7 +1577,7 @@ VkDevice dispatchable_object, VkBufferView object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_buffer_view_status(VkDevice dispatchable_object, VkBufferView object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1582,7 +1594,7 @@ static VkBool32 reset_buffer_view_status(VkDevice dispatchable_object, VkBufferV
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_image_view(VkDevice dispatchable_object, VkImageView vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -1590,6 +1602,7 @@ static void create_image_view(VkDevice dispatchable_object, VkImageView vkObj, V
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -1599,7 +1612,7 @@ static void create_image_view(VkDevice dispatchable_object, VkImageView vkObj, V
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_image_view(VkDevice dispatchable_object, VkImageView object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1623,7 +1636,7 @@ static void destroy_image_view(VkDevice dispatchable_object, VkImageView object)
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_image_view_status(VkDevice dispatchable_object, VkImageView object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -1642,7 +1655,7 @@ static VkBool32 set_image_view_status(VkDevice dispatchable_object, VkImageView 
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_image_view_status(
 VkDevice dispatchable_object, VkImageView object,
     VkDebugReportObjectTypeEXT     objType,
@@ -1672,7 +1685,7 @@ VkDevice dispatchable_object, VkImageView object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_image_view_status(VkDevice dispatchable_object, VkImageView object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1689,7 +1702,7 @@ static VkBool32 reset_image_view_status(VkDevice dispatchable_object, VkImageVie
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_shader_module(VkDevice dispatchable_object, VkShaderModule vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -1697,6 +1710,7 @@ static void create_shader_module(VkDevice dispatchable_object, VkShaderModule vk
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -1706,7 +1720,7 @@ static void create_shader_module(VkDevice dispatchable_object, VkShaderModule vk
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_shader_module(VkDevice dispatchable_object, VkShaderModule object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1730,7 +1744,7 @@ static void destroy_shader_module(VkDevice dispatchable_object, VkShaderModule o
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_shader_module_status(VkDevice dispatchable_object, VkShaderModule object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -1749,7 +1763,7 @@ static VkBool32 set_shader_module_status(VkDevice dispatchable_object, VkShaderM
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_shader_module_status(
 VkDevice dispatchable_object, VkShaderModule object,
     VkDebugReportObjectTypeEXT     objType,
@@ -1779,7 +1793,7 @@ VkDevice dispatchable_object, VkShaderModule object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_shader_module_status(VkDevice dispatchable_object, VkShaderModule object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1796,7 +1810,7 @@ static VkBool32 reset_shader_module_status(VkDevice dispatchable_object, VkShade
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_pipeline_cache(VkDevice dispatchable_object, VkPipelineCache vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -1804,6 +1818,7 @@ static void create_pipeline_cache(VkDevice dispatchable_object, VkPipelineCache 
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -1813,7 +1828,7 @@ static void create_pipeline_cache(VkDevice dispatchable_object, VkPipelineCache 
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_pipeline_cache(VkDevice dispatchable_object, VkPipelineCache object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1837,7 +1852,7 @@ static void destroy_pipeline_cache(VkDevice dispatchable_object, VkPipelineCache
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_pipeline_cache_status(VkDevice dispatchable_object, VkPipelineCache object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -1856,7 +1871,7 @@ static VkBool32 set_pipeline_cache_status(VkDevice dispatchable_object, VkPipeli
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_pipeline_cache_status(
 VkDevice dispatchable_object, VkPipelineCache object,
     VkDebugReportObjectTypeEXT     objType,
@@ -1886,7 +1901,7 @@ VkDevice dispatchable_object, VkPipelineCache object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_pipeline_cache_status(VkDevice dispatchable_object, VkPipelineCache object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1903,7 +1918,7 @@ static VkBool32 reset_pipeline_cache_status(VkDevice dispatchable_object, VkPipe
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_pipeline_layout(VkDevice dispatchable_object, VkPipelineLayout vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -1911,6 +1926,7 @@ static void create_pipeline_layout(VkDevice dispatchable_object, VkPipelineLayou
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -1920,7 +1936,7 @@ static void create_pipeline_layout(VkDevice dispatchable_object, VkPipelineLayou
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_pipeline_layout(VkDevice dispatchable_object, VkPipelineLayout object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -1944,7 +1960,7 @@ static void destroy_pipeline_layout(VkDevice dispatchable_object, VkPipelineLayo
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_pipeline_layout_status(VkDevice dispatchable_object, VkPipelineLayout object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -1963,7 +1979,7 @@ static VkBool32 set_pipeline_layout_status(VkDevice dispatchable_object, VkPipel
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_pipeline_layout_status(
 VkDevice dispatchable_object, VkPipelineLayout object,
     VkDebugReportObjectTypeEXT     objType,
@@ -1993,7 +2009,7 @@ VkDevice dispatchable_object, VkPipelineLayout object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_pipeline_layout_status(VkDevice dispatchable_object, VkPipelineLayout object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2010,7 +2026,7 @@ static VkBool32 reset_pipeline_layout_status(VkDevice dispatchable_object, VkPip
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_pipeline(VkDevice dispatchable_object, VkPipeline vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -2018,6 +2034,7 @@ static void create_pipeline(VkDevice dispatchable_object, VkPipeline vkObj, VkDe
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -2027,7 +2044,7 @@ static void create_pipeline(VkDevice dispatchable_object, VkPipeline vkObj, VkDe
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_pipeline(VkDevice dispatchable_object, VkPipeline object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2051,7 +2068,7 @@ static void destroy_pipeline(VkDevice dispatchable_object, VkPipeline object)
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_pipeline_status(VkDevice dispatchable_object, VkPipeline object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -2070,7 +2087,7 @@ static VkBool32 set_pipeline_status(VkDevice dispatchable_object, VkPipeline obj
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_pipeline_status(
 VkDevice dispatchable_object, VkPipeline object,
     VkDebugReportObjectTypeEXT     objType,
@@ -2100,7 +2117,7 @@ VkDevice dispatchable_object, VkPipeline object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_pipeline_status(VkDevice dispatchable_object, VkPipeline object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2117,7 +2134,7 @@ static VkBool32 reset_pipeline_status(VkDevice dispatchable_object, VkPipeline o
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_descriptor_set_layout(VkDevice dispatchable_object, VkDescriptorSetLayout vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -2125,6 +2142,7 @@ static void create_descriptor_set_layout(VkDevice dispatchable_object, VkDescrip
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -2134,7 +2152,7 @@ static void create_descriptor_set_layout(VkDevice dispatchable_object, VkDescrip
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_descriptor_set_layout(VkDevice dispatchable_object, VkDescriptorSetLayout object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2158,7 +2176,7 @@ static void destroy_descriptor_set_layout(VkDevice dispatchable_object, VkDescri
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_descriptor_set_layout_status(VkDevice dispatchable_object, VkDescriptorSetLayout object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -2177,7 +2195,7 @@ static VkBool32 set_descriptor_set_layout_status(VkDevice dispatchable_object, V
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_descriptor_set_layout_status(
 VkDevice dispatchable_object, VkDescriptorSetLayout object,
     VkDebugReportObjectTypeEXT     objType,
@@ -2207,7 +2225,7 @@ VkDevice dispatchable_object, VkDescriptorSetLayout object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_descriptor_set_layout_status(VkDevice dispatchable_object, VkDescriptorSetLayout object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2224,7 +2242,7 @@ static VkBool32 reset_descriptor_set_layout_status(VkDevice dispatchable_object,
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_sampler(VkDevice dispatchable_object, VkSampler vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -2232,6 +2250,7 @@ static void create_sampler(VkDevice dispatchable_object, VkSampler vkObj, VkDebu
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -2241,7 +2260,7 @@ static void create_sampler(VkDevice dispatchable_object, VkSampler vkObj, VkDebu
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_sampler(VkDevice dispatchable_object, VkSampler object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2265,7 +2284,7 @@ static void destroy_sampler(VkDevice dispatchable_object, VkSampler object)
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_sampler_status(VkDevice dispatchable_object, VkSampler object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -2284,7 +2303,7 @@ static VkBool32 set_sampler_status(VkDevice dispatchable_object, VkSampler objec
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_sampler_status(
 VkDevice dispatchable_object, VkSampler object,
     VkDebugReportObjectTypeEXT     objType,
@@ -2314,7 +2333,7 @@ VkDevice dispatchable_object, VkSampler object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_sampler_status(VkDevice dispatchable_object, VkSampler object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2331,7 +2350,7 @@ static VkBool32 reset_sampler_status(VkDevice dispatchable_object, VkSampler obj
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_descriptor_pool(VkDevice dispatchable_object, VkDescriptorPool vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -2339,6 +2358,7 @@ static void create_descriptor_pool(VkDevice dispatchable_object, VkDescriptorPoo
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -2348,7 +2368,7 @@ static void create_descriptor_pool(VkDevice dispatchable_object, VkDescriptorPoo
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_descriptor_pool(VkDevice dispatchable_object, VkDescriptorPool object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2372,7 +2392,7 @@ static void destroy_descriptor_pool(VkDevice dispatchable_object, VkDescriptorPo
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_descriptor_pool_status(VkDevice dispatchable_object, VkDescriptorPool object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -2391,7 +2411,7 @@ static VkBool32 set_descriptor_pool_status(VkDevice dispatchable_object, VkDescr
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_descriptor_pool_status(
 VkDevice dispatchable_object, VkDescriptorPool object,
     VkDebugReportObjectTypeEXT     objType,
@@ -2421,7 +2441,7 @@ VkDevice dispatchable_object, VkDescriptorPool object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_descriptor_pool_status(VkDevice dispatchable_object, VkDescriptorPool object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2438,7 +2458,7 @@ static VkBool32 reset_descriptor_pool_status(VkDevice dispatchable_object, VkDes
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_descriptor_set(VkDevice dispatchable_object, VkDescriptorSet vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -2446,6 +2466,7 @@ static void create_descriptor_set(VkDevice dispatchable_object, VkDescriptorSet 
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -2455,7 +2476,7 @@ static void create_descriptor_set(VkDevice dispatchable_object, VkDescriptorSet 
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_descriptor_set(VkDevice dispatchable_object, VkDescriptorSet object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2479,7 +2500,7 @@ static void destroy_descriptor_set(VkDevice dispatchable_object, VkDescriptorSet
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_descriptor_set_status(VkDevice dispatchable_object, VkDescriptorSet object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -2498,7 +2519,7 @@ static VkBool32 set_descriptor_set_status(VkDevice dispatchable_object, VkDescri
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_descriptor_set_status(
 VkDevice dispatchable_object, VkDescriptorSet object,
     VkDebugReportObjectTypeEXT     objType,
@@ -2528,7 +2549,7 @@ VkDevice dispatchable_object, VkDescriptorSet object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_descriptor_set_status(VkDevice dispatchable_object, VkDescriptorSet object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2545,7 +2566,7 @@ static VkBool32 reset_descriptor_set_status(VkDevice dispatchable_object, VkDesc
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_render_pass(VkDevice dispatchable_object, VkRenderPass vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -2553,6 +2574,7 @@ static void create_render_pass(VkDevice dispatchable_object, VkRenderPass vkObj,
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -2562,7 +2584,7 @@ static void create_render_pass(VkDevice dispatchable_object, VkRenderPass vkObj,
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_render_pass(VkDevice dispatchable_object, VkRenderPass object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2586,7 +2608,7 @@ static void destroy_render_pass(VkDevice dispatchable_object, VkRenderPass objec
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_render_pass_status(VkDevice dispatchable_object, VkRenderPass object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -2605,7 +2627,7 @@ static VkBool32 set_render_pass_status(VkDevice dispatchable_object, VkRenderPas
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_render_pass_status(
 VkDevice dispatchable_object, VkRenderPass object,
     VkDebugReportObjectTypeEXT     objType,
@@ -2635,7 +2657,7 @@ VkDevice dispatchable_object, VkRenderPass object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_render_pass_status(VkDevice dispatchable_object, VkRenderPass object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2652,7 +2674,7 @@ static VkBool32 reset_render_pass_status(VkDevice dispatchable_object, VkRenderP
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_framebuffer(VkDevice dispatchable_object, VkFramebuffer vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -2660,6 +2682,7 @@ static void create_framebuffer(VkDevice dispatchable_object, VkFramebuffer vkObj
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -2669,7 +2692,7 @@ static void create_framebuffer(VkDevice dispatchable_object, VkFramebuffer vkObj
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_framebuffer(VkDevice dispatchable_object, VkFramebuffer object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2693,7 +2716,7 @@ static void destroy_framebuffer(VkDevice dispatchable_object, VkFramebuffer obje
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_framebuffer_status(VkDevice dispatchable_object, VkFramebuffer object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -2712,7 +2735,7 @@ static VkBool32 set_framebuffer_status(VkDevice dispatchable_object, VkFramebuff
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_framebuffer_status(
 VkDevice dispatchable_object, VkFramebuffer object,
     VkDebugReportObjectTypeEXT     objType,
@@ -2742,7 +2765,7 @@ VkDevice dispatchable_object, VkFramebuffer object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_framebuffer_status(VkDevice dispatchable_object, VkFramebuffer object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2759,7 +2782,7 @@ static VkBool32 reset_framebuffer_status(VkDevice dispatchable_object, VkFramebu
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_swapchain_khr(VkDevice dispatchable_object, VkSwapchainKHR vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -2767,6 +2790,7 @@ static void create_swapchain_khr(VkDevice dispatchable_object, VkSwapchainKHR vk
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -2776,7 +2800,7 @@ static void create_swapchain_khr(VkDevice dispatchable_object, VkSwapchainKHR vk
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_swapchain_khr(VkDevice dispatchable_object, VkSwapchainKHR object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2800,7 +2824,7 @@ static void destroy_swapchain_khr(VkDevice dispatchable_object, VkSwapchainKHR o
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_swapchain_khr_status(VkDevice dispatchable_object, VkSwapchainKHR object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -2819,7 +2843,7 @@ static VkBool32 set_swapchain_khr_status(VkDevice dispatchable_object, VkSwapcha
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_swapchain_khr_status(
 VkDevice dispatchable_object, VkSwapchainKHR object,
     VkDebugReportObjectTypeEXT     objType,
@@ -2849,7 +2873,7 @@ VkDevice dispatchable_object, VkSwapchainKHR object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_swapchain_khr_status(VkDevice dispatchable_object, VkSwapchainKHR object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2866,7 +2890,7 @@ static VkBool32 reset_swapchain_khr_status(VkDevice dispatchable_object, VkSwapc
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_surface_khr(VkDevice dispatchable_object, VkSurfaceKHR vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -2874,6 +2898,7 @@ static void create_surface_khr(VkDevice dispatchable_object, VkSurfaceKHR vkObj,
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -2883,7 +2908,7 @@ static void create_surface_khr(VkDevice dispatchable_object, VkSurfaceKHR vkObj,
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_surface_khr(VkDevice dispatchable_object, VkSurfaceKHR object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2907,7 +2932,7 @@ static void destroy_surface_khr(VkDevice dispatchable_object, VkSurfaceKHR objec
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_surface_khr_status(VkDevice dispatchable_object, VkSurfaceKHR object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -2926,7 +2951,7 @@ static VkBool32 set_surface_khr_status(VkDevice dispatchable_object, VkSurfaceKH
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_surface_khr_status(
 VkDevice dispatchable_object, VkSurfaceKHR object,
     VkDebugReportObjectTypeEXT     objType,
@@ -2956,7 +2981,7 @@ VkDevice dispatchable_object, VkSurfaceKHR object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_surface_khr_status(VkDevice dispatchable_object, VkSurfaceKHR object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -2973,7 +2998,7 @@ static VkBool32 reset_surface_khr_status(VkDevice dispatchable_object, VkSurface
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #833
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #846
 static void create_debug_report_callback_ext(VkDevice dispatchable_object, VkDebugReportCallbackEXT vkObj, VkDebugReportObjectTypeEXT objType)
 {
     log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_INFORMATION_BIT_EXT, objType,(uint64_t)(vkObj), __LINE__, OBJTRACK_NONE, "OBJTRACK",
@@ -2981,6 +3006,7 @@ static void create_debug_report_callback_ext(VkDevice dispatchable_object, VkDeb
         (uint64_t)(vkObj));
 
     OBJTRACK_NODE* pNewObjNode = new OBJTRACK_NODE;
+    pNewObjNode->belongsTo = (uint64_t)dispatchable_object;
     pNewObjNode->objType = objType;
     pNewObjNode->status  = OBJSTATUS_NONE;
     pNewObjNode->vkObj  = (uint64_t)(vkObj);
@@ -2990,7 +3016,7 @@ static void create_debug_report_callback_ext(VkDevice dispatchable_object, VkDeb
     numTotalObjs++;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #855
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #869
 static void destroy_debug_report_callback_ext(VkDevice dispatchable_object, VkDebugReportCallbackEXT object)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -3014,7 +3040,7 @@ static void destroy_debug_report_callback_ext(VkDevice dispatchable_object, VkDe
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #882
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #896
 static VkBool32 set_debug_report_callback_ext_status(VkDevice dispatchable_object, VkDebugReportCallbackEXT object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     if (object != VK_NULL_HANDLE) {
@@ -3033,7 +3059,7 @@ static VkBool32 set_debug_report_callback_ext_status(VkDevice dispatchable_objec
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #904
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #918
 static VkBool32 validate_debug_report_callback_ext_status(
 VkDevice dispatchable_object, VkDebugReportCallbackEXT object,
     VkDebugReportObjectTypeEXT     objType,
@@ -3063,7 +3089,7 @@ VkDevice dispatchable_object, VkDebugReportCallbackEXT object,
     }
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #937
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #951
 static VkBool32 reset_debug_report_callback_ext_status(VkDevice dispatchable_object, VkDebugReportCallbackEXT object, VkDebugReportObjectTypeEXT objType, ObjectStatusFlags status_flag)
 {
     uint64_t object_handle = (uint64_t)(object);
@@ -3080,44 +3106,9 @@ static VkBool32 reset_debug_report_callback_ext_status(VkDevice dispatchable_obj
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #957
-//{'VkPhysicalDevice': {'VkDevice', 'VkSurfaceKHR'}, 'VkCommandBuffer': {'VkPipelineLayout', 'VkDescriptorSet', 'VkRenderPass', 'VkBuffer', 'VkEvent', 'VkPipeline', 'VkFramebuffer', 'VkCommandBuffer', 'VkImage', 'VkQueryPool'}, 'VkDevice': {'VkPipelineLayout', 'VkQueue', 'VkRenderPass', 'VkSampler', 'VkCommandPool', 'VkEvent', 'VkDescriptorPool', 'VkFence', 'VkFramebuffer', 'VkCommandBuffer', 'VkSurfaceKHR', 'VkImageView', 'VkImage', 'VkPipelineCache', 'VkShaderModule', 'VkDescriptorSet', 'VkSwapchainKHR', 'VkBuffer', 'VkPipeline', 'VkBufferView', 'VkSemaphore', 'VkDescriptorSetLayout', 'VkDeviceMemory', 'VkQueryPool'}, 'VkQueue': {'VkSwapchainKHR', 'VkBuffer', 'VkCommandBuffer', 'VkFence', 'VkImage', 'VkSemaphore', 'VkDeviceMemory'}, 'VkInstance': {'VkPhysicalDevice', 'VkSurfaceKHR'}}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #967
-static VkBool32 validate_physical_device(VkPhysicalDevice dispatchable_object, VkPhysicalDevice object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkPhysicalDeviceMap.find((uint64_t)object) == VkPhysicalDeviceMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkPhysicalDevice Object 0x%" PRIx64 ,(uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_device(VkPhysicalDevice dispatchable_object, VkDevice object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkDeviceMap.find((uint64_t)object) == VkDeviceMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkDevice Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_surface_khr(VkPhysicalDevice dispatchable_object, VkSurfaceKHR object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkSurfaceKHRMap.find((uint64_t)object) == VkSurfaceKHRMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkSurfaceKHR Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #967
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #971
+//{'VkCommandBuffer': {'VkFramebuffer', 'VkRenderPass', 'VkCommandBuffer', 'VkBuffer', 'VkQueryPool', 'VkImage', 'VkPipeline', 'VkPipelineLayout', 'VkEvent', 'VkDescriptorSet'}, 'VkDevice': {'VkFence', 'VkRenderPass', 'VkCommandBuffer', 'VkPipelineCache', 'VkBuffer', 'VkQueryPool', 'VkSampler', 'VkQueue', 'VkBufferView', 'VkSurfaceKHR', 'VkImageView', 'VkDescriptorSet', 'VkFramebuffer', 'VkCommandPool', 'VkDescriptorSetLayout', 'VkSwapchainKHR', 'VkImage', 'VkPipeline', 'VkDeviceMemory', 'VkPipelineLayout', 'VkShaderModule', 'VkEvent', 'VkDescriptorPool', 'VkSemaphore'}, 'VkPhysicalDevice': {'VkDevice', 'VkSurfaceKHR'}, 'VkInstance': {'VkSurfaceKHR', 'VkPhysicalDevice'}, 'VkQueue': {'VkFence', 'VkCommandBuffer', 'VkSwapchainKHR', 'VkBuffer', 'VkImage', 'VkDeviceMemory', 'VkSemaphore'}}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #981
 static VkBool32 validate_command_buffer(VkCommandBuffer dispatchable_object, VkCommandBuffer object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
@@ -3129,73 +3120,7 @@ static VkBool32 validate_command_buffer(VkCommandBuffer dispatchable_object, VkC
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_pipeline_layout(VkCommandBuffer dispatchable_object, VkPipelineLayout object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkPipelineLayoutMap.find((uint64_t)object) == VkPipelineLayoutMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkPipelineLayout Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_descriptor_set(VkCommandBuffer dispatchable_object, VkDescriptorSet object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkDescriptorSetMap.find((uint64_t)object) == VkDescriptorSetMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkDescriptorSet Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_render_pass(VkCommandBuffer dispatchable_object, VkRenderPass object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkRenderPassMap.find((uint64_t)object) == VkRenderPassMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkRenderPass Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_buffer(VkCommandBuffer dispatchable_object, VkBuffer object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkBufferMap.find((uint64_t)object) == VkBufferMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkBuffer Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_event(VkCommandBuffer dispatchable_object, VkEvent object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkEventMap.find((uint64_t)object) == VkEventMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkEvent Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_pipeline(VkCommandBuffer dispatchable_object, VkPipeline object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkPipelineMap.find((uint64_t)object) == VkPipelineMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkPipeline Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
 static VkBool32 validate_framebuffer(VkCommandBuffer dispatchable_object, VkFramebuffer object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
@@ -3206,7 +3131,40 @@ static VkBool32 validate_framebuffer(VkCommandBuffer dispatchable_object, VkFram
     }
     return VK_FALSE;
 }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_render_pass(VkCommandBuffer dispatchable_object, VkRenderPass object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkRenderPassMap.find((uint64_t)object) == VkRenderPassMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkRenderPass Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_buffer(VkCommandBuffer dispatchable_object, VkBuffer object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkBufferMap.find((uint64_t)object) == VkBufferMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkBuffer Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_query_pool(VkCommandBuffer dispatchable_object, VkQueryPool object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkQueryPoolMap.find((uint64_t)object) == VkQueryPoolMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkQueryPool Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
 static VkBool32 validate_image(VkCommandBuffer dispatchable_object, VkImage object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
@@ -3219,19 +3177,52 @@ static VkBool32 validate_image(VkCommandBuffer dispatchable_object, VkImage obje
     }
     return VK_FALSE;
 }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_query_pool(VkCommandBuffer dispatchable_object, VkQueryPool object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_pipeline(VkCommandBuffer dispatchable_object, VkPipeline object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
         return VK_FALSE;
-    if (VkQueryPoolMap.find((uint64_t)object) == VkQueryPoolMap.end()) {
+    if (VkPipelineMap.find((uint64_t)object) == VkPipelineMap.end()) {
         return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkQueryPool Object 0x%" PRIx64, (uint64_t)(object));
+            "Invalid VkPipeline Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_pipeline_layout(VkCommandBuffer dispatchable_object, VkPipelineLayout object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkPipelineLayoutMap.find((uint64_t)object) == VkPipelineLayoutMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkPipelineLayout Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_event(VkCommandBuffer dispatchable_object, VkEvent object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkEventMap.find((uint64_t)object) == VkEventMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkEvent Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_descriptor_set(VkCommandBuffer dispatchable_object, VkDescriptorSet object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkDescriptorSetMap.find((uint64_t)object) == VkDescriptorSetMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkDescriptorSet Object 0x%" PRIx64, (uint64_t)(object));
     }
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #967
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #981
 static VkBool32 validate_device(VkDevice dispatchable_object, VkDevice object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
@@ -3243,84 +3234,7 @@ static VkBool32 validate_device(VkDevice dispatchable_object, VkDevice object, V
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_pipeline_layout(VkDevice dispatchable_object, VkPipelineLayout object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkPipelineLayoutMap.find((uint64_t)object) == VkPipelineLayoutMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkPipelineLayout Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_queue(VkDevice dispatchable_object, VkQueue object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkQueueMap.find((uint64_t)object) == VkQueueMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkQueue Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_render_pass(VkDevice dispatchable_object, VkRenderPass object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkRenderPassMap.find((uint64_t)object) == VkRenderPassMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkRenderPass Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_sampler(VkDevice dispatchable_object, VkSampler object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkSamplerMap.find((uint64_t)object) == VkSamplerMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkSampler Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_command_pool(VkDevice dispatchable_object, VkCommandPool object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkCommandPoolMap.find((uint64_t)object) == VkCommandPoolMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkCommandPool Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_event(VkDevice dispatchable_object, VkEvent object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkEventMap.find((uint64_t)object) == VkEventMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkEvent Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_descriptor_pool(VkDevice dispatchable_object, VkDescriptorPool object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkDescriptorPoolMap.find((uint64_t)object) == VkDescriptorPoolMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkDescriptorPool Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
 static VkBool32 validate_fence(VkDevice dispatchable_object, VkFence object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
@@ -3331,18 +3245,18 @@ static VkBool32 validate_fence(VkDevice dispatchable_object, VkFence object, VkD
     }
     return VK_FALSE;
 }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_framebuffer(VkDevice dispatchable_object, VkFramebuffer object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_render_pass(VkDevice dispatchable_object, VkRenderPass object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
         return VK_FALSE;
-    if (VkFramebufferMap.find((uint64_t)object) == VkFramebufferMap.end()) {
+    if (VkRenderPassMap.find((uint64_t)object) == VkRenderPassMap.end()) {
         return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkFramebuffer Object 0x%" PRIx64, (uint64_t)(object));
+            "Invalid VkRenderPass Object 0x%" PRIx64, (uint64_t)(object));
     }
     return VK_FALSE;
 }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
 static VkBool32 validate_command_buffer(VkDevice dispatchable_object, VkCommandBuffer object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
@@ -3353,7 +3267,73 @@ static VkBool32 validate_command_buffer(VkDevice dispatchable_object, VkCommandB
     }
     return VK_FALSE;
 }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_pipeline_cache(VkDevice dispatchable_object, VkPipelineCache object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkPipelineCacheMap.find((uint64_t)object) == VkPipelineCacheMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkPipelineCache Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_buffer(VkDevice dispatchable_object, VkBuffer object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkBufferMap.find((uint64_t)object) == VkBufferMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkBuffer Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_query_pool(VkDevice dispatchable_object, VkQueryPool object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkQueryPoolMap.find((uint64_t)object) == VkQueryPoolMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkQueryPool Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_sampler(VkDevice dispatchable_object, VkSampler object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkSamplerMap.find((uint64_t)object) == VkSamplerMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkSampler Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_queue(VkDevice dispatchable_object, VkQueue object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkQueueMap.find((uint64_t)object) == VkQueueMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkQueue Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_buffer_view(VkDevice dispatchable_object, VkBufferView object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkBufferViewMap.find((uint64_t)object) == VkBufferViewMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkBufferView Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
 static VkBool32 validate_surface_khr(VkDevice dispatchable_object, VkSurfaceKHR object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
@@ -3364,7 +3344,7 @@ static VkBool32 validate_surface_khr(VkDevice dispatchable_object, VkSurfaceKHR 
     }
     return VK_FALSE;
 }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
 static VkBool32 validate_image_view(VkDevice dispatchable_object, VkImageView object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
@@ -3375,7 +3355,62 @@ static VkBool32 validate_image_view(VkDevice dispatchable_object, VkImageView ob
     }
     return VK_FALSE;
 }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_descriptor_set(VkDevice dispatchable_object, VkDescriptorSet object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkDescriptorSetMap.find((uint64_t)object) == VkDescriptorSetMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkDescriptorSet Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_framebuffer(VkDevice dispatchable_object, VkFramebuffer object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkFramebufferMap.find((uint64_t)object) == VkFramebufferMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkFramebuffer Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_command_pool(VkDevice dispatchable_object, VkCommandPool object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkCommandPoolMap.find((uint64_t)object) == VkCommandPoolMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkCommandPool Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_descriptor_set_layout(VkDevice dispatchable_object, VkDescriptorSetLayout object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkDescriptorSetLayoutMap.find((uint64_t)object) == VkDescriptorSetLayoutMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkDescriptorSetLayout Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_swapchain_khr(VkDevice dispatchable_object, VkSwapchainKHR object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkSwapchainKHRMap.find((uint64_t)object) == VkSwapchainKHRMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkSwapchainKHR Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
 static VkBool32 validate_image(VkDevice dispatchable_object, VkImage object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
@@ -3388,62 +3423,7 @@ static VkBool32 validate_image(VkDevice dispatchable_object, VkImage object, VkD
     }
     return VK_FALSE;
 }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_pipeline_cache(VkDevice dispatchable_object, VkPipelineCache object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkPipelineCacheMap.find((uint64_t)object) == VkPipelineCacheMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkPipelineCache Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_shader_module(VkDevice dispatchable_object, VkShaderModule object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkShaderModuleMap.find((uint64_t)object) == VkShaderModuleMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkShaderModule Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_descriptor_set(VkDevice dispatchable_object, VkDescriptorSet object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkDescriptorSetMap.find((uint64_t)object) == VkDescriptorSetMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkDescriptorSet Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_swapchain_khr(VkDevice dispatchable_object, VkSwapchainKHR object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkSwapchainKHRMap.find((uint64_t)object) == VkSwapchainKHRMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkSwapchainKHR Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_buffer(VkDevice dispatchable_object, VkBuffer object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkBufferMap.find((uint64_t)object) == VkBufferMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkBuffer Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
 static VkBool32 validate_pipeline(VkDevice dispatchable_object, VkPipeline object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
@@ -3454,40 +3434,7 @@ static VkBool32 validate_pipeline(VkDevice dispatchable_object, VkPipeline objec
     }
     return VK_FALSE;
 }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_buffer_view(VkDevice dispatchable_object, VkBufferView object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkBufferViewMap.find((uint64_t)object) == VkBufferViewMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkBufferView Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_semaphore(VkDevice dispatchable_object, VkSemaphore object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkSemaphoreMap.find((uint64_t)object) == VkSemaphoreMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkSemaphore Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_descriptor_set_layout(VkDevice dispatchable_object, VkDescriptorSetLayout object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkDescriptorSetLayoutMap.find((uint64_t)object) == VkDescriptorSetLayoutMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkDescriptorSetLayout Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
 static VkBool32 validate_device_memory(VkDevice dispatchable_object, VkDeviceMemory object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
@@ -3498,19 +3445,133 @@ static VkBool32 validate_device_memory(VkDevice dispatchable_object, VkDeviceMem
     }
     return VK_FALSE;
 }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_query_pool(VkDevice dispatchable_object, VkQueryPool object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_pipeline_layout(VkDevice dispatchable_object, VkPipelineLayout object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
         return VK_FALSE;
-    if (VkQueryPoolMap.find((uint64_t)object) == VkQueryPoolMap.end()) {
+    if (VkPipelineLayoutMap.find((uint64_t)object) == VkPipelineLayoutMap.end()) {
         return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkQueryPool Object 0x%" PRIx64, (uint64_t)(object));
+            "Invalid VkPipelineLayout Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_shader_module(VkDevice dispatchable_object, VkShaderModule object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkShaderModuleMap.find((uint64_t)object) == VkShaderModuleMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkShaderModule Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_event(VkDevice dispatchable_object, VkEvent object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkEventMap.find((uint64_t)object) == VkEventMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkEvent Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_descriptor_pool(VkDevice dispatchable_object, VkDescriptorPool object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkDescriptorPoolMap.find((uint64_t)object) == VkDescriptorPoolMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkDescriptorPool Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_semaphore(VkDevice dispatchable_object, VkSemaphore object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkSemaphoreMap.find((uint64_t)object) == VkSemaphoreMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkSemaphore Object 0x%" PRIx64, (uint64_t)(object));
     }
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #967
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #981
+static VkBool32 validate_physical_device(VkPhysicalDevice dispatchable_object, VkPhysicalDevice object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkPhysicalDeviceMap.find((uint64_t)object) == VkPhysicalDeviceMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkPhysicalDevice Object 0x%" PRIx64 ,(uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_device(VkPhysicalDevice dispatchable_object, VkDevice object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkDeviceMap.find((uint64_t)object) == VkDeviceMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkDevice Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_surface_khr(VkPhysicalDevice dispatchable_object, VkSurfaceKHR object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkSurfaceKHRMap.find((uint64_t)object) == VkSurfaceKHRMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkSurfaceKHR Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #981
+static VkBool32 validate_instance(VkInstance dispatchable_object, VkInstance object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkInstanceMap.find((uint64_t)object) == VkInstanceMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkInstance Object 0x%" PRIx64 ,(uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_surface_khr(VkInstance dispatchable_object, VkSurfaceKHR object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkSurfaceKHRMap.find((uint64_t)object) == VkSurfaceKHRMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkSurfaceKHR Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_physical_device(VkInstance dispatchable_object, VkPhysicalDevice object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkPhysicalDeviceMap.find((uint64_t)object) == VkPhysicalDeviceMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkPhysicalDevice Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #981
 static VkBool32 validate_queue(VkQueue dispatchable_object, VkQueue object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
@@ -3522,40 +3583,7 @@ static VkBool32 validate_queue(VkQueue dispatchable_object, VkQueue object, VkDe
     return VK_FALSE;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_swapchain_khr(VkQueue dispatchable_object, VkSwapchainKHR object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkSwapchainKHRMap.find((uint64_t)object) == VkSwapchainKHRMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkSwapchainKHR Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_buffer(VkQueue dispatchable_object, VkBuffer object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkBufferMap.find((uint64_t)object) == VkBufferMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkBuffer Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_command_buffer(VkQueue dispatchable_object, VkCommandBuffer object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkCommandBufferMap.find((uint64_t)object) == VkCommandBufferMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkCommandBuffer Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
 static VkBool32 validate_fence(VkQueue dispatchable_object, VkFence object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
@@ -3566,7 +3594,40 @@ static VkBool32 validate_fence(VkQueue dispatchable_object, VkFence object, VkDe
     }
     return VK_FALSE;
 }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_command_buffer(VkQueue dispatchable_object, VkCommandBuffer object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkCommandBufferMap.find((uint64_t)object) == VkCommandBufferMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkCommandBuffer Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_swapchain_khr(VkQueue dispatchable_object, VkSwapchainKHR object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkSwapchainKHRMap.find((uint64_t)object) == VkSwapchainKHRMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkSwapchainKHR Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_buffer(VkQueue dispatchable_object, VkBuffer object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+{
+    if (null_allowed && (object == VK_NULL_HANDLE))
+        return VK_FALSE;
+    if (VkBufferMap.find((uint64_t)object) == VkBufferMap.end()) {
+        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
+            "Invalid VkBuffer Object 0x%" PRIx64, (uint64_t)(object));
+    }
+    return VK_FALSE;
+}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
 static VkBool32 validate_image(VkQueue dispatchable_object, VkImage object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
@@ -3579,18 +3640,7 @@ static VkBool32 validate_image(VkQueue dispatchable_object, VkImage object, VkDe
     }
     return VK_FALSE;
 }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_semaphore(VkQueue dispatchable_object, VkSemaphore object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkSemaphoreMap.find((uint64_t)object) == VkSemaphoreMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkSemaphore Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
 static VkBool32 validate_device_memory(VkQueue dispatchable_object, VkDeviceMemory object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
@@ -3601,45 +3651,21 @@ static VkBool32 validate_device_memory(VkQueue dispatchable_object, VkDeviceMemo
     }
     return VK_FALSE;
 }
-
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #967
-static VkBool32 validate_instance(VkInstance dispatchable_object, VkInstance object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #998
+static VkBool32 validate_semaphore(VkQueue dispatchable_object, VkSemaphore object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
 {
     if (null_allowed && (object == VK_NULL_HANDLE))
         return VK_FALSE;
-    if (VkInstanceMap.find((uint64_t)object) == VkInstanceMap.end()) {
+    if (VkSemaphoreMap.find((uint64_t)object) == VkSemaphoreMap.end()) {
         return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkInstance Object 0x%" PRIx64 ,(uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_physical_device(VkInstance dispatchable_object, VkPhysicalDevice object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkPhysicalDeviceMap.find((uint64_t)object) == VkPhysicalDeviceMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkPhysicalDevice Object 0x%" PRIx64, (uint64_t)(object));
-    }
-    return VK_FALSE;
-}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #984
-static VkBool32 validate_surface_khr(VkInstance dispatchable_object, VkSurfaceKHR object, VkDebugReportObjectTypeEXT objType, bool null_allowed)
-{
-    if (null_allowed && (object == VK_NULL_HANDLE))
-        return VK_FALSE;
-    if (VkSurfaceKHRMap.find((uint64_t)object) == VkSurfaceKHRMap.end()) {
-        return log_msg(mdd(dispatchable_object), VK_DEBUG_REPORT_ERROR_BIT_EXT, objType, (uint64_t)(object), __LINE__, OBJTRACK_INVALID_OBJECT, "OBJTRACK",
-            "Invalid VkSurfaceKHR Object 0x%" PRIx64, (uint64_t)(object));
+            "Invalid VkSemaphore Object 0x%" PRIx64, (uint64_t)(object));
     }
     return VK_FALSE;
 }
 
 
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1006
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1020
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyInstance(
 VkInstance instance,
 const VkAllocationCallbacks* pAllocator)
@@ -3649,181 +3675,249 @@ const VkAllocationCallbacks* pAllocator)
 
     destroy_instance(instance, instance);
     // Report any remaining objects in LL
-    for (auto it = VkDeviceMap.begin(); it != VkDeviceMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkDeviceMap.clear();
 
-    for (auto it = VkSemaphoreMap.begin(); it != VkSemaphoreMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+    for (auto iit = VkDeviceMap.begin(); iit != VkDeviceMap.end();) {
+        OBJTRACK_NODE* pNode = iit->second;
+        if (pNode->belongsTo == (uint64_t)instance) {
+            log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            for (auto idt = VkSemaphoreMap.begin(); idt != VkSemaphoreMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkSemaphoreMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkCommandBufferMap.begin(); idt != VkCommandBufferMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkCommandBufferMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkFenceMap.begin(); idt != VkFenceMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkFenceMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkDeviceMemoryMap.begin(); idt != VkDeviceMemoryMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkDeviceMemoryMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkBufferMap.begin(); idt != VkBufferMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkBufferMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkImageMap.begin(); idt != VkImageMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkImageMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkEventMap.begin(); idt != VkEventMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkEventMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkQueryPoolMap.begin(); idt != VkQueryPoolMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkQueryPoolMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkBufferViewMap.begin(); idt != VkBufferViewMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkBufferViewMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkImageViewMap.begin(); idt != VkImageViewMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkImageViewMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkShaderModuleMap.begin(); idt != VkShaderModuleMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkShaderModuleMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkPipelineCacheMap.begin(); idt != VkPipelineCacheMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkPipelineCacheMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkPipelineLayoutMap.begin(); idt != VkPipelineLayoutMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkPipelineLayoutMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkRenderPassMap.begin(); idt != VkRenderPassMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkRenderPassMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkPipelineMap.begin(); idt != VkPipelineMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkPipelineMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkDescriptorSetLayoutMap.begin(); idt != VkDescriptorSetLayoutMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkDescriptorSetLayoutMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkSamplerMap.begin(); idt != VkSamplerMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkSamplerMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkDescriptorPoolMap.begin(); idt != VkDescriptorPoolMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkDescriptorPoolMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkDescriptorSetMap.begin(); idt != VkDescriptorSetMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkDescriptorSetMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkFramebufferMap.begin(); idt != VkFramebufferMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkFramebufferMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            for (auto idt = VkCommandPoolMap.begin(); idt != VkCommandPoolMap.end();) {
+                OBJTRACK_NODE* pNode = idt->second;
+                if (pNode->belongsTo == iit->first) {
+                    log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                            "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                            pNode->vkObj);
+                    VkCommandPoolMap.erase(idt++);
+                } else {
+                    ++idt;
+                }
+            }
+            VkDeviceMap.erase(iit++);
+        } else {
+            ++iit;
+        }
     }
-    VkSemaphoreMap.clear();
-
-    for (auto it = VkCommandBufferMap.begin(); it != VkCommandBufferMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkCommandBufferMap.clear();
-
-    for (auto it = VkFenceMap.begin(); it != VkFenceMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkFenceMap.clear();
-
-    for (auto it = VkDeviceMemoryMap.begin(); it != VkDeviceMemoryMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkDeviceMemoryMap.clear();
-
-    for (auto it = VkBufferMap.begin(); it != VkBufferMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkBufferMap.clear();
-
-    for (auto it = VkImageMap.begin(); it != VkImageMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkImageMap.clear();
-
-    for (auto it = VkEventMap.begin(); it != VkEventMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkEventMap.clear();
-
-    for (auto it = VkQueryPoolMap.begin(); it != VkQueryPoolMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkQueryPoolMap.clear();
-
-    for (auto it = VkBufferViewMap.begin(); it != VkBufferViewMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkBufferViewMap.clear();
-
-    for (auto it = VkImageViewMap.begin(); it != VkImageViewMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkImageViewMap.clear();
-
-    for (auto it = VkShaderModuleMap.begin(); it != VkShaderModuleMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkShaderModuleMap.clear();
-
-    for (auto it = VkPipelineCacheMap.begin(); it != VkPipelineCacheMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkPipelineCacheMap.clear();
-
-    for (auto it = VkPipelineLayoutMap.begin(); it != VkPipelineLayoutMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkPipelineLayoutMap.clear();
-
-    for (auto it = VkRenderPassMap.begin(); it != VkRenderPassMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkRenderPassMap.clear();
-
-    for (auto it = VkPipelineMap.begin(); it != VkPipelineMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkPipelineMap.clear();
-
-    for (auto it = VkDescriptorSetLayoutMap.begin(); it != VkDescriptorSetLayoutMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkDescriptorSetLayoutMap.clear();
-
-    for (auto it = VkSamplerMap.begin(); it != VkSamplerMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkSamplerMap.clear();
-
-    for (auto it = VkDescriptorPoolMap.begin(); it != VkDescriptorPoolMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkDescriptorPoolMap.clear();
-
-    for (auto it = VkDescriptorSetMap.begin(); it != VkDescriptorSetMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkDescriptorSetMap.clear();
-
-    for (auto it = VkFramebufferMap.begin(); it != VkFramebufferMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkFramebufferMap.clear();
-
-    for (auto it = VkCommandPoolMap.begin(); it != VkCommandPoolMap.end(); ++it) {
-        OBJTRACK_NODE* pNode = it->second;
-        log_msg(mid(instance), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
-    }
-    VkCommandPoolMap.clear();
 
     dispatch_key key = get_dispatch_key(instance);
     VkLayerInstanceDispatchTable *pInstanceTable = get_dispatch_table(object_tracker_instance_table_map, instance);
@@ -3849,7 +3943,7 @@ const VkAllocationCallbacks* pAllocator)
 }
 
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1055
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1085
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyDevice(
 VkDevice device,
 const VkAllocationCallbacks* pAllocator)
@@ -3858,158 +3952,234 @@ const VkAllocationCallbacks* pAllocator)
     validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
 
     destroy_device(device, device);
-    // Report any remaining objects in LL
-    for (auto it = VkSemaphoreMap.begin(); it != VkSemaphoreMap.end(); ++it) {
+    // Report any remaining objects associated with this VkDevice object in LL
+    for (auto it = VkSemaphoreMap.begin(); it != VkSemaphoreMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkSemaphoreMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkSemaphoreMap.clear();
 
-    for (auto it = VkFenceMap.begin(); it != VkFenceMap.end(); ++it) {
+    for (auto it = VkFenceMap.begin(); it != VkFenceMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkFenceMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkFenceMap.clear();
 
-    for (auto it = VkDeviceMemoryMap.begin(); it != VkDeviceMemoryMap.end(); ++it) {
+    for (auto it = VkDeviceMemoryMap.begin(); it != VkDeviceMemoryMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkDeviceMemoryMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkDeviceMemoryMap.clear();
 
-    for (auto it = VkBufferMap.begin(); it != VkBufferMap.end(); ++it) {
+    for (auto it = VkBufferMap.begin(); it != VkBufferMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkBufferMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkBufferMap.clear();
 
-    for (auto it = VkImageMap.begin(); it != VkImageMap.end(); ++it) {
+    for (auto it = VkImageMap.begin(); it != VkImageMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkImageMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkImageMap.clear();
 
-    for (auto it = VkEventMap.begin(); it != VkEventMap.end(); ++it) {
+    for (auto it = VkEventMap.begin(); it != VkEventMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkEventMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkEventMap.clear();
 
-    for (auto it = VkQueryPoolMap.begin(); it != VkQueryPoolMap.end(); ++it) {
+    for (auto it = VkQueryPoolMap.begin(); it != VkQueryPoolMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkQueryPoolMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkQueryPoolMap.clear();
 
-    for (auto it = VkBufferViewMap.begin(); it != VkBufferViewMap.end(); ++it) {
+    for (auto it = VkBufferViewMap.begin(); it != VkBufferViewMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkBufferViewMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkBufferViewMap.clear();
 
-    for (auto it = VkImageViewMap.begin(); it != VkImageViewMap.end(); ++it) {
+    for (auto it = VkImageViewMap.begin(); it != VkImageViewMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkImageViewMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkImageViewMap.clear();
 
-    for (auto it = VkShaderModuleMap.begin(); it != VkShaderModuleMap.end(); ++it) {
+    for (auto it = VkShaderModuleMap.begin(); it != VkShaderModuleMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkShaderModuleMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkShaderModuleMap.clear();
 
-    for (auto it = VkPipelineCacheMap.begin(); it != VkPipelineCacheMap.end(); ++it) {
+    for (auto it = VkPipelineCacheMap.begin(); it != VkPipelineCacheMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkPipelineCacheMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkPipelineCacheMap.clear();
 
-    for (auto it = VkPipelineLayoutMap.begin(); it != VkPipelineLayoutMap.end(); ++it) {
+    for (auto it = VkPipelineLayoutMap.begin(); it != VkPipelineLayoutMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkPipelineLayoutMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkPipelineLayoutMap.clear();
 
-    for (auto it = VkRenderPassMap.begin(); it != VkRenderPassMap.end(); ++it) {
+    for (auto it = VkRenderPassMap.begin(); it != VkRenderPassMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkRenderPassMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkRenderPassMap.clear();
 
-    for (auto it = VkPipelineMap.begin(); it != VkPipelineMap.end(); ++it) {
+    for (auto it = VkPipelineMap.begin(); it != VkPipelineMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkPipelineMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkPipelineMap.clear();
 
-    for (auto it = VkDescriptorSetLayoutMap.begin(); it != VkDescriptorSetLayoutMap.end(); ++it) {
+    for (auto it = VkDescriptorSetLayoutMap.begin(); it != VkDescriptorSetLayoutMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkDescriptorSetLayoutMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkDescriptorSetLayoutMap.clear();
 
-    for (auto it = VkSamplerMap.begin(); it != VkSamplerMap.end(); ++it) {
+    for (auto it = VkSamplerMap.begin(); it != VkSamplerMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkSamplerMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkSamplerMap.clear();
 
-    for (auto it = VkDescriptorPoolMap.begin(); it != VkDescriptorPoolMap.end(); ++it) {
+    for (auto it = VkDescriptorPoolMap.begin(); it != VkDescriptorPoolMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkDescriptorPoolMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkDescriptorPoolMap.clear();
 
-    for (auto it = VkFramebufferMap.begin(); it != VkFramebufferMap.end(); ++it) {
+    for (auto it = VkFramebufferMap.begin(); it != VkFramebufferMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkFramebufferMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkFramebufferMap.clear();
 
-    for (auto it = VkCommandPoolMap.begin(); it != VkCommandPoolMap.end(); ++it) {
+    for (auto it = VkCommandPoolMap.begin(); it != VkCommandPoolMap.end();) {
         OBJTRACK_NODE* pNode = it->second;
-        log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
-                "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
-                pNode->vkObj);
+        if (pNode->belongsTo == (uint64_t)device) {
+            log_msg(mdd(device), VK_DEBUG_REPORT_ERROR_BIT_EXT, pNode->objType, pNode->vkObj, __LINE__, OBJTRACK_OBJECT_LEAK, "OBJTRACK",
+                    "OBJ ERROR : %s object 0x%" PRIxLEAST64 " has not been destroyed.", string_VkDebugReportObjectTypeEXT(pNode->objType),
+                    pNode->vkObj);
+            VkCommandPoolMap.erase(it++);
+        } else {
+            ++it;
+        }
     }
-    VkCommandPoolMap.clear();
 
     // Clean up Queue's MemRef Linked Lists
     destroyQueueMemRefLists();
@@ -4024,7 +4194,7 @@ const VkAllocationCallbacks* pAllocator)
 }
 
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance)
 {
     return explicit_CreateInstance(pCreateInfo, pAllocator, pInstance);
@@ -4032,13 +4202,13 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstance
 
 
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices)
 {
     return explicit_EnumeratePhysicalDevices(instance, pPhysicalDeviceCount, pPhysicalDevices);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures* pFeatures)
@@ -4046,7 +4216,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFeatures(VkPhysica
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'physicalDevice': 'VkPhysicalDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_physical_device(physicalDevice, physicalDevice, VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4054,7 +4224,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFeatures(VkPhysica
     get_dispatch_table(object_tracker_instance_table_map, physicalDevice)->GetPhysicalDeviceFeatures(physicalDevice, pFeatures);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties* pFormatProperties)
@@ -4062,7 +4232,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFormatProperties(V
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'physicalDevice': 'VkPhysicalDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_physical_device(physicalDevice, physicalDevice, VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4070,7 +4240,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFormatProperties(V
     get_dispatch_table(object_tracker_instance_table_map, physicalDevice)->GetPhysicalDeviceFormatProperties(physicalDevice, format, pFormatProperties);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkImageFormatProperties* pImageFormatProperties)
@@ -4078,7 +4248,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceImageFormatPro
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'physicalDevice': 'VkPhysicalDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_physical_device(physicalDevice, physicalDevice, VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4087,7 +4257,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceImageFormatPro
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties* pProperties)
@@ -4095,7 +4265,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceProperties(VkPhysi
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'physicalDevice': 'VkPhysicalDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_physical_device(physicalDevice, physicalDevice, VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4103,13 +4273,13 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceProperties(VkPhysi
     get_dispatch_table(object_tracker_instance_table_map, physicalDevice)->GetPhysicalDeviceProperties(physicalDevice, pProperties);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties* pQueueFamilyProperties)
 {
     return explicit_GetPhysicalDeviceQueueFamilyProperties(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceMemoryProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties* pMemoryProperties)
@@ -4117,7 +4287,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceMemoryProperties(V
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'physicalDevice': 'VkPhysicalDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_physical_device(physicalDevice, physicalDevice, VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4125,7 +4295,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceMemoryProperties(V
     get_dispatch_table(object_tracker_instance_table_map, physicalDevice)->GetPhysicalDeviceMemoryProperties(physicalDevice, pMemoryProperties);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDevice* pDevice)
 {
     return explicit_CreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice);
@@ -4133,7 +4303,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice p
 
 
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #354
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #363
 
 static const VkExtensionProperties instance_extensions[] = {
     {
@@ -4146,30 +4316,30 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceExtensionPrope
     return util_GetExtensionProperties(1, instance_extensions, pCount, pProperties);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #377
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #386
 static const VkLayerProperties globalLayerProps[] = {
     {
         "VK_LAYER_LUNARG_object_tracker",
         VK_API_VERSION, // specVersion
         1, // implementationVersion
-        "layer: object_tracker",
+        "LunarG Validation Layer"
     }
 };
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #390
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #402
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceLayerProperties(uint32_t *pCount,  VkLayerProperties* pProperties)
 {
     return util_GetLayerProperties(ARRAY_SIZE(globalLayerProps), globalLayerProps, pCount, pProperties);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #400
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #412
 static const VkLayerProperties deviceLayerProps[] = {
     {
         "VK_LAYER_LUNARG_object_tracker",
-        VK_API_VERSION,
-        1,
-        "layer: object_tracker",
+        VK_API_VERSION, // specVersion
+        1, // implementationVersion
+        "LunarG Validation Layer"
     }
 };
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice, uint32_t *pCount, VkLayerProperties* pProperties)
@@ -4178,47 +4348,47 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(
 }
 
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue)
 {
     return explicit_GetDeviceQueue(device, queueFamilyIndex, queueIndex, pQueue);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'fence': 'VkFence', 'pSubmits[submitCount]': {'pCommandBuffers[commandBufferCount]': 'VkCommandBuffer', 'pWaitSemaphores[waitSemaphoreCount]': 'VkSemaphore', 'pSignalSemaphores[signalSemaphoreCount]': 'VkSemaphore'}, 'queue': 'VkQueue'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'pSubmits[submitCount]': {'pWaitSemaphores[waitSemaphoreCount]': 'VkSemaphore', 'pCommandBuffers[commandBufferCount]': 'VkCommandBuffer', 'pSignalSemaphores[signalSemaphoreCount]': 'VkSemaphore'}, 'fence': 'VkFence', 'queue': 'VkQueue'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_fence(queue, fence, VK_DEBUG_REPORT_OBJECT_TYPE_FENCE_EXT, true);
     if (pSubmits) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1138
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1172
         for (uint32_t idx0=0; idx0<submitCount; ++idx0) {
             if (pSubmits[idx0].pCommandBuffers) {
                 for (uint32_t idx1=0; idx1<pSubmits[idx0].commandBufferCount; ++idx1) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                     skipCall |= validate_command_buffer(queue, pSubmits[idx0].pCommandBuffers[idx1], VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
                 }
             }
             if (pSubmits[idx0].pSignalSemaphores) {
                 for (uint32_t idx2=0; idx2<pSubmits[idx0].signalSemaphoreCount; ++idx2) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                     skipCall |= validate_semaphore(queue, pSubmits[idx0].pSignalSemaphores[idx2], VK_DEBUG_REPORT_OBJECT_TYPE_SEMAPHORE_EXT, false);
                 }
             }
             if (pSubmits[idx0].pWaitSemaphores) {
                 for (uint32_t idx3=0; idx3<pSubmits[idx0].waitSemaphoreCount; ++idx3) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                     skipCall |= validate_semaphore(queue, pSubmits[idx0].pWaitSemaphores[idx3], VK_DEBUG_REPORT_OBJECT_TYPE_SEMAPHORE_EXT, false);
                 }
             }
         }
     }
     if (queue) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
         skipCall |= validate_queue(queue, queue, VK_DEBUG_REPORT_OBJECT_TYPE_QUEUE_EXT, false);
     }
     loader_platform_thread_unlock_mutex(&objLock);
@@ -4228,7 +4398,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueueSubmit(VkQueue queue, uint
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueueWaitIdle(VkQueue queue)
@@ -4236,7 +4406,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueueWaitIdle(VkQueue queue)
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'queue': 'VkQueue'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_queue(queue, queue, VK_DEBUG_REPORT_OBJECT_TYPE_QUEUE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4245,7 +4415,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueueWaitIdle(VkQueue queue)
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkDeviceWaitIdle(VkDevice device)
@@ -4253,7 +4423,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkDeviceWaitIdle(VkDevice device)
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4262,7 +4432,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkDeviceWaitIdle(VkDevice device)
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAllocateMemory(VkDevice device, const VkMemoryAllocateInfo* pAllocateInfo, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory)
@@ -4270,7 +4440,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAllocateMemory(VkDevice device,
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4284,39 +4454,39 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAllocateMemory(VkDevice device,
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkFreeMemory(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks* pAllocator)
 {
     return explicit_FreeMemory(device, memory, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkMapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ppData)
 {
     return explicit_MapMemory(device, memory, offset, size, flags, ppData);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkUnmapMemory(VkDevice device, VkDeviceMemory memory)
 {
     return explicit_UnmapMemory(device, memory);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkFlushMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'pMemoryRanges[memoryRangeCount]': {'memory': 'VkDeviceMemory'}, 'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'device': 'VkDevice', 'pMemoryRanges[memoryRangeCount]': {'memory': 'VkDeviceMemory'}}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     if (pMemoryRanges) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1138
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1172
         for (uint32_t idx0=0; idx0<memoryRangeCount; ++idx0) {
             if (pMemoryRanges[idx0].memory) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                 skipCall |= validate_device_memory(device, pMemoryRanges[idx0].memory, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT, false);
             }
         }
@@ -4328,21 +4498,21 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkFlushMappedMemoryRanges(VkDevic
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkInvalidateMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'pMemoryRanges[memoryRangeCount]': {'memory': 'VkDeviceMemory'}, 'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'device': 'VkDevice', 'pMemoryRanges[memoryRangeCount]': {'memory': 'VkDeviceMemory'}}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     if (pMemoryRanges) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1138
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1172
         for (uint32_t idx0=0; idx0<memoryRangeCount; ++idx0) {
             if (pMemoryRanges[idx0].memory) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                 skipCall |= validate_device_memory(device, pMemoryRanges[idx0].memory, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT, false);
             }
         }
@@ -4354,7 +4524,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkInvalidateMappedMemoryRanges(Vk
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetDeviceMemoryCommitment(VkDevice device, VkDeviceMemory memory, VkDeviceSize* pCommittedMemoryInBytes)
@@ -4362,9 +4532,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetDeviceMemoryCommitment(VkDevice 
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'memory': 'VkDeviceMemory'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device_memory(device, memory, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4372,19 +4542,19 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetDeviceMemoryCommitment(VkDevice 
     get_dispatch_table(object_tracker_device_table_map, device)->GetDeviceMemoryCommitment(device, memory, pCommittedMemoryInBytes);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'device': 'VkDevice', 'buffer': 'VkBuffer', 'memory': 'VkDeviceMemory'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'device': 'VkDevice', 'memory': 'VkDeviceMemory', 'buffer': 'VkBuffer'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_buffer(device, buffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device_memory(device, memory, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4393,19 +4563,19 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice devic
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'device': 'VkDevice', 'image': 'VkImage', 'memory': 'VkDeviceMemory'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'device': 'VkDevice', 'memory': 'VkDeviceMemory', 'image': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_image(device, image, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device_memory(device, memory, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4414,7 +4584,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory(VkDevice device
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetBufferMemoryRequirements(VkDevice device, VkBuffer buffer, VkMemoryRequirements* pMemoryRequirements)
@@ -4422,9 +4592,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetBufferMemoryRequirements(VkDevic
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'buffer': 'VkBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_buffer(device, buffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4432,7 +4602,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetBufferMemoryRequirements(VkDevic
     get_dispatch_table(object_tracker_device_table_map, device)->GetBufferMemoryRequirements(device, buffer, pMemoryRequirements);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetImageMemoryRequirements(VkDevice device, VkImage image, VkMemoryRequirements* pMemoryRequirements)
@@ -4440,9 +4610,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetImageMemoryRequirements(VkDevice
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'image': 'VkImage'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_image(device, image, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4450,7 +4620,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetImageMemoryRequirements(VkDevice
     get_dispatch_table(object_tracker_device_table_map, device)->GetImageMemoryRequirements(device, image, pMemoryRequirements);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetImageSparseMemoryRequirements(VkDevice device, VkImage image, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements* pSparseMemoryRequirements)
@@ -4458,9 +4628,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetImageSparseMemoryRequirements(Vk
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'image': 'VkImage'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_image(device, image, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4468,7 +4638,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetImageSparseMemoryRequirements(Vk
     get_dispatch_table(object_tracker_device_table_map, device)->GetImageSparseMemoryRequirements(device, image, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage, VkImageTiling tiling, uint32_t* pPropertyCount, VkSparseImageFormatProperties* pProperties)
@@ -4476,7 +4646,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceSparseImageFormatP
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'physicalDevice': 'VkPhysicalDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_physical_device(physicalDevice, physicalDevice, VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4484,13 +4654,13 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceSparseImageFormatP
     get_dispatch_table(object_tracker_instance_table_map, physicalDevice)->GetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling, pPropertyCount, pProperties);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence)
 {
     return explicit_QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateFence(VkDevice device, const VkFenceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence)
@@ -4498,7 +4668,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateFence(VkDevice device, co
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4512,10 +4682,10 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateFence(VkDevice device, co
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyFence(VkDevice device, VkFence fence, const VkAllocationCallbacks* pAllocator)
@@ -4523,9 +4693,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyFence(VkDevice device, VkFen
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'fence': 'VkFence'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_fence(device, fence, VK_DEBUG_REPORT_OBJECT_TYPE_FENCE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4536,19 +4706,19 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyFence(VkDevice device, VkFen
     get_dispatch_table(object_tracker_device_table_map, device)->DestroyFence(device, fence, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'device': 'VkDevice', 'pFences[fenceCount]': 'VkFence'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'pFences[fenceCount]': 'VkFence', 'device': 'VkDevice'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     if (pFences) {
         for (uint32_t idx0=0; idx0<fenceCount; ++idx0) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
             skipCall |= validate_fence(device, pFences[idx0], VK_DEBUG_REPORT_OBJECT_TYPE_FENCE_EXT, false);
         }
     }
@@ -4559,7 +4729,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetFences(VkDevice device, ui
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetFenceStatus(VkDevice device, VkFence fence)
@@ -4567,9 +4737,9 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetFenceStatus(VkDevice device,
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'fence': 'VkFence'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_fence(device, fence, VK_DEBUG_REPORT_OBJECT_TYPE_FENCE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4578,19 +4748,19 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetFenceStatus(VkDevice device,
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences, VkBool32 waitAll, uint64_t timeout)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'device': 'VkDevice', 'pFences[fenceCount]': 'VkFence'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'pFences[fenceCount]': 'VkFence', 'device': 'VkDevice'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     if (pFences) {
         for (uint32_t idx0=0; idx0<fenceCount; ++idx0) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
             skipCall |= validate_fence(device, pFences[idx0], VK_DEBUG_REPORT_OBJECT_TYPE_FENCE_EXT, false);
         }
     }
@@ -4601,7 +4771,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkWaitForFences(VkDevice device, 
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSemaphore(VkDevice device, const VkSemaphoreCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore)
@@ -4609,7 +4779,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSemaphore(VkDevice device
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4623,20 +4793,20 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSemaphore(VkDevice device
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'semaphore': 'VkSemaphore', 'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'device': 'VkDevice', 'semaphore': 'VkSemaphore'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_semaphore(device, semaphore, VK_DEBUG_REPORT_OBJECT_TYPE_SEMAPHORE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4647,7 +4817,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySemaphore(VkDevice device, V
     get_dispatch_table(object_tracker_device_table_map, device)->DestroySemaphore(device, semaphore, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateEvent(VkDevice device, const VkEventCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkEvent* pEvent)
@@ -4655,7 +4825,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateEvent(VkDevice device, co
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4669,10 +4839,10 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateEvent(VkDevice device, co
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyEvent(VkDevice device, VkEvent event, const VkAllocationCallbacks* pAllocator)
@@ -4680,9 +4850,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyEvent(VkDevice device, VkEve
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'event': 'VkEvent'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_event(device, event, VK_DEBUG_REPORT_OBJECT_TYPE_EVENT_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4693,7 +4863,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyEvent(VkDevice device, VkEve
     get_dispatch_table(object_tracker_device_table_map, device)->DestroyEvent(device, event, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetEventStatus(VkDevice device, VkEvent event)
@@ -4701,9 +4871,9 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetEventStatus(VkDevice device,
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'event': 'VkEvent'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_event(device, event, VK_DEBUG_REPORT_OBJECT_TYPE_EVENT_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4712,7 +4882,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetEventStatus(VkDevice device,
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkSetEvent(VkDevice device, VkEvent event)
@@ -4720,9 +4890,9 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkSetEvent(VkDevice device, VkEve
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'event': 'VkEvent'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_event(device, event, VK_DEBUG_REPORT_OBJECT_TYPE_EVENT_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4731,7 +4901,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkSetEvent(VkDevice device, VkEve
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetEvent(VkDevice device, VkEvent event)
@@ -4739,9 +4909,9 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetEvent(VkDevice device, VkE
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'event': 'VkEvent'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_event(device, event, VK_DEBUG_REPORT_OBJECT_TYPE_EVENT_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4750,7 +4920,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetEvent(VkDevice device, VkE
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateQueryPool(VkDevice device, const VkQueryPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool)
@@ -4758,7 +4928,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateQueryPool(VkDevice device
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4772,20 +4942,20 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateQueryPool(VkDevice device
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyQueryPool(VkDevice device, VkQueryPool queryPool, const VkAllocationCallbacks* pAllocator)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'queryPool': 'VkQueryPool', 'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'device': 'VkDevice', 'queryPool': 'VkQueryPool'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_query_pool(device, queryPool, VK_DEBUG_REPORT_OBJECT_TYPE_QUERY_POOL_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4796,17 +4966,17 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyQueryPool(VkDevice device, V
     get_dispatch_table(object_tracker_device_table_map, device)->DestroyQueryPool(device, queryPool, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride, VkQueryResultFlags flags)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'queryPool': 'VkQueryPool', 'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'device': 'VkDevice', 'queryPool': 'VkQueryPool'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_query_pool(device, queryPool, VK_DEBUG_REPORT_OBJECT_TYPE_QUERY_POOL_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4815,7 +4985,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetQueryPoolResults(VkDevice de
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateBuffer(VkDevice device, const VkBufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer)
@@ -4823,7 +4993,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateBuffer(VkDevice device, c
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4837,10 +5007,10 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateBuffer(VkDevice device, c
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyBuffer(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks* pAllocator)
@@ -4848,9 +5018,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyBuffer(VkDevice device, VkBu
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'buffer': 'VkBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_buffer(device, buffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4861,7 +5031,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyBuffer(VkDevice device, VkBu
     get_dispatch_table(object_tracker_device_table_map, device)->DestroyBuffer(device, buffer, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateBufferView(VkDevice device, const VkBufferViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBufferView* pView)
@@ -4869,10 +5039,10 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateBufferView(VkDevice devic
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'pCreateInfo': {'buffer': 'VkBuffer'}}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     if (pCreateInfo) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
         skipCall |= validate_buffer(device, pCreateInfo->buffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
     }
     loader_platform_thread_unlock_mutex(&objLock);
@@ -4887,10 +5057,10 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateBufferView(VkDevice devic
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyBufferView(VkDevice device, VkBufferView bufferView, const VkAllocationCallbacks* pAllocator)
@@ -4898,9 +5068,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyBufferView(VkDevice device, 
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'bufferView': 'VkBufferView'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_buffer_view(device, bufferView, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_VIEW_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4911,7 +5081,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyBufferView(VkDevice device, 
     get_dispatch_table(object_tracker_device_table_map, device)->DestroyBufferView(device, bufferView, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateImage(VkDevice device, const VkImageCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImage* pImage)
@@ -4919,7 +5089,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateImage(VkDevice device, co
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4933,10 +5103,10 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateImage(VkDevice device, co
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyImage(VkDevice device, VkImage image, const VkAllocationCallbacks* pAllocator)
@@ -4944,9 +5114,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyImage(VkDevice device, VkIma
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'image': 'VkImage'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_image(device, image, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4957,7 +5127,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyImage(VkDevice device, VkIma
     get_dispatch_table(object_tracker_device_table_map, device)->DestroyImage(device, image, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetImageSubresourceLayout(VkDevice device, VkImage image, const VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout)
@@ -4965,9 +5135,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetImageSubresourceLayout(VkDevice 
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'image': 'VkImage'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_image(device, image, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -4975,7 +5145,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetImageSubresourceLayout(VkDevice 
     get_dispatch_table(object_tracker_device_table_map, device)->GetImageSubresourceLayout(device, image, pSubresource, pLayout);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateImageView(VkDevice device, const VkImageViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImageView* pView)
@@ -4983,10 +5153,10 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateImageView(VkDevice device
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'pCreateInfo': {'image': 'VkImage'}}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     if (pCreateInfo) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
         skipCall |= validate_image(device, pCreateInfo->image, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
     }
     loader_platform_thread_unlock_mutex(&objLock);
@@ -5001,10 +5171,10 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateImageView(VkDevice device
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyImageView(VkDevice device, VkImageView imageView, const VkAllocationCallbacks* pAllocator)
@@ -5012,9 +5182,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyImageView(VkDevice device, V
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'imageView': 'VkImageView'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_image_view(device, imageView, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_VIEW_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5025,7 +5195,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyImageView(VkDevice device, V
     get_dispatch_table(object_tracker_device_table_map, device)->DestroyImageView(device, imageView, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule)
@@ -5033,7 +5203,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateShaderModule(VkDevice dev
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5047,20 +5217,20 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateShaderModule(VkDevice dev
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyShaderModule(VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'shaderModule': 'VkShaderModule', 'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'device': 'VkDevice', 'shaderModule': 'VkShaderModule'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_shader_module(device, shaderModule, VK_DEBUG_REPORT_OBJECT_TYPE_SHADER_MODULE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5071,7 +5241,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyShaderModule(VkDevice device
     get_dispatch_table(object_tracker_device_table_map, device)->DestroyShaderModule(device, shaderModule, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineCache(VkDevice device, const VkPipelineCacheCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineCache* pPipelineCache)
@@ -5079,7 +5249,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineCache(VkDevice de
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5093,10 +5263,10 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineCache(VkDevice de
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyPipelineCache(VkDevice device, VkPipelineCache pipelineCache, const VkAllocationCallbacks* pAllocator)
@@ -5104,9 +5274,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyPipelineCache(VkDevice devic
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'pipelineCache': 'VkPipelineCache'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_pipeline_cache(device, pipelineCache, VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_CACHE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5117,7 +5287,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyPipelineCache(VkDevice devic
     get_dispatch_table(object_tracker_device_table_map, device)->DestroyPipelineCache(device, pipelineCache, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineCacheData(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData)
@@ -5125,9 +5295,9 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineCacheData(VkDevice d
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'pipelineCache': 'VkPipelineCache'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_pipeline_cache(device, pipelineCache, VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_CACHE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5136,21 +5306,21 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineCacheData(VkDevice d
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkMergePipelineCaches(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'pSrcCaches[srcCacheCount]': 'VkPipelineCache', 'device': 'VkDevice', 'dstCache': 'VkPipelineCache'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'device': 'VkDevice', 'dstCache': 'VkPipelineCache', 'pSrcCaches[srcCacheCount]': 'VkPipelineCache'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_pipeline_cache(device, dstCache, VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_CACHE_EXT, false);
     if (pSrcCaches) {
         for (uint32_t idx0=0; idx0<srcCacheCount; ++idx0) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
             skipCall |= validate_pipeline_cache(device, pSrcCaches[idx0], VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_CACHE_EXT, false);
         }
     }
@@ -5161,32 +5331,32 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkMergePipelineCaches(VkDevice de
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkGraphicsPipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines)
 {
     return explicit_CreateGraphicsPipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateComputePipelines(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkComputePipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines)
 {
     return explicit_CreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'device': 'VkDevice', 'pipeline': 'VkPipeline'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'pipeline': 'VkPipeline', 'device': 'VkDevice'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_pipeline(device, pipeline, VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5197,7 +5367,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyPipeline(VkDevice device, Vk
     get_dispatch_table(object_tracker_device_table_map, device)->DestroyPipeline(device, pipeline, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineLayout(VkDevice device, const VkPipelineLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineLayout* pPipelineLayout)
@@ -5205,12 +5375,12 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineLayout(VkDevice d
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'pCreateInfo': {'pSetLayouts[setLayoutCount]': 'VkDescriptorSetLayout'}}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     if (pCreateInfo) {
         if (pCreateInfo->pSetLayouts) {
             for (uint32_t idx0=0; idx0<pCreateInfo->setLayoutCount; ++idx0) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                 skipCall |= validate_descriptor_set_layout(device, pCreateInfo->pSetLayouts[idx0], VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT_EXT, false);
             }
         }
@@ -5227,10 +5397,10 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineLayout(VkDevice d
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyPipelineLayout(VkDevice device, VkPipelineLayout pipelineLayout, const VkAllocationCallbacks* pAllocator)
@@ -5238,9 +5408,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyPipelineLayout(VkDevice devi
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'pipelineLayout': 'VkPipelineLayout'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_pipeline_layout(device, pipelineLayout, VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_LAYOUT_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5251,7 +5421,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyPipelineLayout(VkDevice devi
     get_dispatch_table(object_tracker_device_table_map, device)->DestroyPipelineLayout(device, pipelineLayout, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSampler(VkDevice device, const VkSamplerCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSampler* pSampler)
@@ -5259,7 +5429,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSampler(VkDevice device, 
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5273,10 +5443,10 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSampler(VkDevice device, 
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySampler(VkDevice device, VkSampler sampler, const VkAllocationCallbacks* pAllocator)
@@ -5284,9 +5454,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySampler(VkDevice device, VkS
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'sampler': 'VkSampler'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_sampler(device, sampler, VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5297,7 +5467,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySampler(VkDevice device, VkS
     get_dispatch_table(object_tracker_device_table_map, device)->DestroySampler(device, sampler, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorSetLayout(VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorSetLayout* pSetLayout)
@@ -5305,15 +5475,15 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorSetLayout(VkDev
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'pCreateInfo': {'pBindings[bindingCount]': {'pImmutableSamplers[descriptorCount]': 'VkSampler'}}}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     if (pCreateInfo) {
         if (pCreateInfo->pBindings) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1138
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1172
             for (uint32_t idx0=0; idx0<pCreateInfo->bindingCount; ++idx0) {
                 if (pCreateInfo->pBindings[idx0].pImmutableSamplers) {
                     for (uint32_t idx1=0; idx1<pCreateInfo->pBindings[idx0].descriptorCount; ++idx1) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                         skipCall |= validate_sampler(device, pCreateInfo->pBindings[idx0].pImmutableSamplers[idx1], VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_EXT, false);
                     }
                 }
@@ -5332,20 +5502,20 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorSetLayout(VkDev
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout descriptorSetLayout, const VkAllocationCallbacks* pAllocator)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'descriptorSetLayout': 'VkDescriptorSetLayout', 'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'device': 'VkDevice', 'descriptorSetLayout': 'VkDescriptorSetLayout'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_descriptor_set_layout(device, descriptorSetLayout, VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5356,7 +5526,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyDescriptorSetLayout(VkDevice
     get_dispatch_table(object_tracker_device_table_map, device)->DestroyDescriptorSetLayout(device, descriptorSetLayout, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorPool(VkDevice device, const VkDescriptorPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorPool* pDescriptorPool)
@@ -5364,7 +5534,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorPool(VkDevice d
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5378,13 +5548,13 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorPool(VkDevice d
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool, const VkAllocationCallbacks* pAllocator)
 {
     return explicit_DestroyDescriptorPool(device, descriptorPool, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags)
@@ -5392,9 +5562,9 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetDescriptorPool(VkDevice de
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'descriptorPool': 'VkDescriptorPool'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_descriptor_pool(device, descriptorPool, VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_POOL_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5403,56 +5573,56 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetDescriptorPool(VkDevice de
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAllocateDescriptorSets(VkDevice device, const VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets)
 {
     return explicit_AllocateDescriptorSets(device, pAllocateInfo, pDescriptorSets);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkFreeDescriptorSets(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets)
 {
     return explicit_FreeDescriptorSets(device, descriptorPool, descriptorSetCount, pDescriptorSets);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkUpdateDescriptorSets(VkDevice device, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites, uint32_t descriptorCopyCount, const VkCopyDescriptorSet* pDescriptorCopies)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'device': 'VkDevice', 'pDescriptorWrites[descriptorWriteCount]': {'pBufferInfo[descriptorCount]': {'buffer': 'VkBuffer'}, 'pImageInfo[descriptorCount]': {'imageView': 'VkImageView', 'sampler': 'VkSampler'}, 'pTexelBufferView[descriptorCount]': 'VkBufferView', 'dstSet': 'VkDescriptorSet'}, 'pDescriptorCopies[descriptorCopyCount]': {'srcSet': 'VkDescriptorSet', 'dstSet': 'VkDescriptorSet'}}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'pDescriptorCopies[descriptorCopyCount]': {'dstSet': 'VkDescriptorSet', 'srcSet': 'VkDescriptorSet'}, 'device': 'VkDevice', 'pDescriptorWrites[descriptorWriteCount]': {'dstSet': 'VkDescriptorSet', 'pBufferInfo[descriptorCount]': {'buffer': 'VkBuffer'}, 'pTexelBufferView[descriptorCount]': 'VkBufferView', 'pImageInfo[descriptorCount]': {'sampler': 'VkSampler', 'imageView': 'VkImageView'}}}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     if (pDescriptorCopies) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1138
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1172
         for (uint32_t idx0=0; idx0<descriptorCopyCount; ++idx0) {
             if (pDescriptorCopies[idx0].dstSet) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                 skipCall |= validate_descriptor_set(device, pDescriptorCopies[idx0].dstSet, VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_EXT, false);
             }
             if (pDescriptorCopies[idx0].srcSet) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                 skipCall |= validate_descriptor_set(device, pDescriptorCopies[idx0].srcSet, VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_EXT, false);
             }
         }
     }
     if (pDescriptorWrites) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1138
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1172
         for (uint32_t idx1=0; idx1<descriptorWriteCount; ++idx1) {
             if (pDescriptorWrites[idx1].dstSet) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                 skipCall |= validate_descriptor_set(device, pDescriptorWrites[idx1].dstSet, VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_EXT, false);
             }
             if ((pDescriptorWrites[idx1].descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)         ||
                 (pDescriptorWrites[idx1].descriptorType == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER)         ||
                 (pDescriptorWrites[idx1].descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC) ||
                 (pDescriptorWrites[idx1].descriptorType == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC)   ) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1138
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1172
                 for (uint32_t idx2=0; idx2<pDescriptorWrites[idx1].descriptorCount; ++idx2) {
                     if (pDescriptorWrites[idx1].pBufferInfo[idx2].buffer) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                         skipCall |= validate_buffer(device, pDescriptorWrites[idx1].pBufferInfo[idx2].buffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
                     }
                 }
@@ -5462,14 +5632,14 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkUpdateDescriptorSets(VkDevice devic
                 (pDescriptorWrites[idx1].descriptorType == VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT)       ||
                 (pDescriptorWrites[idx1].descriptorType == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)          ||
                 (pDescriptorWrites[idx1].descriptorType == VK_DESCRIPTOR_TYPE_STORAGE_IMAGE)            ) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1138
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1172
                 for (uint32_t idx3=0; idx3<pDescriptorWrites[idx1].descriptorCount; ++idx3) {
                     if (pDescriptorWrites[idx1].pImageInfo[idx3].imageView) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                         skipCall |= validate_image_view(device, pDescriptorWrites[idx1].pImageInfo[idx3].imageView, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_VIEW_EXT, false);
                     }
                     if (pDescriptorWrites[idx1].pImageInfo[idx3].sampler) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                         skipCall |= validate_sampler(device, pDescriptorWrites[idx1].pImageInfo[idx3].sampler, VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_EXT, false);
                     }
                 }
@@ -5477,7 +5647,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkUpdateDescriptorSets(VkDevice devic
             if ((pDescriptorWrites[idx1].descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER) ||
                 (pDescriptorWrites[idx1].descriptorType == VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER)   ) {
                 for (uint32_t idx4=0; idx4<pDescriptorWrites[idx1].descriptorCount; ++idx4) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                     skipCall |= validate_buffer_view(device, pDescriptorWrites[idx1].pTexelBufferView[idx4], VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_VIEW_EXT, true);
                 }
             }
@@ -5489,7 +5659,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkUpdateDescriptorSets(VkDevice devic
     get_dispatch_table(object_tracker_device_table_map, device)->UpdateDescriptorSets(device, descriptorWriteCount, pDescriptorWrites, descriptorCopyCount, pDescriptorCopies);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateFramebuffer(VkDevice device, const VkFramebufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFramebuffer* pFramebuffer)
@@ -5497,17 +5667,17 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateFramebuffer(VkDevice devi
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice', 'pCreateInfo': {'renderPass': 'VkRenderPass', 'pAttachments[attachmentCount]': 'VkImageView'}}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     if (pCreateInfo) {
         if (pCreateInfo->pAttachments) {
             for (uint32_t idx0=0; idx0<pCreateInfo->attachmentCount; ++idx0) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                 skipCall |= validate_image_view(device, pCreateInfo->pAttachments[idx0], VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_VIEW_EXT, false);
             }
         }
         if (pCreateInfo->renderPass) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
             skipCall |= validate_render_pass(device, pCreateInfo->renderPass, VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT, false);
         }
     }
@@ -5523,20 +5693,20 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateFramebuffer(VkDevice devi
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyFramebuffer(VkDevice device, VkFramebuffer framebuffer, const VkAllocationCallbacks* pAllocator)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'framebuffer': 'VkFramebuffer', 'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'device': 'VkDevice', 'framebuffer': 'VkFramebuffer'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_framebuffer(device, framebuffer, VK_DEBUG_REPORT_OBJECT_TYPE_FRAMEBUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5547,7 +5717,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyFramebuffer(VkDevice device,
     get_dispatch_table(object_tracker_device_table_map, device)->DestroyFramebuffer(device, framebuffer, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateRenderPass(VkDevice device, const VkRenderPassCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass)
@@ -5555,7 +5725,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateRenderPass(VkDevice devic
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5569,20 +5739,20 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateRenderPass(VkDevice devic
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyRenderPass(VkDevice device, VkRenderPass renderPass, const VkAllocationCallbacks* pAllocator)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'device': 'VkDevice', 'renderPass': 'VkRenderPass'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'renderPass': 'VkRenderPass', 'device': 'VkDevice'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_render_pass(device, renderPass, VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5593,17 +5763,17 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyRenderPass(VkDevice device, 
     get_dispatch_table(object_tracker_device_table_map, device)->DestroyRenderPass(device, renderPass, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetRenderAreaGranularity(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'device': 'VkDevice', 'renderPass': 'VkRenderPass'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'renderPass': 'VkRenderPass', 'device': 'VkDevice'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_render_pass(device, renderPass, VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5611,7 +5781,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetRenderAreaGranularity(VkDevice d
     get_dispatch_table(object_tracker_device_table_map, device)->GetRenderAreaGranularity(device, renderPass, pGranularity);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool)
@@ -5619,7 +5789,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateCommandPool(VkDevice devi
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'device': 'VkDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5633,23 +5803,23 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateCommandPool(VkDevice devi
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyCommandPool(VkDevice device, VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator)
 {
     return explicit_DestroyCommandPool(device, commandPool, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'device': 'VkDevice', 'commandPool': 'VkCommandPool'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'commandPool': 'VkCommandPool', 'device': 'VkDevice'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_pool(device, commandPool, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_POOL_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5658,34 +5828,34 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetCommandPool(VkDevice devic
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers)
 {
     return explicit_AllocateCommandBuffers(device, pAllocateInfo, pCommandBuffers);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkFreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers)
 {
     return explicit_FreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkBeginCommandBuffer(VkCommandBuffer commandBuffer, const VkCommandBufferBeginInfo* pBeginInfo)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'pBeginInfo': {'pInheritanceInfo': {'framebuffer': 'VkFramebuffer', 'renderPass': 'VkRenderPass'}}}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'pBeginInfo': {'pInheritanceInfo': {'renderPass': 'VkRenderPass', 'framebuffer': 'VkFramebuffer'}}}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     if (pBeginInfo) {
         OBJTRACK_NODE* pNode = VkCommandBufferMap[(uint64_t)commandBuffer];
         if ((pBeginInfo->pInheritanceInfo) && (pNode->status & OBJSTATUS_COMMAND_BUFFER_SECONDARY)) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
             skipCall |= validate_framebuffer(commandBuffer, pBeginInfo->pInheritanceInfo->framebuffer, VK_DEBUG_REPORT_OBJECT_TYPE_FRAMEBUFFER_EXT, true);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
             skipCall |= validate_render_pass(commandBuffer, pBeginInfo->pInheritanceInfo->renderPass, VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT, true);
         }
     }
@@ -5696,7 +5866,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkBeginCommandBuffer(VkCommandBuf
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEndCommandBuffer(VkCommandBuffer commandBuffer)
@@ -5704,7 +5874,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEndCommandBuffer(VkCommandBuffe
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5713,7 +5883,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEndCommandBuffer(VkCommandBuffe
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags)
@@ -5721,7 +5891,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetCommandBuffer(VkCommandBuf
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5730,17 +5900,17 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetCommandBuffer(VkCommandBuf
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'pipeline': 'VkPipeline'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'pipeline': 'VkPipeline', 'commandBuffer': 'VkCommandBuffer'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_pipeline(commandBuffer, pipeline, VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5748,7 +5918,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindPipeline(VkCommandBuffer com
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewport* pViewports)
@@ -5756,7 +5926,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetViewport(VkCommandBuffer comm
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5764,7 +5934,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetViewport(VkCommandBuffer comm
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetScissor(VkCommandBuffer commandBuffer, uint32_t firstScissor, uint32_t scissorCount, const VkRect2D* pScissors)
@@ -5772,7 +5942,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetScissor(VkCommandBuffer comma
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5780,7 +5950,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetScissor(VkCommandBuffer comma
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth)
@@ -5788,7 +5958,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetLineWidth(VkCommandBuffer com
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5796,7 +5966,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetLineWidth(VkCommandBuffer com
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdSetLineWidth(commandBuffer, lineWidth);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBias(VkCommandBuffer commandBuffer, float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor)
@@ -5804,7 +5974,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBias(VkCommandBuffer com
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5812,7 +5982,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBias(VkCommandBuffer com
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdSetDepthBias(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetBlendConstants(VkCommandBuffer commandBuffer, const float blendConstants[4])
@@ -5820,7 +5990,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetBlendConstants(VkCommandBuffe
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5828,7 +5998,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetBlendConstants(VkCommandBuffe
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdSetBlendConstants(commandBuffer, blendConstants);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBounds(VkCommandBuffer commandBuffer, float minDepthBounds, float maxDepthBounds)
@@ -5836,7 +6006,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBounds(VkCommandBuffer c
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5844,7 +6014,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBounds(VkCommandBuffer c
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilCompareMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t compareMask)
@@ -5852,7 +6022,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilCompareMask(VkCommandB
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5860,7 +6030,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilCompareMask(VkCommandB
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilWriteMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t writeMask)
@@ -5868,7 +6038,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilWriteMask(VkCommandBuf
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5876,7 +6046,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilWriteMask(VkCommandBuf
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilReference(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t reference)
@@ -5884,7 +6054,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilReference(VkCommandBuf
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5892,21 +6062,21 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilReference(VkCommandBuf
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdSetStencilReference(commandBuffer, faceMask, reference);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'pDescriptorSets[descriptorSetCount]': 'VkDescriptorSet', 'layout': 'VkPipelineLayout'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'layout': 'VkPipelineLayout', 'pDescriptorSets[descriptorSetCount]': 'VkDescriptorSet'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_pipeline_layout(commandBuffer, layout, VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_LAYOUT_EXT, false);
     if (pDescriptorSets) {
         for (uint32_t idx0=0; idx0<descriptorSetCount; ++idx0) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
             skipCall |= validate_descriptor_set(commandBuffer, pDescriptorSets[idx0], VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_EXT, false);
         }
     }
@@ -5916,7 +6086,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorSets(VkCommandBuff
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkIndexType indexType)
@@ -5924,9 +6094,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindIndexBuffer(VkCommandBuffer 
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'buffer': 'VkBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_buffer(commandBuffer, buffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5934,7 +6104,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindIndexBuffer(VkCommandBuffer 
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets)
@@ -5942,11 +6112,11 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindVertexBuffers(VkCommandBuffe
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'pBuffers[bindingCount]': 'VkBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     if (pBuffers) {
         for (uint32_t idx0=0; idx0<bindingCount; ++idx0) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
             skipCall |= validate_buffer(commandBuffer, pBuffers[idx0], VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
         }
     }
@@ -5956,7 +6126,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindVertexBuffers(VkCommandBuffe
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
@@ -5964,7 +6134,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDraw(VkCommandBuffer commandBuff
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5972,7 +6142,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDraw(VkCommandBuffer commandBuff
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance)
@@ -5980,7 +6150,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexed(VkCommandBuffer comm
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -5988,7 +6158,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexed(VkCommandBuffer comm
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdDrawIndexed(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride)
@@ -5996,9 +6166,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndirect(VkCommandBuffer com
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'buffer': 'VkBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_buffer(commandBuffer, buffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6006,7 +6176,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndirect(VkCommandBuffer com
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride)
@@ -6014,9 +6184,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexedIndirect(VkCommandBuf
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'buffer': 'VkBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_buffer(commandBuffer, buffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6024,7 +6194,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexedIndirect(VkCommandBuf
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDispatch(VkCommandBuffer commandBuffer, uint32_t x, uint32_t y, uint32_t z)
@@ -6032,7 +6202,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDispatch(VkCommandBuffer command
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6040,7 +6210,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDispatch(VkCommandBuffer command
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdDispatch(commandBuffer, x, y, z);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset)
@@ -6048,9 +6218,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDispatchIndirect(VkCommandBuffer
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'buffer': 'VkBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_buffer(commandBuffer, buffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6058,19 +6228,19 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDispatchIndirect(VkCommandBuffer
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdDispatchIndirect(commandBuffer, buffer, offset);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferCopy* pRegions)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'dstBuffer': 'VkBuffer', 'srcBuffer': 'VkBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'srcBuffer': 'VkBuffer', 'dstBuffer': 'VkBuffer'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_buffer(commandBuffer, dstBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_buffer(commandBuffer, srcBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6078,19 +6248,19 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyBuffer(VkCommandBuffer comma
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageCopy* pRegions)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'srcImage': 'VkImage', 'dstImage': 'VkImage'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'dstImage': 'VkImage', 'srcImage': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_image(commandBuffer, dstImage, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_image(commandBuffer, srcImage, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6098,19 +6268,19 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyImage(VkCommandBuffer comman
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageBlit* pRegions, VkFilter filter)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'srcImage': 'VkImage', 'dstImage': 'VkImage'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'dstImage': 'VkImage', 'srcImage': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_image(commandBuffer, dstImage, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_image(commandBuffer, srcImage, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6118,19 +6288,19 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBlitImage(VkCommandBuffer comman
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions, filter);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkBufferImageCopy* pRegions)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'dstImage': 'VkImage', 'srcBuffer': 'VkBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'srcBuffer': 'VkBuffer', 'dstImage': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_image(commandBuffer, dstImage, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_buffer(commandBuffer, srcBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6138,19 +6308,19 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyBufferToImage(VkCommandBuffe
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'srcImage': 'VkImage', 'dstBuffer': 'VkBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'dstBuffer': 'VkBuffer', 'srcImage': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_buffer(commandBuffer, dstBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_image(commandBuffer, srcImage, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6158,7 +6328,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyImageToBuffer(VkCommandBuffe
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize dataSize, const uint32_t* pData)
@@ -6166,9 +6336,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdUpdateBuffer(VkCommandBuffer com
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'dstBuffer': 'VkBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_buffer(commandBuffer, dstBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6176,7 +6346,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdUpdateBuffer(VkCommandBuffer com
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data)
@@ -6184,9 +6354,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdFillBuffer(VkCommandBuffer comma
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'dstBuffer': 'VkBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_buffer(commandBuffer, dstBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6194,7 +6364,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdFillBuffer(VkCommandBuffer comma
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearColorValue* pColor, uint32_t rangeCount, const VkImageSubresourceRange* pRanges)
@@ -6202,9 +6372,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearColorImage(VkCommandBuffer 
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'image': 'VkImage'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_image(commandBuffer, image, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6212,7 +6382,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearColorImage(VkCommandBuffer 
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearDepthStencilValue* pDepthStencil, uint32_t rangeCount, const VkImageSubresourceRange* pRanges)
@@ -6220,9 +6390,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearDepthStencilImage(VkCommand
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'image': 'VkImage'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_image(commandBuffer, image, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6230,7 +6400,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearDepthStencilImage(VkCommand
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearAttachments(VkCommandBuffer commandBuffer, uint32_t attachmentCount, const VkClearAttachment* pAttachments, uint32_t rectCount, const VkClearRect* pRects)
@@ -6238,7 +6408,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearAttachments(VkCommandBuffer
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6246,19 +6416,19 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearAttachments(VkCommandBuffer
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageResolve* pRegions)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'srcImage': 'VkImage', 'dstImage': 'VkImage'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'dstImage': 'VkImage', 'srcImage': 'VkImage'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_image(commandBuffer, dstImage, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_image(commandBuffer, srcImage, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6266,7 +6436,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResolveImage(VkCommandBuffer com
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask)
@@ -6274,9 +6444,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetEvent(VkCommandBuffer command
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'event': 'VkEvent'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_event(commandBuffer, event, VK_DEBUG_REPORT_OBJECT_TYPE_EVENT_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6284,7 +6454,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetEvent(VkCommandBuffer command
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdSetEvent(commandBuffer, event, stageMask);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask)
@@ -6292,9 +6462,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResetEvent(VkCommandBuffer comma
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'event': 'VkEvent'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_event(commandBuffer, event, VK_DEBUG_REPORT_OBJECT_TYPE_EVENT_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6302,36 +6472,36 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResetEvent(VkCommandBuffer comma
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdResetEvent(commandBuffer, event, stageMask);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'pEvents[eventCount]': 'VkEvent', 'pImageMemoryBarriers[imageMemoryBarrierCount]': {'image': 'VkImage'}, 'pBufferMemoryBarriers[bufferMemoryBarrierCount]': {'buffer': 'VkBuffer'}}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'pImageMemoryBarriers[imageMemoryBarrierCount]': {'image': 'VkImage'}, 'pBufferMemoryBarriers[bufferMemoryBarrierCount]': {'buffer': 'VkBuffer'}, 'pEvents[eventCount]': 'VkEvent'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     if (pBufferMemoryBarriers) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1138
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1172
         for (uint32_t idx0=0; idx0<bufferMemoryBarrierCount; ++idx0) {
             if (pBufferMemoryBarriers[idx0].buffer) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                 skipCall |= validate_buffer(commandBuffer, pBufferMemoryBarriers[idx0].buffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
             }
         }
     }
     if (pEvents) {
         for (uint32_t idx1=0; idx1<eventCount; ++idx1) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
             skipCall |= validate_event(commandBuffer, pEvents[idx1], VK_DEBUG_REPORT_OBJECT_TYPE_EVENT_EXT, false);
         }
     }
     if (pImageMemoryBarriers) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1138
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1172
         for (uint32_t idx2=0; idx2<imageMemoryBarrierCount; ++idx2) {
             if (pImageMemoryBarriers[idx2].image) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                 skipCall |= validate_image(commandBuffer, pImageMemoryBarriers[idx2].image, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
             }
         }
@@ -6342,7 +6512,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents(VkCommandBuffer comma
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers)
@@ -6350,22 +6520,22 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdPipelineBarrier(VkCommandBuffer 
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'pImageMemoryBarriers[imageMemoryBarrierCount]': {'image': 'VkImage'}, 'pBufferMemoryBarriers[bufferMemoryBarrierCount]': {'buffer': 'VkBuffer'}}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     if (pBufferMemoryBarriers) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1138
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1172
         for (uint32_t idx0=0; idx0<bufferMemoryBarrierCount; ++idx0) {
             if (pBufferMemoryBarriers[idx0].buffer) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                 skipCall |= validate_buffer(commandBuffer, pBufferMemoryBarriers[idx0].buffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
             }
         }
     }
     if (pImageMemoryBarriers) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1138
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1172
         for (uint32_t idx1=0; idx1<imageMemoryBarrierCount; ++idx1) {
             if (pImageMemoryBarriers[idx1].image) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                 skipCall |= validate_image(commandBuffer, pImageMemoryBarriers[idx1].image, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT, false);
             }
         }
@@ -6376,7 +6546,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdPipelineBarrier(VkCommandBuffer 
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags)
@@ -6384,9 +6554,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBeginQuery(VkCommandBuffer comma
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'queryPool': 'VkQueryPool'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_query_pool(commandBuffer, queryPool, VK_DEBUG_REPORT_OBJECT_TYPE_QUERY_POOL_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6394,7 +6564,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBeginQuery(VkCommandBuffer comma
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdBeginQuery(commandBuffer, queryPool, query, flags);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query)
@@ -6402,9 +6572,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdEndQuery(VkCommandBuffer command
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'queryPool': 'VkQueryPool'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_query_pool(commandBuffer, queryPool, VK_DEBUG_REPORT_OBJECT_TYPE_QUERY_POOL_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6412,7 +6582,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdEndQuery(VkCommandBuffer command
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdEndQuery(commandBuffer, queryPool, query);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount)
@@ -6420,9 +6590,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResetQueryPool(VkCommandBuffer c
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'queryPool': 'VkQueryPool'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_query_pool(commandBuffer, queryPool, VK_DEBUG_REPORT_OBJECT_TYPE_QUERY_POOL_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6430,7 +6600,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResetQueryPool(VkCommandBuffer c
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool, uint32_t query)
@@ -6438,9 +6608,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWriteTimestamp(VkCommandBuffer c
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'queryPool': 'VkQueryPool'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_query_pool(commandBuffer, queryPool, VK_DEBUG_REPORT_OBJECT_TYPE_QUERY_POOL_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6448,7 +6618,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWriteTimestamp(VkCommandBuffer c
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize stride, VkQueryResultFlags flags)
@@ -6456,11 +6626,11 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyQueryPoolResults(VkCommandBu
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'queryPool': 'VkQueryPool', 'dstBuffer': 'VkBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_buffer(commandBuffer, dstBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_query_pool(commandBuffer, queryPool, VK_DEBUG_REPORT_OBJECT_TYPE_QUERY_POOL_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6468,7 +6638,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyQueryPoolResults(VkCommandBu
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size, const void* pValues)
@@ -6476,9 +6646,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdPushConstants(VkCommandBuffer co
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'layout': 'VkPipelineLayout'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_pipeline_layout(commandBuffer, layout, VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_LAYOUT_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6486,20 +6656,20 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdPushConstants(VkCommandBuffer co
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBeginRenderPass(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, VkSubpassContents contents)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'pRenderPassBegin': {'framebuffer': 'VkFramebuffer', 'renderPass': 'VkRenderPass'}}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'commandBuffer': 'VkCommandBuffer', 'pRenderPassBegin': {'renderPass': 'VkRenderPass', 'framebuffer': 'VkFramebuffer'}}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     if (pRenderPassBegin) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
         skipCall |= validate_framebuffer(commandBuffer, pRenderPassBegin->framebuffer, VK_DEBUG_REPORT_OBJECT_TYPE_FRAMEBUFFER_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
         skipCall |= validate_render_pass(commandBuffer, pRenderPassBegin->renderPass, VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT, false);
     }
     loader_platform_thread_unlock_mutex(&objLock);
@@ -6508,7 +6678,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBeginRenderPass(VkCommandBuffer 
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents)
@@ -6516,7 +6686,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdNextSubpass(VkCommandBuffer comm
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6524,7 +6694,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdNextSubpass(VkCommandBuffer comm
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdNextSubpass(commandBuffer, contents);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdEndRenderPass(VkCommandBuffer commandBuffer)
@@ -6532,7 +6702,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdEndRenderPass(VkCommandBuffer co
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6540,7 +6710,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdEndRenderPass(VkCommandBuffer co
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdEndRenderPass(commandBuffer);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers)
@@ -6548,11 +6718,11 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdExecuteCommands(VkCommandBuffer 
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'commandBuffer': 'VkCommandBuffer', 'pCommandBuffers[commandBufferCount]': 'VkCommandBuffer'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_command_buffer(commandBuffer, commandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
     if (pCommandBuffers) {
         for (uint32_t idx0=0; idx0<commandBufferCount; ++idx0) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
             skipCall |= validate_command_buffer(commandBuffer, pCommandBuffers[idx0], VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT, false);
         }
     }
@@ -6562,10 +6732,10 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdExecuteCommands(VkCommandBuffer 
     get_dispatch_table(object_tracker_device_table_map, commandBuffer)->CmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
-
-
 // CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
+
+
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1367
 
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySurfaceKHR(VkInstance instance, VkSurfaceKHR surface, const VkAllocationCallbacks* pAllocator)
@@ -6573,9 +6743,9 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySurfaceKHR(VkInstance instan
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'surface': 'VkSurfaceKHR', 'instance': 'VkInstance'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_instance(instance, instance, VK_DEBUG_REPORT_OBJECT_TYPE_INSTANCE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_surface_khr(instance, surface, VK_DEBUG_REPORT_OBJECT_TYPE_SURFACE_KHR_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6586,17 +6756,17 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySurfaceKHR(VkInstance instan
     get_dispatch_table(object_tracker_instance_table_map, instance)->DestroySurfaceKHR(instance, surface, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'physicalDevice': 'VkPhysicalDevice', 'surface': 'VkSurfaceKHR'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'surface': 'VkSurfaceKHR', 'physicalDevice': 'VkPhysicalDevice'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_physical_device(physicalDevice, physicalDevice, VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_surface_khr(physicalDevice, surface, VK_DEBUG_REPORT_OBJECT_TYPE_SURFACE_KHR_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6605,17 +6775,17 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceSupport
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilitiesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'physicalDevice': 'VkPhysicalDevice', 'surface': 'VkSurfaceKHR'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'surface': 'VkSurfaceKHR', 'physicalDevice': 'VkPhysicalDevice'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_physical_device(physicalDevice, physicalDevice, VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_surface_khr(physicalDevice, surface, VK_DEBUG_REPORT_OBJECT_TYPE_SURFACE_KHR_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6624,17 +6794,17 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabil
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceFormatsKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pSurfaceFormatCount, VkSurfaceFormatKHR* pSurfaceFormats)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'physicalDevice': 'VkPhysicalDevice', 'surface': 'VkSurfaceKHR'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'surface': 'VkSurfaceKHR', 'physicalDevice': 'VkPhysicalDevice'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_physical_device(physicalDevice, physicalDevice, VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_surface_khr(physicalDevice, surface, VK_DEBUG_REPORT_OBJECT_TYPE_SURFACE_KHR_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6643,17 +6813,17 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceFormats
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfacePresentModesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'physicalDevice': 'VkPhysicalDevice', 'surface': 'VkSurfaceKHR'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'surface': 'VkSurfaceKHR', 'physicalDevice': 'VkPhysicalDevice'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_physical_device(physicalDevice, physicalDevice, VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_surface_khr(physicalDevice, surface, VK_DEBUG_REPORT_OBJECT_TYPE_SURFACE_KHR_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6662,20 +6832,20 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfacePresent
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSwapchainKHR(VkDevice device, const VkSwapchainCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'device': 'VkDevice', 'pCreateInfo': {'oldSwapchain': 'VkSwapchainKHR', 'surface': 'VkSurfaceKHR'}}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'device': 'VkDevice', 'pCreateInfo': {'surface': 'VkSurfaceKHR', 'oldSwapchain': 'VkSwapchainKHR'}}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
     if (pCreateInfo) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
         skipCall |= validate_swapchain_khr(device, pCreateInfo->oldSwapchain, VK_DEBUG_REPORT_OBJECT_TYPE_SWAPCHAIN_KHR_EXT, true);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
         skipCall |= validate_surface_khr(device, pCreateInfo->surface, VK_DEBUG_REPORT_OBJECT_TYPE_SURFACE_KHR_EXT, false);
     }
     loader_platform_thread_unlock_mutex(&objLock);
@@ -6690,33 +6860,33 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSwapchainKHR(VkDevice dev
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySwapchainKHR(VkDevice device, VkSwapchainKHR swapchain, const VkAllocationCallbacks* pAllocator)
 {
     return explicit_DestroySwapchainKHR(device, swapchain, pAllocator);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetSwapchainImagesKHR(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pSwapchainImageCount, VkImage* pSwapchainImages)
 {
     return explicit_GetSwapchainImagesKHR(device, swapchain, pSwapchainImageCount, pSwapchainImages);
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex)
 {
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
-// objects to validate: {'semaphore': 'VkSemaphore', 'device': 'VkDevice', 'fence': 'VkFence', 'swapchain': 'VkSwapchainKHR'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// objects to validate: {'swapchain': 'VkSwapchainKHR', 'device': 'VkDevice', 'fence': 'VkFence', 'semaphore': 'VkSemaphore'}
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_device(device, device, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT, false);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_fence(device, fence, VK_DEBUG_REPORT_OBJECT_TYPE_FENCE_EXT, true);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_semaphore(device, semaphore, VK_DEBUG_REPORT_OBJECT_TYPE_SEMAPHORE_EXT, true);
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_swapchain_khr(device, swapchain, VK_DEBUG_REPORT_OBJECT_TYPE_SWAPCHAIN_KHR_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6725,7 +6895,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAcquireNextImageKHR(VkDevice de
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueuePresentKHR(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)
@@ -6736,18 +6906,18 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueuePresentKHR(VkQueue queue, 
     if (pPresentInfo) {
         if (pPresentInfo->pSwapchains) {
             for (uint32_t idx0=0; idx0<pPresentInfo->swapchainCount; ++idx0) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                 skipCall |= validate_swapchain_khr(queue, pPresentInfo->pSwapchains[idx0], VK_DEBUG_REPORT_OBJECT_TYPE_SWAPCHAIN_KHR_EXT, false);
             }
         }
         if (pPresentInfo->pWaitSemaphores) {
             for (uint32_t idx1=0; idx1<pPresentInfo->waitSemaphoreCount; ++idx1) {
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1208
                 skipCall |= validate_semaphore(queue, pPresentInfo->pWaitSemaphores[idx1], VK_DEBUG_REPORT_OBJECT_TYPE_SEMAPHORE_EXT, false);
             }
         }
     }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_queue(queue, queue, VK_DEBUG_REPORT_OBJECT_TYPE_QUEUE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6756,7 +6926,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueuePresentKHR(VkQueue queue, 
     return result;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 #ifdef VK_USE_PLATFORM_WIN32_KHR
@@ -6766,7 +6936,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateWin32SurfaceKHR(VkInstanc
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'instance': 'VkInstance'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_instance(instance, instance, VK_DEBUG_REPORT_OBJECT_TYPE_INSTANCE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6782,7 +6952,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateWin32SurfaceKHR(VkInstanc
 
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1299
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1333
 
 
 #ifdef VK_USE_PLATFORM_WIN32_KHR
@@ -6792,7 +6962,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceWin32Presentat
     VkBool32 skipCall = VK_FALSE;
     loader_platform_thread_lock_mutex(&objLock);
 // objects to validate: {'physicalDevice': 'VkPhysicalDevice'}
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1182
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #1216
     skipCall |= validate_physical_device(physicalDevice, physicalDevice, VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT, false);
     loader_platform_thread_unlock_mutex(&objLock);
     if (skipCall)
@@ -6803,7 +6973,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceWin32Presentat
 
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #461
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #476
 static inline PFN_vkVoidFunction layer_intercept_proc(const char *name)
 {
     if (!name || name[0] != 'v' || name[1] != 'k')
@@ -7115,8 +7285,8 @@ static inline PFN_vkVoidFunction layer_intercept_instance_proc(const char *name)
     return NULL;
 }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #501
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #292
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #516
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #301
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDebugReportCallbackEXT(
         VkInstance                                   instance,
         const VkDebugReportCallbackCreateInfoEXT*    pCreateInfo,
@@ -7134,7 +7304,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDebugReportCallbackEXT(
     }
     return result;
 }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #323
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #332
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT msgCallback, const VkAllocationCallbacks *pAllocator)
 {
     VkLayerInstanceDispatchTable *pInstanceTable = get_dispatch_table(object_tracker_instance_table_map, instance);
@@ -7142,7 +7312,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyDebugReportCallbackEXT(VkIns
     layer_data *my_data = get_my_data_ptr(get_dispatch_key(instance), layer_data_map);
     layer_destroy_msg_callback(my_data->report_data, msgCallback, pAllocator);
 }
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #339
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #348
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDebugReportMessageEXT(VkInstance instance, VkDebugReportFlagsEXT    flags, VkDebugReportObjectTypeEXT objType, uint64_t object, size_t location, int32_t msgCode, const char *pLayerPrefix, const char *pMsg)
 {
     VkLayerInstanceDispatchTable *pInstanceTable = get_dispatch_table(object_tracker_instance_table_map, instance);
@@ -7163,7 +7333,7 @@ VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(VkD
         return NULL;
     }
 
-// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #526
+// CODEGEN : file C:/releasebuild/LoaderAndValidationLayers/vk-layer-generate.py line #541
     layer_data *my_device_data = get_my_data_ptr(get_dispatch_key(device), layer_data_map);
     if (my_device_data->wsi_enabled) {
         if (!strcmp("vkCreateSwapchainKHR", funcName))
@@ -7209,6 +7379,8 @@ VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(V
     VkLayerInstanceDispatchTable* pTable = get_dispatch_table(object_tracker_instance_table_map, instance);
     if (instanceExtMap.size() != 0 && instanceExtMap[pTable].wsi_enabled)
     {
+        if (!strcmp("vkDestroySurfaceKHR", funcName))
+            return reinterpret_cast<PFN_vkVoidFunction>(vkDestroySurfaceKHR);
         if (!strcmp("vkGetPhysicalDeviceSurfaceSupportKHR", funcName))
             return reinterpret_cast<PFN_vkVoidFunction>(vkGetPhysicalDeviceSurfaceSupportKHR);
         if (!strcmp("vkGetPhysicalDeviceSurfaceCapabilitiesKHR", funcName))

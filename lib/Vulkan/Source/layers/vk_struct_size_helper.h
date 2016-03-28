@@ -157,5 +157,7 @@ size_t vk_size_vkswapchaincreateinfokhr(const VkSwapchainCreateInfoKHR* pStruct)
 size_t vk_size_vkvertexinputattributedescription(const VkVertexInputAttributeDescription* pStruct);
 size_t vk_size_vkvertexinputbindingdescription(const VkVertexInputBindingDescription* pStruct);
 size_t vk_size_vkviewport(const VkViewport* pStruct);
+#ifdef VK_USE_PLATFORM_WIN32_KHR
 size_t vk_size_vkwin32surfacecreateinfokhr(const VkWin32SurfaceCreateInfoKHR* pStruct);
+#endif //VK_USE_PLATFORM_WIN32_KHR
 size_t vk_size_vkwritedescriptorset(const VkWriteDescriptorSet* pStruct);

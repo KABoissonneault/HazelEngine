@@ -1,44 +1,43 @@
 /* THIS FILE IS GENERATED.  DO NOT EDIT. */
 
 /*
+ * Copyright (c) 2015-2016 Valve Corporation
+ * Copyright (c) 2015-2016 LunarG, Inc.
  *
- * Copyright (C) 2015-2016 Valve Corporation
- * Copyright (C) 2015-2016 LunarG, Inc.
- * Copyright (C) 2015-2016 Google, Inc.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and/or associated documentation files (the "Materials"), to
+ * deal in the Materials without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Materials, and to permit persons to whom the Materials
+ * are furnished to do so, subject to the following conditions:
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice(s) and this permission notice shall be included
+ * in all copies or substantial portions of the Materials.
  *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
  *
- * Author: Tobin Ehlis <tobine@google.com>
- * Author: Courtney Goeltzenleuchter <courtneygo@google.com>
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE MATERIALS OR THE
+ * USE OR OTHER DEALINGS IN THE MATERIALS
+ *
+ * Author: Tobin Ehlis <tobin@lunarg.com>
+ * Author: Courtney Goeltzenleuchter <courtney@lunarg.com>
  * Author: Jon Ashburn <jon@lunarg.com>
  * Author: Mark Lobodzinski <mark@lunarg.com>
- * Author: Mike Stroyan <stroyan@google.com>
+ * Author: Mike Stroyan <mike@lunarg.com>
  * Author: Tony Barbour <tony@LunarG.com>
  */
 
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #850
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #929
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <string.h>
 
-#include "vk_layer_platform.h"
+#include "vk_loader_platform.h"
 #include "vulkan/vk_layer.h"
 #include "vk_struct_string_helper_cpp.h"
 #include "vk_layer_table.h"
@@ -82,24 +81,24 @@ void ConfigureOutputStream(bool writeToFile, bool flushAfterWrite)
     }
 }
 
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #900
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #979
 static bool g_ApiDumpDetailed = true;
 
-static LAYER_PLATFORM_THREAD_ONCE_DECLARATION(initOnce);
+static LOADER_PLATFORM_THREAD_ONCE_DECLARATION(initOnce);
 
 static int printLockInitialized = 0;
-static layer_platform_thread_mutex printLock;
+static loader_platform_thread_mutex printLock;
 
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #908
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #987
 #define LAYER_EXT_ARRAY_SIZE 1
 #define LAYER_DEV_EXT_ARRAY_SIZE 1
 #define MAX_TID 513
-static layer_platform_thread_id tidMapping[MAX_TID] = {0};
+static loader_platform_thread_id tidMapping[MAX_TID] = {0};
 static uint32_t maxTID = 0;
 // Map actual TID to an index value and return that index
 //  This keeps TIDs in range from 0-MAX_TID and simplifies compares between runs
 static uint32_t getTIDIndex() {
-    layer_platform_thread_id tid = layer_platform_get_thread_id();
+    loader_platform_thread_id tid = loader_platform_get_thread_id();
     for (uint32_t i = 0; i < maxTID; i++) {
         if (tid == tidMapping[i])
             return i;
@@ -112,7 +111,7 @@ static uint32_t getTIDIndex() {
 }
 
 
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #933
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1012
 #include "vk_dispatch_table_helper.h"
 #include "vk_layer_config.h"
 
@@ -120,13 +119,13 @@ static void initapi_dump(void)
 {
     using namespace StreamControl;
 
-    char const*const logName = getLayerOption("ApiDumpLogFilename");
+    char const*const logName = getLayerOption("lunarg_api_dump.log_filename");
     if(logName != NULL)
     {
         fileName = logName;
     }
 
-    char const*const detailedStr = getLayerOption("ApiDumpDetailed");
+    char const*const detailedStr = getLayerOption("lunarg_api_dump.detailed");
     if(detailedStr != NULL)
     {
         if(strcmp(detailedStr, "TRUE") == 0)
@@ -139,7 +138,7 @@ static void initapi_dump(void)
         }
     }
 
-    char const*const writeToFileStr = getLayerOption("ApiDumpFile");
+    char const*const writeToFileStr = getLayerOption("lunarg_api_dump.file");
     bool writeToFile = false;
     if(writeToFileStr != NULL)
     {
@@ -153,8 +152,8 @@ static void initapi_dump(void)
         }
     }
 
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #974
-    char const*const noAddrStr = getLayerOption("ApiDumpNoAddr");
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1053
+    char const*const noAddrStr = getLayerOption("lunarg_api_dump.no_addr");
     if(noAddrStr != NULL)
     {
         if(strcmp(noAddrStr, "FALSE") == 0)
@@ -167,7 +166,7 @@ static void initapi_dump(void)
         }
     }
 
-    char const*const flushAfterWriteStr = getLayerOption("ApiDumpFlush");
+    char const*const flushAfterWriteStr = getLayerOption("lunarg_api_dump.flush");
     bool flushAfterWrite = false;
     if(flushAfterWriteStr != NULL)
     {
@@ -181,13 +180,13 @@ static void initapi_dump(void)
         }
     }
 
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1002
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1081
     ConfigureOutputStream(writeToFile, flushAfterWrite);
 
     if (!printLockInitialized)
     {
         // TODO/TBD: Need to delete this mutex sometime.  How???
-        layer_platform_thread_create_mutex(&printLock);
+        loader_platform_thread_create_mutex(&printLock);
         printLockInitialized = 1;
     }
 }
@@ -196,7 +195,7 @@ static void initapi_dump(void)
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance)
 {
     using namespace StreamControl;
-    layer_platform_thread_once(&initOnce, initapi_dump);
+    loader_platform_thread_once(&initOnce, initapi_dump);
     VkLayerInstanceCreateInfo *chain_info = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
     PFN_vkGetInstanceProcAddr fpGetInstanceProcAddr = chain_info->u.pLayerInfo->pfnNextGetInstanceProcAddr;
     PFN_vkCreateInstance fpCreateInstance = (PFN_vkCreateInstance) fpGetInstanceProcAddr(NULL, "vkCreateInstance");
@@ -211,30 +210,30 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstance
         return result;
     initInstanceTable(*pInstance, fpGetInstanceProcAddr);
     createInstanceRegisterExtensions(pCreateInfo, *pInstance);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateInstance(pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pInstance = " << (void*)*pInstance << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateInstance(pCreateInfo = address, pAllocator = address, pInstance = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkinstancecreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -247,46 +246,46 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyInstance(VkInstance instance
     pDisp->DestroyInstance(instance, pAllocator);
     instanceExtMap.erase(pDisp);
     destroy_instance_dispatch_table(key);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyInstance(instance = " << (void*)(instance) << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyInstance(instance = address, pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices)
 {
     using namespace StreamControl;
     VkResult result = instance_dispatch_table(instance)->EnumeratePhysicalDevices(instance, pPhysicalDeviceCount, pPhysicalDevices);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkEnumeratePhysicalDevices(instance = " << (void*)(instance) << ", pPhysicalDeviceCount = " << *(pPhysicalDeviceCount) << ", pPhysicalDevices = " << (void*)(pPhysicalDevices) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkEnumeratePhysicalDevices(instance = address, pPhysicalDeviceCount = " << *(pPhysicalDeviceCount) << ", pPhysicalDevices = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pPhysicalDevices) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < *pPhysicalDeviceCount; i++) {
                 tmp_str = string_convert_helper(pPhysicalDevices[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -297,7 +296,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInst
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -305,75 +304,75 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFeatures(VkPhysica
 {
     using namespace StreamControl;
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceFeatures(physicalDevice, pFeatures);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceFeatures(physicalDevice = " << (void*)(physicalDevice) << ", pFeatures = " << (void*)(pFeatures) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceFeatures(physicalDevice = address, pFeatures = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pFeatures) {
             tmp_str = vk_print_vkphysicaldevicefeatures(pFeatures, "    ");
             (*outputStream) << "   pFeatures (" << pFeatures << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties* pFormatProperties)
 {
     using namespace StreamControl;
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceFormatProperties(physicalDevice, format, pFormatProperties);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceFormatProperties(physicalDevice = " << (void*)(physicalDevice) << ", format = " << string_VkFormat(format) << ", pFormatProperties = " << (void*)(pFormatProperties) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceFormatProperties(physicalDevice = address, format = " << string_VkFormat(format) << ", pFormatProperties = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pFormatProperties) {
             tmp_str = vk_print_vkformatproperties(pFormatProperties, "    ");
             (*outputStream) << "   pFormatProperties (" << pFormatProperties << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkImageFormatProperties* pImageFormatProperties)
 {
     using namespace StreamControl;
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceImageFormatProperties(physicalDevice, format, type, tiling, usage, flags, pImageFormatProperties);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceImageFormatProperties(physicalDevice = " << (void*)(physicalDevice) << ", format = " << string_VkFormat(format) << ", type = " << string_VkImageType(type) << ", tiling = " << string_VkImageTiling(tiling) << ", usage = " << usage << ", flags = " << flags << ", pImageFormatProperties = " << (void*)(pImageFormatProperties) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceImageFormatProperties(physicalDevice = address, format = " << string_VkFormat(format) << ", type = " << string_VkImageType(type) << ", tiling = " << string_VkImageTiling(tiling) << ", usage = " << usage << ", flags = " << flags << ", pImageFormatProperties = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pImageFormatProperties) {
             tmp_str = vk_print_vkimageformatproperties(pImageFormatProperties, "    ");
             (*outputStream) << "   pImageFormatProperties (" << pImageFormatProperties << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -381,108 +380,108 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceProperties(VkPhysi
 {
     using namespace StreamControl;
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceProperties(physicalDevice, pProperties);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceProperties(physicalDevice = " << (void*)(physicalDevice) << ", pProperties = " << (void*)(pProperties) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceProperties(physicalDevice = address, pProperties = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pProperties) {
             tmp_str = vk_print_vkphysicaldeviceproperties(pProperties, "    ");
             (*outputStream) << "   pProperties (" << pProperties << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties* pQueueFamilyProperties)
 {
     using namespace StreamControl;
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceQueueFamilyProperties(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice = " << (void*)(physicalDevice) << ", pQueueFamilyPropertyCount = " << *(pQueueFamilyPropertyCount) << ", pQueueFamilyProperties = " << (void*)(pQueueFamilyProperties) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice = address, pQueueFamilyPropertyCount = " << *(pQueueFamilyPropertyCount) << ", pQueueFamilyProperties = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pQueueFamilyProperties) {
             tmp_str = vk_print_vkqueuefamilyproperties(pQueueFamilyProperties, "    ");
             (*outputStream) << "   pQueueFamilyProperties (" << pQueueFamilyProperties << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceMemoryProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties* pMemoryProperties)
 {
     using namespace StreamControl;
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceMemoryProperties(physicalDevice, pMemoryProperties);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceMemoryProperties(physicalDevice = " << (void*)(physicalDevice) << ", pMemoryProperties = " << (void*)(pMemoryProperties) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceMemoryProperties(physicalDevice = address, pMemoryProperties = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pMemoryProperties) {
             tmp_str = vk_print_vkphysicaldevicememoryproperties(pMemoryProperties, "    ");
             (*outputStream) << "   pMemoryProperties (" << pMemoryProperties << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1174
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1253
 
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDevice* pDevice)
 {
     using namespace StreamControl;
     VkResult result = explicit_CreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateDevice(physicalDevice = " << (void*)(physicalDevice) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pDevice = " << (void*)*pDevice << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateDevice(physicalDevice = address, pCreateInfo = address, pAllocator = address, pDevice = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkdevicecreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -494,35 +493,35 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyDevice(VkDevice device, cons
     pDisp->DestroyDevice(device, pAllocator);
     deviceExtMap.erase(pDisp);
     destroy_device_dispatch_table(key);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyDevice(device = " << (void*)(device) << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyDevice(device = address, pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #332
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #315
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceExtensionProperties(const char *pLayerName, uint32_t *pCount,  VkExtensionProperties* pProperties)
 {
     return util_GetExtensionProperties(0, NULL, pCount, pProperties);
 }
 
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #349
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #342
 static const VkLayerProperties globalLayerProps[] = {
     {
         "VK_LAYER_LUNARG_api_dump",
@@ -532,14 +531,14 @@ static const VkLayerProperties globalLayerProps[] = {
     }
 };
 
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #359
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #352
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceLayerProperties(uint32_t *pCount,  VkLayerProperties* pProperties)
 {
     return util_GetLayerProperties(ARRAY_SIZE(globalLayerProps), globalLayerProps, pCount, pProperties);
 }
 
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #373
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #366
 static const VkLayerProperties deviceLayerProps[] = {
     {
         "VK_LAYER_LUNARG_api_dump",
@@ -558,37 +557,37 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetDeviceQueue(VkDevice device, uin
 {
     using namespace StreamControl;
     device_dispatch_table(device)->GetDeviceQueue(device, queueFamilyIndex, queueIndex, pQueue);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetDeviceQueue(device = " << (void*)(device) << ", queueFamilyIndex = " << queueFamilyIndex << ", queueIndex = " << queueIndex << ", pQueue = " << (void*)(pQueue) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetDeviceQueue(device = address, queueFamilyIndex = " << queueFamilyIndex << ", queueIndex = " << queueIndex << ", pQueue = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(queue)->QueueSubmit(queue, submitCount, pSubmits, fence);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkQueueSubmit(queue = " << (void*)(queue) << ", submitCount = " << submitCount << ", pSubmits = " << (void*)(pSubmits) << ", fence = " << fence << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkQueueSubmit(queue = address, submitCount = " << submitCount << ", pSubmits = address, fence = " << fence << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pSubmits) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < submitCount; i++) {
                 tmp_str = vk_print_vksubmitinfo(&pSubmits[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -599,7 +598,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueueSubmit(VkQueue queue, uint
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -607,16 +606,16 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueueWaitIdle(VkQueue queue)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(queue)->QueueWaitIdle(queue);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkQueueWaitIdle(queue = " << (void*)(queue) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkQueueWaitIdle(queue = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -624,16 +623,16 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkDeviceWaitIdle(VkDevice device)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->DeviceWaitIdle(device);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDeviceWaitIdle(device = " << (void*)(device) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDeviceWaitIdle(device = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -641,30 +640,30 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAllocateMemory(VkDevice device,
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->AllocateMemory(device, pAllocateInfo, pAllocator, pMemory);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkAllocateMemory(device = " << (void*)(device) << ", pAllocateInfo = " << (void*)(pAllocateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pMemory = " << pMemory << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkAllocateMemory(device = address, pAllocateInfo = address, pAllocator = address, pMemory = " << pMemory << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocateInfo) {
             tmp_str = vk_print_vkmemoryallocateinfo(pAllocateInfo, "    ");
             (*outputStream) << "   pAllocateInfo (" << pAllocateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -672,41 +671,41 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkFreeMemory(VkDevice device, VkDevic
 {
     using namespace StreamControl;
     device_dispatch_table(device)->FreeMemory(device, memory, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkFreeMemory(device = " << (void*)(device) << ", memory = " << memory << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkFreeMemory(device = address, memory = " << memory << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkMapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ppData)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->MapMemory(device, memory, offset, size, flags, ppData);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkMapMemory(device = " << (void*)(device) << ", memory = " << memory << ", offset = " << (void*)(offset) << ", size = " << (void*)(size) << ", flags = " << flags << ", ppData = " << (void*)*ppData << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkMapMemory(device = address, memory = " << memory << ", offset = address, size = address, flags = " << flags << ", ppData = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -714,37 +713,37 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkUnmapMemory(VkDevice device, VkDevi
 {
     using namespace StreamControl;
     device_dispatch_table(device)->UnmapMemory(device, memory);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkUnmapMemory(device = " << (void*)(device) << ", memory = " << memory << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkUnmapMemory(device = address, memory = " << memory << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkFlushMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->FlushMappedMemoryRanges(device, memoryRangeCount, pMemoryRanges);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkFlushMappedMemoryRanges(device = " << (void*)(device) << ", memoryRangeCount = " << memoryRangeCount << ", pMemoryRanges = " << (void*)(pMemoryRanges) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkFlushMappedMemoryRanges(device = address, memoryRangeCount = " << memoryRangeCount << ", pMemoryRanges = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pMemoryRanges) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < memoryRangeCount; i++) {
                 tmp_str = vk_print_vkmappedmemoryrange(&pMemoryRanges[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -755,7 +754,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkFlushMappedMemoryRanges(VkDevic
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -763,21 +762,21 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkInvalidateMappedMemoryRanges(Vk
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->InvalidateMappedMemoryRanges(device, memoryRangeCount, pMemoryRanges);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkInvalidateMappedMemoryRanges(device = " << (void*)(device) << ", memoryRangeCount = " << memoryRangeCount << ", pMemoryRanges = " << (void*)(pMemoryRanges) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkInvalidateMappedMemoryRanges(device = address, memoryRangeCount = " << memoryRangeCount << ", pMemoryRanges = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pMemoryRanges) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < memoryRangeCount; i++) {
                 tmp_str = vk_print_vkmappedmemoryrange(&pMemoryRanges[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -788,7 +787,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkInvalidateMappedMemoryRanges(Vk
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -796,32 +795,32 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetDeviceMemoryCommitment(VkDevice 
 {
     using namespace StreamControl;
     device_dispatch_table(device)->GetDeviceMemoryCommitment(device, memory, pCommittedMemoryInBytes);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetDeviceMemoryCommitment(device = " << (void*)(device) << ", memory = " << memory << ", pCommittedMemoryInBytes = " << (void*)(pCommittedMemoryInBytes) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetDeviceMemoryCommitment(device = address, memory = " << memory << ", pCommittedMemoryInBytes = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->BindBufferMemory(device, buffer, memory, memoryOffset);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkBindBufferMemory(device = " << (void*)(device) << ", buffer = " << buffer << ", memory = " << memory << ", memoryOffset = " << (void*)(memoryOffset) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkBindBufferMemory(device = address, buffer = " << buffer << ", memory = " << memory << ", memoryOffset = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -829,16 +828,16 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory(VkDevice device
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->BindImageMemory(device, image, memory, memoryOffset);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkBindImageMemory(device = " << (void*)(device) << ", image = " << image << ", memory = " << memory << ", memoryOffset = " << (void*)(memoryOffset) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkBindImageMemory(device = address, image = " << image << ", memory = " << memory << ", memoryOffset = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -846,71 +845,71 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetBufferMemoryRequirements(VkDevic
 {
     using namespace StreamControl;
     device_dispatch_table(device)->GetBufferMemoryRequirements(device, buffer, pMemoryRequirements);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetBufferMemoryRequirements(device = " << (void*)(device) << ", buffer = " << buffer << ", pMemoryRequirements = " << (void*)(pMemoryRequirements) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetBufferMemoryRequirements(device = address, buffer = " << buffer << ", pMemoryRequirements = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pMemoryRequirements) {
             tmp_str = vk_print_vkmemoryrequirements(pMemoryRequirements, "    ");
             (*outputStream) << "   pMemoryRequirements (" << pMemoryRequirements << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetImageMemoryRequirements(VkDevice device, VkImage image, VkMemoryRequirements* pMemoryRequirements)
 {
     using namespace StreamControl;
     device_dispatch_table(device)->GetImageMemoryRequirements(device, image, pMemoryRequirements);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetImageMemoryRequirements(device = " << (void*)(device) << ", image = " << image << ", pMemoryRequirements = " << (void*)(pMemoryRequirements) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetImageMemoryRequirements(device = address, image = " << image << ", pMemoryRequirements = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pMemoryRequirements) {
             tmp_str = vk_print_vkmemoryrequirements(pMemoryRequirements, "    ");
             (*outputStream) << "   pMemoryRequirements (" << pMemoryRequirements << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetImageSparseMemoryRequirements(VkDevice device, VkImage image, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements* pSparseMemoryRequirements)
 {
     using namespace StreamControl;
     device_dispatch_table(device)->GetImageSparseMemoryRequirements(device, image, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetImageSparseMemoryRequirements(device = " << (void*)(device) << ", image = " << image << ", pSparseMemoryRequirementCount = " << *(pSparseMemoryRequirementCount) << ", pSparseMemoryRequirements = " << (void*)(pSparseMemoryRequirements) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetImageSparseMemoryRequirements(device = address, image = " << image << ", pSparseMemoryRequirementCount = " << *(pSparseMemoryRequirementCount) << ", pSparseMemoryRequirements = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pSparseMemoryRequirements) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < *pSparseMemoryRequirementCount; i++) {
                 tmp_str = vk_print_vksparseimagememoryrequirements(&pSparseMemoryRequirements[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -921,53 +920,53 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetImageSparseMemoryRequirements(Vk
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage, VkImageTiling tiling, uint32_t* pPropertyCount, VkSparseImageFormatProperties* pProperties)
 {
     using namespace StreamControl;
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling, pPropertyCount, pProperties);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice = " << (void*)(physicalDevice) << ", format = " << string_VkFormat(format) << ", type = " << string_VkImageType(type) << ", samples = " << string_VkSampleCountFlagBits(samples) << ", usage = " << usage << ", tiling = " << string_VkImageTiling(tiling) << ", pPropertyCount = " << *(pPropertyCount) << ", pProperties = " << (void*)(pProperties) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice = address, format = " << string_VkFormat(format) << ", type = " << string_VkImageType(type) << ", samples = " << string_VkSampleCountFlagBits(samples) << ", usage = " << usage << ", tiling = " << string_VkImageTiling(tiling) << ", pPropertyCount = " << *(pPropertyCount) << ", pProperties = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pProperties) {
             tmp_str = vk_print_vksparseimageformatproperties(pProperties, "    ");
             (*outputStream) << "   pProperties (" << pProperties << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(queue)->QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkQueueBindSparse(queue = " << (void*)(queue) << ", bindInfoCount = " << bindInfoCount << ", pBindInfo = " << (void*)(pBindInfo) << ", fence = " << fence << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkQueueBindSparse(queue = address, bindInfoCount = " << bindInfoCount << ", pBindInfo = address, fence = " << fence << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pBindInfo) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < bindInfoCount; i++) {
                 tmp_str = vk_print_vkbindsparseinfo(&pBindInfo[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -978,7 +977,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueueBindSparse(VkQueue queue, 
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -986,30 +985,30 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateFence(VkDevice device, co
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateFence(device, pCreateInfo, pAllocator, pFence);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateFence(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pFence = " << pFence << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateFence(device = address, pCreateInfo = address, pAllocator = address, pFence = " << pFence << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkfencecreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1017,46 +1016,46 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyFence(VkDevice device, VkFen
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroyFence(device, fence, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyFence(device = " << (void*)(device) << ", fence = " << fence << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyFence(device = address, fence = " << fence << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->ResetFences(device, fenceCount, pFences);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkResetFences(device = " << (void*)(device) << ", fenceCount = " << fenceCount << ", pFences = " << (void*)(pFences) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkResetFences(device = address, fenceCount = " << fenceCount << ", pFences = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pFences) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < fenceCount; i++) {
                 tmp_str = string_convert_helper(pFences[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -1067,7 +1066,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetFences(VkDevice device, ui
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1075,16 +1074,16 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetFenceStatus(VkDevice device,
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->GetFenceStatus(device, fence);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetFenceStatus(device = " << (void*)(device) << ", fence = " << fence << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetFenceStatus(device = address, fence = " << fence << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1092,21 +1091,21 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkWaitForFences(VkDevice device, 
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->WaitForFences(device, fenceCount, pFences, waitAll, timeout);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkWaitForFences(device = " << (void*)(device) << ", fenceCount = " << fenceCount << ", pFences = " << (void*)(pFences) << ", waitAll = " << waitAll << ", timeout = " << timeout << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkWaitForFences(device = address, fenceCount = " << fenceCount << ", pFences = address, waitAll = " << waitAll << ", timeout = " << timeout << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pFences) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < fenceCount; i++) {
                 tmp_str = string_convert_helper(pFences[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -1117,7 +1116,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkWaitForFences(VkDevice device, 
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1125,30 +1124,30 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSemaphore(VkDevice device
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateSemaphore(device, pCreateInfo, pAllocator, pSemaphore);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateSemaphore(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pSemaphore = " << pSemaphore << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateSemaphore(device = address, pCreateInfo = address, pAllocator = address, pSemaphore = " << pSemaphore << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vksemaphorecreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1156,55 +1155,55 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySemaphore(VkDevice device, V
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroySemaphore(device, semaphore, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroySemaphore(device = " << (void*)(device) << ", semaphore = " << semaphore << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroySemaphore(device = address, semaphore = " << semaphore << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateEvent(VkDevice device, const VkEventCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkEvent* pEvent)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateEvent(device, pCreateInfo, pAllocator, pEvent);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateEvent(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pEvent = " << pEvent << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateEvent(device = address, pCreateInfo = address, pAllocator = address, pEvent = " << pEvent << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkeventcreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1212,41 +1211,41 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyEvent(VkDevice device, VkEve
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroyEvent(device, event, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyEvent(device = " << (void*)(device) << ", event = " << event << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyEvent(device = address, event = " << event << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetEventStatus(VkDevice device, VkEvent event)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->GetEventStatus(device, event);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetEventStatus(device = " << (void*)(device) << ", event = " << event << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetEventStatus(device = address, event = " << event << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1254,16 +1253,16 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkSetEvent(VkDevice device, VkEve
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->SetEvent(device, event);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkSetEvent(device = " << (void*)(device) << ", event = " << event << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkSetEvent(device = address, event = " << event << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1271,16 +1270,16 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetEvent(VkDevice device, VkE
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->ResetEvent(device, event);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkResetEvent(device = " << (void*)(device) << ", event = " << event << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkResetEvent(device = address, event = " << event << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1288,30 +1287,30 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateQueryPool(VkDevice device
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateQueryPool(device, pCreateInfo, pAllocator, pQueryPool);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateQueryPool(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pQueryPool = " << pQueryPool << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateQueryPool(device = address, pCreateInfo = address, pAllocator = address, pQueryPool = " << pQueryPool << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkquerypoolcreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1319,41 +1318,41 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyQueryPool(VkDevice device, V
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroyQueryPool(device, queryPool, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyQueryPool(device = " << (void*)(device) << ", queryPool = " << queryPool << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyQueryPool(device = address, queryPool = " << queryPool << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride, VkQueryResultFlags flags)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->GetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetQueryPoolResults(device = " << (void*)(device) << ", queryPool = " << queryPool << ", firstQuery = " << firstQuery << ", queryCount = " << queryCount << ", dataSize = " << (unsigned long)dataSize << ", pData = " << (void*)(pData) << ", stride = " << (void*)(stride) << ", flags = " << flags << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetQueryPoolResults(device = address, queryPool = " << queryPool << ", firstQuery = " << firstQuery << ", queryCount = " << queryCount << ", dataSize = " << (unsigned long)dataSize << ", pData = address, stride = address, flags = " << flags << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1361,30 +1360,30 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateBuffer(VkDevice device, c
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateBuffer(device, pCreateInfo, pAllocator, pBuffer);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateBuffer(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pBuffer = " << pBuffer << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateBuffer(device = address, pCreateInfo = address, pAllocator = address, pBuffer = " << pBuffer << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkbuffercreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1392,55 +1391,55 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyBuffer(VkDevice device, VkBu
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroyBuffer(device, buffer, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyBuffer(device = " << (void*)(device) << ", buffer = " << buffer << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyBuffer(device = address, buffer = " << buffer << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateBufferView(VkDevice device, const VkBufferViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBufferView* pView)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateBufferView(device, pCreateInfo, pAllocator, pView);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateBufferView(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pView = " << pView << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateBufferView(device = address, pCreateInfo = address, pAllocator = address, pView = " << pView << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkbufferviewcreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1448,55 +1447,55 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyBufferView(VkDevice device, 
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroyBufferView(device, bufferView, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyBufferView(device = " << (void*)(device) << ", bufferView = " << bufferView << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyBufferView(device = address, bufferView = " << bufferView << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateImage(VkDevice device, const VkImageCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImage* pImage)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateImage(device, pCreateInfo, pAllocator, pImage);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateImage(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pImage = " << pImage << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateImage(device = address, pCreateInfo = address, pAllocator = address, pImage = " << pImage << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkimagecreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1504,85 +1503,85 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyImage(VkDevice device, VkIma
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroyImage(device, image, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyImage(device = " << (void*)(device) << ", image = " << image << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyImage(device = address, image = " << image << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetImageSubresourceLayout(VkDevice device, VkImage image, const VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout)
 {
     using namespace StreamControl;
     device_dispatch_table(device)->GetImageSubresourceLayout(device, image, pSubresource, pLayout);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetImageSubresourceLayout(device = " << (void*)(device) << ", image = " << image << ", pSubresource = " << (void*)(pSubresource) << ", pLayout = " << (void*)(pLayout) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetImageSubresourceLayout(device = address, image = " << image << ", pSubresource = address, pLayout = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pSubresource) {
             tmp_str = vk_print_vkimagesubresource(pSubresource, "    ");
             (*outputStream) << "   pSubresource (" << pSubresource << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pLayout) {
             tmp_str = vk_print_vksubresourcelayout(pLayout, "    ");
             (*outputStream) << "   pLayout (" << pLayout << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateImageView(VkDevice device, const VkImageViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImageView* pView)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateImageView(device, pCreateInfo, pAllocator, pView);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateImageView(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pView = " << pView << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateImageView(device = address, pCreateInfo = address, pAllocator = address, pView = " << pView << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkimageviewcreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1590,55 +1589,55 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyImageView(VkDevice device, V
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroyImageView(device, imageView, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyImageView(device = " << (void*)(device) << ", imageView = " << imageView << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyImageView(device = address, imageView = " << imageView << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateShaderModule(device, pCreateInfo, pAllocator, pShaderModule);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateShaderModule(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pShaderModule = " << pShaderModule << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateShaderModule(device = address, pCreateInfo = address, pAllocator = address, pShaderModule = " << pShaderModule << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkshadermodulecreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1646,55 +1645,55 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyShaderModule(VkDevice device
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroyShaderModule(device, shaderModule, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyShaderModule(device = " << (void*)(device) << ", shaderModule = " << shaderModule << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyShaderModule(device = address, shaderModule = " << shaderModule << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineCache(VkDevice device, const VkPipelineCacheCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineCache* pPipelineCache)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreatePipelineCache(device, pCreateInfo, pAllocator, pPipelineCache);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreatePipelineCache(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pPipelineCache = " << pPipelineCache << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreatePipelineCache(device = address, pCreateInfo = address, pAllocator = address, pPipelineCache = " << pPipelineCache << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkpipelinecachecreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1702,41 +1701,41 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyPipelineCache(VkDevice devic
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroyPipelineCache(device, pipelineCache, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyPipelineCache(device = " << (void*)(device) << ", pipelineCache = " << pipelineCache << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyPipelineCache(device = address, pipelineCache = " << pipelineCache << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineCacheData(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->GetPipelineCacheData(device, pipelineCache, pDataSize, pData);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPipelineCacheData(device = " << (void*)(device) << ", pipelineCache = " << pipelineCache << ", pDataSize = " << (unsigned long)*pDataSize << ", pData = " << (void*)(pData) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPipelineCacheData(device = address, pipelineCache = " << pipelineCache << ", pDataSize = " << (unsigned long)*pDataSize << ", pData = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1744,21 +1743,21 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkMergePipelineCaches(VkDevice de
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->MergePipelineCaches(device, dstCache, srcCacheCount, pSrcCaches);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkMergePipelineCaches(device = " << (void*)(device) << ", dstCache = " << dstCache << ", srcCacheCount = " << srcCacheCount << ", pSrcCaches = " << (void*)(pSrcCaches) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkMergePipelineCaches(device = address, dstCache = " << dstCache << ", srcCacheCount = " << srcCacheCount << ", pSrcCaches = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pSrcCaches) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < srcCacheCount; i++) {
                 tmp_str = string_convert_helper(pSrcCaches[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -1769,7 +1768,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkMergePipelineCaches(VkDevice de
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1777,21 +1776,21 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateGraphicsPipelines(VkDevic
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateGraphicsPipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateGraphicsPipelines(device = " << (void*)(device) << ", pipelineCache = " << pipelineCache << ", createInfoCount = " << createInfoCount << ", pCreateInfos = " << (void*)(pCreateInfos) << ", pAllocator = " << (void*)(pAllocator) << ", pPipelines = " << pPipelines << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateGraphicsPipelines(device = address, pipelineCache = " << pipelineCache << ", createInfoCount = " << createInfoCount << ", pCreateInfos = address, pAllocator = address, pPipelines = " << pPipelines << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pCreateInfos) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < createInfoCount; i++) {
                 tmp_str = vk_print_vkgraphicspipelinecreateinfo(&pCreateInfos[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -1801,13 +1800,13 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateGraphicsPipelines(VkDevic
                 }
             }
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1815,21 +1814,21 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateComputePipelines(VkDevice
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateComputePipelines(device = " << (void*)(device) << ", pipelineCache = " << pipelineCache << ", createInfoCount = " << createInfoCount << ", pCreateInfos = " << (void*)(pCreateInfos) << ", pAllocator = " << (void*)(pAllocator) << ", pPipelines = " << pPipelines << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateComputePipelines(device = address, pipelineCache = " << pipelineCache << ", createInfoCount = " << createInfoCount << ", pCreateInfos = address, pAllocator = address, pPipelines = " << pPipelines << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pCreateInfos) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < createInfoCount; i++) {
                 tmp_str = vk_print_vkcomputepipelinecreateinfo(&pCreateInfos[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -1839,13 +1838,13 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateComputePipelines(VkDevice
                 }
             }
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1853,55 +1852,55 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyPipeline(VkDevice device, Vk
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroyPipeline(device, pipeline, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyPipeline(device = " << (void*)(device) << ", pipeline = " << pipeline << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyPipeline(device = address, pipeline = " << pipeline << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineLayout(VkDevice device, const VkPipelineLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineLayout* pPipelineLayout)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreatePipelineLayout(device, pCreateInfo, pAllocator, pPipelineLayout);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreatePipelineLayout(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pPipelineLayout = " << pPipelineLayout << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreatePipelineLayout(device = address, pCreateInfo = address, pAllocator = address, pPipelineLayout = " << pPipelineLayout << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkpipelinelayoutcreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1909,55 +1908,55 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyPipelineLayout(VkDevice devi
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroyPipelineLayout(device, pipelineLayout, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyPipelineLayout(device = " << (void*)(device) << ", pipelineLayout = " << pipelineLayout << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyPipelineLayout(device = address, pipelineLayout = " << pipelineLayout << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSampler(VkDevice device, const VkSamplerCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSampler* pSampler)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateSampler(device, pCreateInfo, pAllocator, pSampler);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateSampler(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pSampler = " << pSampler << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateSampler(device = address, pCreateInfo = address, pAllocator = address, pSampler = " << pSampler << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vksamplercreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -1965,55 +1964,55 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySampler(VkDevice device, VkS
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroySampler(device, sampler, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroySampler(device = " << (void*)(device) << ", sampler = " << sampler << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroySampler(device = address, sampler = " << sampler << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorSetLayout(VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorSetLayout* pSetLayout)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateDescriptorSetLayout(device, pCreateInfo, pAllocator, pSetLayout);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateDescriptorSetLayout(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pSetLayout = " << pSetLayout << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateDescriptorSetLayout(device = address, pCreateInfo = address, pAllocator = address, pSetLayout = " << pSetLayout << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkdescriptorsetlayoutcreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -2021,55 +2020,55 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyDescriptorSetLayout(VkDevice
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroyDescriptorSetLayout(device, descriptorSetLayout, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyDescriptorSetLayout(device = " << (void*)(device) << ", descriptorSetLayout = " << descriptorSetLayout << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyDescriptorSetLayout(device = address, descriptorSetLayout = " << descriptorSetLayout << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorPool(VkDevice device, const VkDescriptorPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorPool* pDescriptorPool)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateDescriptorPool(device, pCreateInfo, pAllocator, pDescriptorPool);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateDescriptorPool(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pDescriptorPool = " << pDescriptorPool << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateDescriptorPool(device = address, pCreateInfo = address, pAllocator = address, pDescriptorPool = " << pDescriptorPool << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkdescriptorpoolcreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -2077,41 +2076,41 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyDescriptorPool(VkDevice devi
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroyDescriptorPool(device, descriptorPool, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyDescriptorPool(device = " << (void*)(device) << ", descriptorPool = " << descriptorPool << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyDescriptorPool(device = address, descriptorPool = " << descriptorPool << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->ResetDescriptorPool(device, descriptorPool, flags);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkResetDescriptorPool(device = " << (void*)(device) << ", descriptorPool = " << descriptorPool << ", flags = " << flags << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkResetDescriptorPool(device = address, descriptorPool = " << descriptorPool << ", flags = " << flags << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -2119,25 +2118,25 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAllocateDescriptorSets(VkDevice
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->AllocateDescriptorSets(device, pAllocateInfo, pDescriptorSets);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkAllocateDescriptorSets(device = " << (void*)(device) << ", pAllocateInfo = " << (void*)(pAllocateInfo) << ", pDescriptorSets = " << pDescriptorSets << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkAllocateDescriptorSets(device = address, pAllocateInfo = address, pDescriptorSets = " << pDescriptorSets << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocateInfo) {
             tmp_str = vk_print_vkdescriptorsetallocateinfo(pAllocateInfo, "    ");
             (*outputStream) << "   pAllocateInfo (" << pAllocateInfo << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -2145,21 +2144,21 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkFreeDescriptorSets(VkDevice dev
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->FreeDescriptorSets(device, descriptorPool, descriptorSetCount, pDescriptorSets);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkFreeDescriptorSets(device = " << (void*)(device) << ", descriptorPool = " << descriptorPool << ", descriptorSetCount = " << descriptorSetCount << ", pDescriptorSets = " << (void*)(pDescriptorSets) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkFreeDescriptorSets(device = address, descriptorPool = " << descriptorPool << ", descriptorSetCount = " << descriptorSetCount << ", pDescriptorSets = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pDescriptorSets) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < descriptorSetCount; i++) {
                 tmp_str = string_convert_helper(pDescriptorSets[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -2170,7 +2169,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkFreeDescriptorSets(VkDevice dev
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -2178,21 +2177,21 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkUpdateDescriptorSets(VkDevice devic
 {
     using namespace StreamControl;
     device_dispatch_table(device)->UpdateDescriptorSets(device, descriptorWriteCount, pDescriptorWrites, descriptorCopyCount, pDescriptorCopies);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkUpdateDescriptorSets(device = " << (void*)(device) << ", descriptorWriteCount = " << descriptorWriteCount << ", pDescriptorWrites = " << (void*)(pDescriptorWrites) << ", descriptorCopyCount = " << descriptorCopyCount << ", pDescriptorCopies = " << (void*)(pDescriptorCopies) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkUpdateDescriptorSets(device = address, descriptorWriteCount = " << descriptorWriteCount << ", pDescriptorWrites = address, descriptorCopyCount = " << descriptorCopyCount << ", pDescriptorCopies = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pDescriptorWrites) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < descriptorWriteCount; i++) {
                 tmp_str = vk_print_vkwritedescriptorset(&pDescriptorWrites[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -2202,43 +2201,43 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkUpdateDescriptorSets(VkDevice devic
                 }
             }
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pDescriptorCopies) {
             tmp_str = vk_print_vkcopydescriptorset(pDescriptorCopies, "    ");
             (*outputStream) << "   pDescriptorCopies (" << pDescriptorCopies << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateFramebuffer(VkDevice device, const VkFramebufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFramebuffer* pFramebuffer)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateFramebuffer(device, pCreateInfo, pAllocator, pFramebuffer);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateFramebuffer(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pFramebuffer = " << pFramebuffer << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateFramebuffer(device = address, pCreateInfo = address, pAllocator = address, pFramebuffer = " << pFramebuffer << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkframebuffercreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -2246,55 +2245,55 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyFramebuffer(VkDevice device,
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroyFramebuffer(device, framebuffer, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyFramebuffer(device = " << (void*)(device) << ", framebuffer = " << framebuffer << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyFramebuffer(device = address, framebuffer = " << framebuffer << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateRenderPass(VkDevice device, const VkRenderPassCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateRenderPass(device, pCreateInfo, pAllocator, pRenderPass);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateRenderPass(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pRenderPass = " << pRenderPass << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateRenderPass(device = address, pCreateInfo = address, pAllocator = address, pRenderPass = " << pRenderPass << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkrenderpasscreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -2302,80 +2301,80 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyRenderPass(VkDevice device, 
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroyRenderPass(device, renderPass, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyRenderPass(device = " << (void*)(device) << ", renderPass = " << renderPass << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyRenderPass(device = address, renderPass = " << renderPass << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkGetRenderAreaGranularity(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity)
 {
     using namespace StreamControl;
     device_dispatch_table(device)->GetRenderAreaGranularity(device, renderPass, pGranularity);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetRenderAreaGranularity(device = " << (void*)(device) << ", renderPass = " << renderPass << ", pGranularity = " << (void*)(pGranularity) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetRenderAreaGranularity(device = address, renderPass = " << renderPass << ", pGranularity = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pGranularity) {
             tmp_str = vk_print_vkextent2d(pGranularity, "    ");
             (*outputStream) << "   pGranularity (" << pGranularity << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateCommandPool(device, pCreateInfo, pAllocator, pCommandPool);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateCommandPool(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pCommandPool = " << pCommandPool << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateCommandPool(device = address, pCreateInfo = address, pAllocator = address, pCommandPool = " << pCommandPool << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkcommandpoolcreateinfo(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -2383,41 +2382,41 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroyCommandPool(VkDevice device,
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroyCommandPool(device, commandPool, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyCommandPool(device = " << (void*)(device) << ", commandPool = " << commandPool << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroyCommandPool(device = address, commandPool = " << commandPool << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->ResetCommandPool(device, commandPool, flags);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkResetCommandPool(device = " << (void*)(device) << ", commandPool = " << commandPool << ", flags = " << flags << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkResetCommandPool(device = address, commandPool = " << commandPool << ", flags = " << flags << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -2425,25 +2424,25 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAllocateCommandBuffers(VkDevice
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->AllocateCommandBuffers(device, pAllocateInfo, pCommandBuffers);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkAllocateCommandBuffers(device = " << (void*)(device) << ", pAllocateInfo = " << (void*)(pAllocateInfo) << ", pCommandBuffers = " << (void*)*pCommandBuffers << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkAllocateCommandBuffers(device = address, pAllocateInfo = address, pCommandBuffers = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocateInfo) {
             tmp_str = vk_print_vkcommandbufferallocateinfo(pAllocateInfo, "    ");
             (*outputStream) << "   pAllocateInfo (" << pAllocateInfo << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -2451,21 +2450,21 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkFreeCommandBuffers(VkDevice device,
 {
     using namespace StreamControl;
     device_dispatch_table(device)->FreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkFreeCommandBuffers(device = " << (void*)(device) << ", commandPool = " << commandPool << ", commandBufferCount = " << commandBufferCount << ", pCommandBuffers = " << (void*)(pCommandBuffers) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkFreeCommandBuffers(device = address, commandPool = " << commandPool << ", commandBufferCount = " << commandBufferCount << ", pCommandBuffers = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pCommandBuffers) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < commandBufferCount; i++) {
                 tmp_str = string_convert_helper(pCommandBuffers[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -2476,32 +2475,32 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkFreeCommandBuffers(VkDevice device,
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkBeginCommandBuffer(VkCommandBuffer commandBuffer, const VkCommandBufferBeginInfo* pBeginInfo)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(commandBuffer)->BeginCommandBuffer(commandBuffer, pBeginInfo);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkBeginCommandBuffer(commandBuffer = " << (void*)(commandBuffer) << ", pBeginInfo = " << (void*)(pBeginInfo) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkBeginCommandBuffer(commandBuffer = address, pBeginInfo = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pBeginInfo) {
             tmp_str = vk_print_vkcommandbufferbegininfo(pBeginInfo, "    ");
             (*outputStream) << "   pBeginInfo (" << pBeginInfo << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -2509,16 +2508,16 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEndCommandBuffer(VkCommandBuffe
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(commandBuffer)->EndCommandBuffer(commandBuffer);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkEndCommandBuffer(commandBuffer = " << (void*)(commandBuffer) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkEndCommandBuffer(commandBuffer = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -2526,16 +2525,16 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkResetCommandBuffer(VkCommandBuf
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(commandBuffer)->ResetCommandBuffer(commandBuffer, flags);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkResetCommandBuffer(commandBuffer = " << (void*)(commandBuffer) << ", flags = " << flags << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkResetCommandBuffer(commandBuffer = address, flags = " << flags << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -2543,37 +2542,37 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindPipeline(VkCommandBuffer com
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdBindPipeline(commandBuffer = " << (void*)(commandBuffer) << ", pipelineBindPoint = " << string_VkPipelineBindPoint(pipelineBindPoint) << ", pipeline = " << pipeline << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdBindPipeline(commandBuffer = address, pipelineBindPoint = " << string_VkPipelineBindPoint(pipelineBindPoint) << ", pipeline = " << pipeline << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewport* pViewports)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetViewport(commandBuffer = " << (void*)(commandBuffer) << ", firstViewport = " << firstViewport << ", viewportCount = " << viewportCount << ", pViewports = " << (void*)(pViewports) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetViewport(commandBuffer = address, firstViewport = " << firstViewport << ", viewportCount = " << viewportCount << ", pViewports = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pViewports) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < viewportCount; i++) {
                 tmp_str = vk_print_vkviewport(&pViewports[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -2584,28 +2583,28 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetViewport(VkCommandBuffer comm
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetScissor(VkCommandBuffer commandBuffer, uint32_t firstScissor, uint32_t scissorCount, const VkRect2D* pScissors)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetScissor(commandBuffer = " << (void*)(commandBuffer) << ", firstScissor = " << firstScissor << ", scissorCount = " << scissorCount << ", pScissors = " << (void*)(pScissors) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetScissor(commandBuffer = address, firstScissor = " << firstScissor << ", scissorCount = " << scissorCount << ", pScissors = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pScissors) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < scissorCount; i++) {
                 tmp_str = vk_print_vkrect2d(&pScissors[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -2616,140 +2615,140 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetScissor(VkCommandBuffer comma
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdSetLineWidth(commandBuffer, lineWidth);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetLineWidth(commandBuffer = " << (void*)(commandBuffer) << ", lineWidth = " << lineWidth << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetLineWidth(commandBuffer = address, lineWidth = " << lineWidth << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBias(VkCommandBuffer commandBuffer, float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdSetDepthBias(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetDepthBias(commandBuffer = " << (void*)(commandBuffer) << ", depthBiasConstantFactor = " << depthBiasConstantFactor << ", depthBiasClamp = " << depthBiasClamp << ", depthBiasSlopeFactor = " << depthBiasSlopeFactor << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetDepthBias(commandBuffer = address, depthBiasConstantFactor = " << depthBiasConstantFactor << ", depthBiasClamp = " << depthBiasClamp << ", depthBiasSlopeFactor = " << depthBiasSlopeFactor << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetBlendConstants(VkCommandBuffer commandBuffer, const float blendConstants[4])
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdSetBlendConstants(commandBuffer, blendConstants);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetBlendConstants(commandBuffer = " << (void*)(commandBuffer) << ", blendConstants = " << "[" << blendConstants[0] << "," << blendConstants[1] << "," << blendConstants[2] << "," << blendConstants[3] << "]" << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetBlendConstants(commandBuffer = address, blendConstants = " << "[" << blendConstants[0] << "," << blendConstants[1] << "," << blendConstants[2] << "," << blendConstants[3] << "]" << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBounds(VkCommandBuffer commandBuffer, float minDepthBounds, float maxDepthBounds)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetDepthBounds(commandBuffer = " << (void*)(commandBuffer) << ", minDepthBounds = " << minDepthBounds << ", maxDepthBounds = " << maxDepthBounds << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetDepthBounds(commandBuffer = address, minDepthBounds = " << minDepthBounds << ", maxDepthBounds = " << maxDepthBounds << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilCompareMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t compareMask)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetStencilCompareMask(commandBuffer = " << (void*)(commandBuffer) << ", faceMask = " << faceMask << ", compareMask = " << compareMask << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetStencilCompareMask(commandBuffer = address, faceMask = " << faceMask << ", compareMask = " << compareMask << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilWriteMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t writeMask)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetStencilWriteMask(commandBuffer = " << (void*)(commandBuffer) << ", faceMask = " << faceMask << ", writeMask = " << writeMask << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetStencilWriteMask(commandBuffer = address, faceMask = " << faceMask << ", writeMask = " << writeMask << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilReference(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t reference)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdSetStencilReference(commandBuffer, faceMask, reference);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetStencilReference(commandBuffer = " << (void*)(commandBuffer) << ", faceMask = " << faceMask << ", reference = " << reference << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetStencilReference(commandBuffer = address, faceMask = " << faceMask << ", reference = " << reference << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdBindDescriptorSets(commandBuffer = " << (void*)(commandBuffer) << ", pipelineBindPoint = " << string_VkPipelineBindPoint(pipelineBindPoint) << ", layout = " << layout << ", firstSet = " << firstSet << ", descriptorSetCount = " << descriptorSetCount << ", pDescriptorSets = " << (void*)(pDescriptorSets) << ", dynamicOffsetCount = " << dynamicOffsetCount << ", pDynamicOffsets = " << (void*)(pDynamicOffsets) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdBindDescriptorSets(commandBuffer = address, pipelineBindPoint = " << string_VkPipelineBindPoint(pipelineBindPoint) << ", layout = " << layout << ", firstSet = " << firstSet << ", descriptorSetCount = " << descriptorSetCount << ", pDescriptorSets = address, dynamicOffsetCount = " << dynamicOffsetCount << ", pDynamicOffsets = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pDescriptorSets) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < descriptorSetCount; i++) {
                 tmp_str = string_convert_helper(pDescriptorSets[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -2760,7 +2759,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorSets(VkCommandBuff
             }
         }
         if (pDynamicOffsets) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < dynamicOffsetCount; i++) {
                 tmp_str = string_convert_helper(pDynamicOffsets[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -2771,156 +2770,156 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorSets(VkCommandBuff
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkIndexType indexType)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdBindIndexBuffer(commandBuffer = " << (void*)(commandBuffer) << ", buffer = " << buffer << ", offset = " << (void*)(offset) << ", indexType = " << string_VkIndexType(indexType) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdBindIndexBuffer(commandBuffer = address, buffer = " << buffer << ", offset = address, indexType = " << string_VkIndexType(indexType) << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdBindVertexBuffers(commandBuffer = " << (void*)(commandBuffer) << ", firstBinding = " << firstBinding << ", bindingCount = " << bindingCount << ", pBuffers = " << (void*)(pBuffers) << ", pOffsets = " << (void*)(pOffsets) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdBindVertexBuffers(commandBuffer = address, firstBinding = " << firstBinding << ", bindingCount = " << bindingCount << ", pBuffers = address, pOffsets = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdDraw(commandBuffer = " << (void*)(commandBuffer) << ", vertexCount = " << vertexCount << ", instanceCount = " << instanceCount << ", firstVertex = " << firstVertex << ", firstInstance = " << firstInstance << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdDraw(commandBuffer = address, vertexCount = " << vertexCount << ", instanceCount = " << instanceCount << ", firstVertex = " << firstVertex << ", firstInstance = " << firstInstance << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdDrawIndexed(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdDrawIndexed(commandBuffer = " << (void*)(commandBuffer) << ", indexCount = " << indexCount << ", instanceCount = " << instanceCount << ", firstIndex = " << firstIndex << ", vertexOffset = " << vertexOffset << ", firstInstance = " << firstInstance << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdDrawIndexed(commandBuffer = address, indexCount = " << indexCount << ", instanceCount = " << instanceCount << ", firstIndex = " << firstIndex << ", vertexOffset = " << vertexOffset << ", firstInstance = " << firstInstance << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdDrawIndirect(commandBuffer = " << (void*)(commandBuffer) << ", buffer = " << buffer << ", offset = " << (void*)(offset) << ", drawCount = " << drawCount << ", stride = " << stride << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdDrawIndirect(commandBuffer = address, buffer = " << buffer << ", offset = address, drawCount = " << drawCount << ", stride = " << stride << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdDrawIndexedIndirect(commandBuffer = " << (void*)(commandBuffer) << ", buffer = " << buffer << ", offset = " << (void*)(offset) << ", drawCount = " << drawCount << ", stride = " << stride << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdDrawIndexedIndirect(commandBuffer = address, buffer = " << buffer << ", offset = address, drawCount = " << drawCount << ", stride = " << stride << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDispatch(VkCommandBuffer commandBuffer, uint32_t x, uint32_t y, uint32_t z)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdDispatch(commandBuffer, x, y, z);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdDispatch(commandBuffer = " << (void*)(commandBuffer) << ", x = " << x << ", y = " << y << ", z = " << z << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdDispatch(commandBuffer = address, x = " << x << ", y = " << y << ", z = " << z << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdDispatchIndirect(commandBuffer, buffer, offset);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdDispatchIndirect(commandBuffer = " << (void*)(commandBuffer) << ", buffer = " << buffer << ", offset = " << (void*)(offset) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdDispatchIndirect(commandBuffer = address, buffer = " << buffer << ", offset = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferCopy* pRegions)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdCopyBuffer(commandBuffer = " << (void*)(commandBuffer) << ", srcBuffer = " << srcBuffer << ", dstBuffer = " << dstBuffer << ", regionCount = " << regionCount << ", pRegions = " << (void*)(pRegions) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdCopyBuffer(commandBuffer = address, srcBuffer = " << srcBuffer << ", dstBuffer = " << dstBuffer << ", regionCount = " << regionCount << ", pRegions = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pRegions) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < regionCount; i++) {
                 tmp_str = vk_print_vkbuffercopy(&pRegions[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -2931,28 +2930,28 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyBuffer(VkCommandBuffer comma
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageCopy* pRegions)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdCopyImage(commandBuffer = " << (void*)(commandBuffer) << ", srcImage = " << srcImage << ", srcImageLayout = " << string_VkImageLayout(srcImageLayout) << ", dstImage = " << dstImage << ", dstImageLayout = " << string_VkImageLayout(dstImageLayout) << ", regionCount = " << regionCount << ", pRegions = " << (void*)(pRegions) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdCopyImage(commandBuffer = address, srcImage = " << srcImage << ", srcImageLayout = " << string_VkImageLayout(srcImageLayout) << ", dstImage = " << dstImage << ", dstImageLayout = " << string_VkImageLayout(dstImageLayout) << ", regionCount = " << regionCount << ", pRegions = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pRegions) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < regionCount; i++) {
                 tmp_str = vk_print_vkimagecopy(&pRegions[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -2963,28 +2962,28 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyImage(VkCommandBuffer comman
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageBlit* pRegions, VkFilter filter)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions, filter);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdBlitImage(commandBuffer = " << (void*)(commandBuffer) << ", srcImage = " << srcImage << ", srcImageLayout = " << string_VkImageLayout(srcImageLayout) << ", dstImage = " << dstImage << ", dstImageLayout = " << string_VkImageLayout(dstImageLayout) << ", regionCount = " << regionCount << ", pRegions = " << (void*)(pRegions) << ", filter = " << string_VkFilter(filter) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdBlitImage(commandBuffer = address, srcImage = " << srcImage << ", srcImageLayout = " << string_VkImageLayout(srcImageLayout) << ", dstImage = " << dstImage << ", dstImageLayout = " << string_VkImageLayout(dstImageLayout) << ", regionCount = " << regionCount << ", pRegions = address, filter = " << string_VkFilter(filter) << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pRegions) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < regionCount; i++) {
                 tmp_str = vk_print_vkimageblit(&pRegions[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -2995,28 +2994,28 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBlitImage(VkCommandBuffer comman
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkBufferImageCopy* pRegions)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdCopyBufferToImage(commandBuffer = " << (void*)(commandBuffer) << ", srcBuffer = " << srcBuffer << ", dstImage = " << dstImage << ", dstImageLayout = " << string_VkImageLayout(dstImageLayout) << ", regionCount = " << regionCount << ", pRegions = " << (void*)(pRegions) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdCopyBufferToImage(commandBuffer = address, srcBuffer = " << srcBuffer << ", dstImage = " << dstImage << ", dstImageLayout = " << string_VkImageLayout(dstImageLayout) << ", regionCount = " << regionCount << ", pRegions = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pRegions) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < regionCount; i++) {
                 tmp_str = vk_print_vkbufferimagecopy(&pRegions[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3027,28 +3026,28 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyBufferToImage(VkCommandBuffe
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdCopyImageToBuffer(commandBuffer = " << (void*)(commandBuffer) << ", srcImage = " << srcImage << ", srcImageLayout = " << string_VkImageLayout(srcImageLayout) << ", dstBuffer = " << dstBuffer << ", regionCount = " << regionCount << ", pRegions = " << (void*)(pRegions) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdCopyImageToBuffer(commandBuffer = address, srcImage = " << srcImage << ", srcImageLayout = " << string_VkImageLayout(srcImageLayout) << ", dstBuffer = " << dstBuffer << ", regionCount = " << regionCount << ", pRegions = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pRegions) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < regionCount; i++) {
                 tmp_str = vk_print_vkbufferimagecopy(&pRegions[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3059,65 +3058,65 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyImageToBuffer(VkCommandBuffe
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize dataSize, const uint32_t* pData)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdUpdateBuffer(commandBuffer = " << (void*)(commandBuffer) << ", dstBuffer = " << dstBuffer << ", dstOffset = " << (void*)(dstOffset) << ", dataSize = " << (void*)(dataSize) << ", pData = " << (void*)(pData) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdUpdateBuffer(commandBuffer = address, dstBuffer = " << dstBuffer << ", dstOffset = address, dataSize = address, pData = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdFillBuffer(commandBuffer = " << (void*)(commandBuffer) << ", dstBuffer = " << dstBuffer << ", dstOffset = " << (void*)(dstOffset) << ", size = " << (void*)(size) << ", data = " << data << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdFillBuffer(commandBuffer = address, dstBuffer = " << dstBuffer << ", dstOffset = address, size = address, data = " << data << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearColorValue* pColor, uint32_t rangeCount, const VkImageSubresourceRange* pRanges)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdClearColorImage(commandBuffer = " << (void*)(commandBuffer) << ", image = " << image << ", imageLayout = " << string_VkImageLayout(imageLayout) << ", pColor = " << (void*)(pColor) << ", rangeCount = " << rangeCount << ", pRanges = " << (void*)(pRanges) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdClearColorImage(commandBuffer = address, image = " << image << ", imageLayout = " << string_VkImageLayout(imageLayout) << ", pColor = address, rangeCount = " << rangeCount << ", pRanges = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pColor) {
             tmp_str = vk_print_vkclearcolorvalue(pColor, "    ");
             (*outputStream) << "   pColor (" << pColor << ")" << endl << tmp_str << endl;
         }
         uint32_t i;
         if (pRanges) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < rangeCount; i++) {
                 tmp_str = vk_print_vkimagesubresourcerange(&pRanges[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3128,33 +3127,33 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearColorImage(VkCommandBuffer 
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearDepthStencilValue* pDepthStencil, uint32_t rangeCount, const VkImageSubresourceRange* pRanges)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdClearDepthStencilImage(commandBuffer = " << (void*)(commandBuffer) << ", image = " << image << ", imageLayout = " << string_VkImageLayout(imageLayout) << ", pDepthStencil = " << (void*)(pDepthStencil) << ", rangeCount = " << rangeCount << ", pRanges = " << (void*)(pRanges) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdClearDepthStencilImage(commandBuffer = address, image = " << image << ", imageLayout = " << string_VkImageLayout(imageLayout) << ", pDepthStencil = address, rangeCount = " << rangeCount << ", pRanges = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pDepthStencil) {
             tmp_str = vk_print_vkcleardepthstencilvalue(pDepthStencil, "    ");
             (*outputStream) << "   pDepthStencil (" << pDepthStencil << ")" << endl << tmp_str << endl;
         }
         uint32_t i;
         if (pRanges) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < rangeCount; i++) {
                 tmp_str = vk_print_vkimagesubresourcerange(&pRanges[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3165,28 +3164,28 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearDepthStencilImage(VkCommand
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearAttachments(VkCommandBuffer commandBuffer, uint32_t attachmentCount, const VkClearAttachment* pAttachments, uint32_t rectCount, const VkClearRect* pRects)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdClearAttachments(commandBuffer = " << (void*)(commandBuffer) << ", attachmentCount = " << attachmentCount << ", pAttachments = " << (void*)(pAttachments) << ", rectCount = " << rectCount << ", pRects = " << (void*)(pRects) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdClearAttachments(commandBuffer = address, attachmentCount = " << attachmentCount << ", pAttachments = address, rectCount = " << rectCount << ", pRects = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pAttachments) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < attachmentCount; i++) {
                 tmp_str = vk_print_vkclearattachment(&pAttachments[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3197,7 +3196,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearAttachments(VkCommandBuffer
             }
         }
         if (pRects) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < rectCount; i++) {
                 tmp_str = vk_print_vkclearrect(&pRects[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3208,28 +3207,28 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdClearAttachments(VkCommandBuffer
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageResolve* pRegions)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdResolveImage(commandBuffer = " << (void*)(commandBuffer) << ", srcImage = " << srcImage << ", srcImageLayout = " << string_VkImageLayout(srcImageLayout) << ", dstImage = " << dstImage << ", dstImageLayout = " << string_VkImageLayout(dstImageLayout) << ", regionCount = " << regionCount << ", pRegions = " << (void*)(pRegions) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdResolveImage(commandBuffer = address, srcImage = " << srcImage << ", srcImageLayout = " << string_VkImageLayout(srcImageLayout) << ", dstImage = " << dstImage << ", dstImageLayout = " << string_VkImageLayout(dstImageLayout) << ", regionCount = " << regionCount << ", pRegions = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pRegions) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < regionCount; i++) {
                 tmp_str = vk_print_vkimageresolve(&pRegions[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3240,60 +3239,60 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResolveImage(VkCommandBuffer com
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdSetEvent(commandBuffer, event, stageMask);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetEvent(commandBuffer = " << (void*)(commandBuffer) << ", event = " << event << ", stageMask = " << stageMask << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdSetEvent(commandBuffer = address, event = " << event << ", stageMask = " << stageMask << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdResetEvent(commandBuffer, event, stageMask);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdResetEvent(commandBuffer = " << (void*)(commandBuffer) << ", event = " << event << ", stageMask = " << stageMask << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdResetEvent(commandBuffer = address, event = " << event << ", stageMask = " << stageMask << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdWaitEvents(commandBuffer = " << (void*)(commandBuffer) << ", eventCount = " << eventCount << ", pEvents = " << (void*)(pEvents) << ", srcStageMask = " << srcStageMask << ", dstStageMask = " << dstStageMask << ", memoryBarrierCount = " << memoryBarrierCount << ", pMemoryBarriers = " << (void*)(pMemoryBarriers) << ", bufferMemoryBarrierCount = " << bufferMemoryBarrierCount << ", pBufferMemoryBarriers = " << (void*)(pBufferMemoryBarriers) << ", imageMemoryBarrierCount = " << imageMemoryBarrierCount << ", pImageMemoryBarriers = " << (void*)(pImageMemoryBarriers) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdWaitEvents(commandBuffer = address, eventCount = " << eventCount << ", pEvents = address, srcStageMask = " << srcStageMask << ", dstStageMask = " << dstStageMask << ", memoryBarrierCount = " << memoryBarrierCount << ", pMemoryBarriers = address, bufferMemoryBarrierCount = " << bufferMemoryBarrierCount << ", pBufferMemoryBarriers = address, imageMemoryBarrierCount = " << imageMemoryBarrierCount << ", pImageMemoryBarriers = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pBufferMemoryBarriers) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < bufferMemoryBarrierCount; i++) {
                 tmp_str = vk_print_vkbuffermemorybarrier(&pBufferMemoryBarriers[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3304,7 +3303,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents(VkCommandBuffer comma
             }
         }
         if (pEvents) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < eventCount; i++) {
                 tmp_str = string_convert_helper(pEvents[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3315,7 +3314,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents(VkCommandBuffer comma
             }
         }
         if (pImageMemoryBarriers) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < imageMemoryBarrierCount; i++) {
                 tmp_str = vk_print_vkimagememorybarrier(&pImageMemoryBarriers[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3326,7 +3325,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents(VkCommandBuffer comma
             }
         }
         if (pMemoryBarriers) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < memoryBarrierCount; i++) {
                 tmp_str = vk_print_vkmemorybarrier(&pMemoryBarriers[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3337,28 +3336,28 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents(VkCommandBuffer comma
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdPipelineBarrier(commandBuffer = " << (void*)(commandBuffer) << ", srcStageMask = " << srcStageMask << ", dstStageMask = " << dstStageMask << ", dependencyFlags = " << dependencyFlags << ", memoryBarrierCount = " << memoryBarrierCount << ", pMemoryBarriers = " << (void*)(pMemoryBarriers) << ", bufferMemoryBarrierCount = " << bufferMemoryBarrierCount << ", pBufferMemoryBarriers = " << (void*)(pBufferMemoryBarriers) << ", imageMemoryBarrierCount = " << imageMemoryBarrierCount << ", pImageMemoryBarriers = " << (void*)(pImageMemoryBarriers) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdPipelineBarrier(commandBuffer = address, srcStageMask = " << srcStageMask << ", dstStageMask = " << dstStageMask << ", dependencyFlags = " << dependencyFlags << ", memoryBarrierCount = " << memoryBarrierCount << ", pMemoryBarriers = address, bufferMemoryBarrierCount = " << bufferMemoryBarrierCount << ", pBufferMemoryBarriers = address, imageMemoryBarrierCount = " << imageMemoryBarrierCount << ", pImageMemoryBarriers = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pImageMemoryBarriers) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < imageMemoryBarrierCount; i++) {
                 tmp_str = vk_print_vkimagememorybarrier(&pImageMemoryBarriers[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3369,7 +3368,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdPipelineBarrier(VkCommandBuffer 
             }
         }
         if (pMemoryBarriers) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < memoryBarrierCount; i++) {
                 tmp_str = vk_print_vkmemorybarrier(&pMemoryBarriers[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3380,7 +3379,7 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdPipelineBarrier(VkCommandBuffer 
             }
         }
         if (pBufferMemoryBarriers) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < bufferMemoryBarrierCount; i++) {
                 tmp_str = vk_print_vkbuffermemorybarrier(&pBufferMemoryBarriers[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3391,181 +3390,181 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdPipelineBarrier(VkCommandBuffer 
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdBeginQuery(commandBuffer, queryPool, query, flags);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdBeginQuery(commandBuffer = " << (void*)(commandBuffer) << ", queryPool = " << queryPool << ", query = " << query << ", flags = " << flags << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdBeginQuery(commandBuffer = address, queryPool = " << queryPool << ", query = " << query << ", flags = " << flags << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdEndQuery(commandBuffer, queryPool, query);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdEndQuery(commandBuffer = " << (void*)(commandBuffer) << ", queryPool = " << queryPool << ", query = " << query << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdEndQuery(commandBuffer = address, queryPool = " << queryPool << ", query = " << query << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdResetQueryPool(commandBuffer = " << (void*)(commandBuffer) << ", queryPool = " << queryPool << ", firstQuery = " << firstQuery << ", queryCount = " << queryCount << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdResetQueryPool(commandBuffer = address, queryPool = " << queryPool << ", firstQuery = " << firstQuery << ", queryCount = " << queryCount << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool, uint32_t query)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdWriteTimestamp(commandBuffer = " << (void*)(commandBuffer) << ", pipelineStage = " << string_VkPipelineStageFlagBits(pipelineStage) << ", queryPool = " << queryPool << ", query = " << query << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdWriteTimestamp(commandBuffer = address, pipelineStage = " << string_VkPipelineStageFlagBits(pipelineStage) << ", queryPool = " << queryPool << ", query = " << query << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize stride, VkQueryResultFlags flags)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdCopyQueryPoolResults(commandBuffer = " << (void*)(commandBuffer) << ", queryPool = " << queryPool << ", firstQuery = " << firstQuery << ", queryCount = " << queryCount << ", dstBuffer = " << dstBuffer << ", dstOffset = " << (void*)(dstOffset) << ", stride = " << (void*)(stride) << ", flags = " << flags << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdCopyQueryPoolResults(commandBuffer = address, queryPool = " << queryPool << ", firstQuery = " << firstQuery << ", queryCount = " << queryCount << ", dstBuffer = " << dstBuffer << ", dstOffset = address, stride = address, flags = " << flags << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size, const void* pValues)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdPushConstants(commandBuffer = " << (void*)(commandBuffer) << ", layout = " << layout << ", stageFlags = " << stageFlags << ", offset = " << offset << ", size = " << size << ", pValues = " << (void*)(pValues) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdPushConstants(commandBuffer = address, layout = " << layout << ", stageFlags = " << stageFlags << ", offset = " << offset << ", size = " << size << ", pValues = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdBeginRenderPass(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, VkSubpassContents contents)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdBeginRenderPass(commandBuffer = " << (void*)(commandBuffer) << ", pRenderPassBegin = " << (void*)(pRenderPassBegin) << ", contents = " << string_VkSubpassContents(contents) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdBeginRenderPass(commandBuffer = address, pRenderPassBegin = address, contents = " << string_VkSubpassContents(contents) << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pRenderPassBegin) {
             tmp_str = vk_print_vkrenderpassbegininfo(pRenderPassBegin, "    ");
             (*outputStream) << "   pRenderPassBegin (" << pRenderPassBegin << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdNextSubpass(commandBuffer, contents);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdNextSubpass(commandBuffer = " << (void*)(commandBuffer) << ", contents = " << string_VkSubpassContents(contents) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdNextSubpass(commandBuffer = address, contents = " << string_VkSubpassContents(contents) << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdEndRenderPass(VkCommandBuffer commandBuffer)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdEndRenderPass(commandBuffer);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdEndRenderPass(commandBuffer = " << (void*)(commandBuffer) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdEndRenderPass(commandBuffer = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers)
 {
     using namespace StreamControl;
     device_dispatch_table(commandBuffer)->CmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdExecuteCommands(commandBuffer = " << (void*)(commandBuffer) << ", commandBufferCount = " << commandBufferCount << ", pCommandBuffers = " << (void*)(pCommandBuffers) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCmdExecuteCommands(commandBuffer = address, commandBufferCount = " << commandBufferCount << ", pCommandBuffers = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pCommandBuffers) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < commandBufferCount; i++) {
                 tmp_str = string_convert_helper(pCommandBuffers[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3576,48 +3575,48 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkCmdExecuteCommands(VkCommandBuffer 
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySurfaceKHR(VkInstance instance, VkSurfaceKHR surface, const VkAllocationCallbacks* pAllocator)
 {
     using namespace StreamControl;
     instance_dispatch_table(instance)->DestroySurfaceKHR(instance, surface, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroySurfaceKHR(instance = " << (void*)(instance) << ", surface = " << surface << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroySurfaceKHR(instance = address, surface = " << surface << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported)
 {
     using namespace StreamControl;
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, pSupported);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice = " << (void*)(physicalDevice) << ", queueFamilyIndex = " << queueFamilyIndex << ", surface = " << surface << ", pSupported = " << pSupported << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice = address, queueFamilyIndex = " << queueFamilyIndex << ", surface = " << surface << ", pSupported = " << pSupported << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -3625,25 +3624,25 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabil
 {
     using namespace StreamControl;
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, pSurfaceCapabilities);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice = " << (void*)(physicalDevice) << ", surface = " << surface << ", pSurfaceCapabilities = " << (void*)(pSurfaceCapabilities) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice = address, surface = " << surface << ", pSurfaceCapabilities = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pSurfaceCapabilities) {
             tmp_str = vk_print_vksurfacecapabilitieskhr(pSurfaceCapabilities, "    ");
             (*outputStream) << "   pSurfaceCapabilities (" << pSurfaceCapabilities << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -3651,21 +3650,21 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceFormats
 {
     using namespace StreamControl;
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, pSurfaceFormatCount, pSurfaceFormats);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice = " << (void*)(physicalDevice) << ", surface = " << surface << ", pSurfaceFormatCount = " << *(pSurfaceFormatCount) << ", pSurfaceFormats = " << (void*)(pSurfaceFormats) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice = address, surface = " << surface << ", pSurfaceFormatCount = " << *(pSurfaceFormatCount) << ", pSurfaceFormats = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pSurfaceFormats) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < *pSurfaceFormatCount; i++) {
                 tmp_str = vk_print_vksurfaceformatkhr(&pSurfaceFormats[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3676,7 +3675,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceFormats
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -3684,21 +3683,21 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfacePresent
 {
     using namespace StreamControl;
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, pPresentModeCount, pPresentModes);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice = " << (void*)(physicalDevice) << ", surface = " << surface << ", pPresentModeCount = " << *(pPresentModeCount) << ", pPresentModes = " << (void*)(pPresentModes) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice = address, surface = " << surface << ", pPresentModeCount = " << *(pPresentModeCount) << ", pPresentModes = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pPresentModes) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < *pPresentModeCount; i++) {
                 tmp_str = string_convert_helper(pPresentModes[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3709,7 +3708,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfacePresent
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -3717,30 +3716,30 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateSwapchainKHR(VkDevice dev
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->CreateSwapchainKHR(device, pCreateInfo, pAllocator, pSwapchain);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateSwapchainKHR(device = " << (void*)(device) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pSwapchain = " << pSwapchain << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateSwapchainKHR(device = address, pCreateInfo = address, pAllocator = address, pSwapchain = " << pSwapchain << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkswapchaincreateinfokhr(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -3748,46 +3747,46 @@ VK_LAYER_EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySwapchainKHR(VkDevice device
 {
     using namespace StreamControl;
     device_dispatch_table(device)->DestroySwapchainKHR(device, swapchain, pAllocator);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroySwapchainKHR(device = " << (void*)(device) << ", swapchain = " << swapchain << ", pAllocator = " << (void*)(pAllocator) << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkDestroySwapchainKHR(device = address, swapchain = " << swapchain << ", pAllocator = address)\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetSwapchainImagesKHR(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pSwapchainImageCount, VkImage* pSwapchainImages)
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->GetSwapchainImagesKHR(device, swapchain, pSwapchainImageCount, pSwapchainImages);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetSwapchainImagesKHR(device = " << (void*)(device) << ", swapchain = " << swapchain << ", pSwapchainImageCount = " << *(pSwapchainImageCount) << ", pSwapchainImages = " << pSwapchainImages << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetSwapchainImagesKHR(device = address, swapchain = " << swapchain << ", pSwapchainImageCount = " << *(pSwapchainImageCount) << ", pSwapchainImages = " << pSwapchainImages << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
         uint32_t i;
         if (pSwapchainImages) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1123
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1202
             for (i = 0; i < *pSwapchainImageCount; i++) {
                 tmp_str = string_convert_helper(pSwapchainImages[i], "    ");
                 if (StreamControl::writeAddress == true) {
@@ -3798,7 +3797,7 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetSwapchainImagesKHR(VkDevice 
             }
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -3806,16 +3805,16 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkAcquireNextImageKHR(VkDevice de
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(device)->AcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkAcquireNextImageKHR(device = " << (void*)(device) << ", swapchain = " << swapchain << ", timeout = " << timeout << ", semaphore = " << semaphore << ", fence = " << fence << ", pImageIndex = " << *(pImageIndex) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkAcquireNextImageKHR(device = address, swapchain = " << swapchain << ", timeout = " << timeout << ", semaphore = " << semaphore << ", fence = " << fence << ", pImageIndex = " << *(pImageIndex) << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -3823,25 +3822,25 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkQueuePresentKHR(VkQueue queue, 
 {
     using namespace StreamControl;
     VkResult result = device_dispatch_table(queue)->QueuePresentKHR(queue, pPresentInfo);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkQueuePresentKHR(queue = " << (void*)(queue) << ", pPresentInfo = " << (void*)(pPresentInfo) << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkQueuePresentKHR(queue = address, pPresentInfo = address) = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pPresentInfo) {
             tmp_str = vk_print_vkpresentinfokhr(pPresentInfo, "    ");
             (*outputStream) << "   pPresentInfo (" << pPresentInfo << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -3851,30 +3850,30 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateWin32SurfaceKHR(VkInstanc
 {
     using namespace StreamControl;
     VkResult result = instance_dispatch_table(instance)->CreateWin32SurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateWin32SurfaceKHR(instance = " << (void*)(instance) << ", pCreateInfo = " << (void*)(pCreateInfo) << ", pAllocator = " << (void*)(pAllocator) << ", pSurface = " << pSurface << ") = " << string_VkResult((VkResult)result) << endl;
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkCreateWin32SurfaceKHR(instance = address, pCreateInfo = address, pAllocator = address, pSurface = " << pSurface << ") = " << string_VkResult((VkResult)result) << endl;
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
     if (g_ApiDumpDetailed) {
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1091
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1170
         string tmp_str;
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pCreateInfo) {
             tmp_str = vk_print_vkwin32surfacecreateinfokhr(pCreateInfo, "    ");
             (*outputStream) << "   pCreateInfo (" << pCreateInfo << ")" << endl << tmp_str << endl;
         }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1100
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1179
         if (pAllocator) {
             tmp_str = vk_print_vkallocationcallbacks(pAllocator, "    ");
             (*outputStream) << "   pAllocator (" << pAllocator << ")" << endl << tmp_str << endl;
         }
     }
-    layer_platform_thread_unlock_mutex(&printLock);
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
@@ -3886,22 +3885,22 @@ VK_LAYER_EXPORT VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceWin32Presentat
 {
     using namespace StreamControl;
     VkBool32 result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceWin32PresentationSupportKHR(physicalDevice, queueFamilyIndex);
-    layer_platform_thread_lock_mutex(&printLock);
-    // CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1032
+    loader_platform_thread_lock_mutex(&printLock);
+    // CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1111
     if (StreamControl::writeAddress == true) {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceWin32PresentationSupportKHR(physicalDevice = " << (void*)(physicalDevice) << ", queueFamilyIndex = " << queueFamilyIndex << ")\n";
     }
     else {
         (*outputStream) << "t{" << getTIDIndex() << "} vkGetPhysicalDeviceWin32PresentationSupportKHR(physicalDevice = address, queueFamilyIndex = " << queueFamilyIndex << ")\n";
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #1084
-    layer_platform_thread_unlock_mutex(&printLock);
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #1163
+    loader_platform_thread_unlock_mutex(&printLock);
     return result;
 }
 
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #431
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #424
 static inline PFN_vkVoidFunction layer_intercept_proc(const char *name)
 {
     if (!name || name[0] != 'v' || name[1] != 'k')
@@ -4213,13 +4212,13 @@ static inline PFN_vkVoidFunction layer_intercept_instance_proc(const char *name)
     return NULL;
 }
 
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #479
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #558
 VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(VkDevice device, const char* funcName)
 {
     PFN_vkVoidFunction addr;
 
 
-    layer_platform_thread_once(&initOnce, initapi_dump);
+    loader_platform_thread_once(&initOnce, initapi_dump);
 
     if (!strcmp("vkGetDeviceProcAddr", funcName)) {
         return (PFN_vkVoidFunction) vkGetDeviceProcAddr;
@@ -4247,7 +4246,7 @@ VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(VkD
         if (!strcmp("vkQueuePresentKHR", funcName))
             return reinterpret_cast<PFN_vkVoidFunction>(vkQueuePresentKHR);
     }
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #517
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #596
     {
         if (pDisp->GetDeviceProcAddr == NULL)
             return NULL;
@@ -4255,7 +4254,7 @@ VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(VkD
     }
 }
 
-// CODEGEN : file C:/releasebuild/VulkanTools/vk-layer-generate.py line #524
+// CODEGEN : file C:/releasebuild/VulkanTools/vk-vtlayer-generate.py line #603
 VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(VkInstance instance, const char* funcName)
 {
     PFN_vkVoidFunction addr;
@@ -4266,7 +4265,7 @@ VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(V
     if (!strcmp(funcName, "vkCreateDevice"))
         return (PFN_vkVoidFunction) vkCreateDevice;
 
-    layer_platform_thread_once(&initOnce, initapi_dump);
+    loader_platform_thread_once(&initOnce, initapi_dump);
 
     addr = layer_intercept_instance_proc(funcName);
     if (addr)
@@ -4280,6 +4279,8 @@ VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(V
 
     if (instanceExtMap.size() != 0 && instanceExtMap[pTable].wsi_enabled)
     {
+        if (!strcmp("vkDestroySurfaceKHR", funcName))
+            return reinterpret_cast<PFN_vkVoidFunction>(vkDestroySurfaceKHR);
         if (!strcmp("vkGetPhysicalDeviceSurfaceSupportKHR", funcName))
             return reinterpret_cast<PFN_vkVoidFunction>(vkGetPhysicalDeviceSurfaceSupportKHR);
         if (!strcmp("vkGetPhysicalDeviceSurfaceCapabilitiesKHR", funcName))
