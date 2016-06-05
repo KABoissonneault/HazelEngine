@@ -1,9 +1,44 @@
 #pragma once
 
 #include <future>
+#include <cstdint>
 
 namespace HE
 {
+	using EngineVersion = std::uint32_t;
+	using EngineVersionMajor = std::uint8_t;
+	using EngineVersionMinor = std::uint8_t;
+	using EngineVersionPatch = std::uint16_t;
+
+	constexpr EngineVersion MakeVersion(EngineVersionMajor major, EngineVersionMinor minor, EngineVersionPatch patch) noexcept
+	{
+		return  (((major) << 24) | ((minor) << 16)  | (patch));
+	}
+
+	constexpr EngineVersionMajor GetMajor(EngineVersion v)
+	{
+		return v >> 24;
+	}
+
+	constexpr EngineVersionMinor GetMinor(EngineVersion v)
+	{
+		return v >> 16 & 0xFF;
+	}
+
+	constexpr EngineVersionPatch GetPatch(EngineVersion v)
+	{
+		return v & 0xFFFF;
+	}
+		
+	namespace Test
+	{
+		constexpr auto testVersion = MakeVersion(1, 2, 24);
+		static_assert(testVersion == 0x01020018, "EngineVersion Test fail");
+		static_assert(GetMajor(testVersion) == 1, "EngineVersion Test fail");
+		static_assert(GetMinor(testVersion) == 2, "EngineVersion Test fail");
+		static_assert(GetPatch(testVersion) == 24, "EngineVersion Test fail");
+	}
+	
 
 	// Represents a game engine that wraps both a Model of a game and
 	// a View of the Model

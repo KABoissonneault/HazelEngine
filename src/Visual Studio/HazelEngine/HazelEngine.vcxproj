@@ -154,7 +154,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(SrcDir)Engine;$(SrcDir)SDK;$(LibDir)ChaiScript\include;$(LibDir)Vulkan\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SrcDir)Engine;$(SrcDir)SDK;$(LibDir)ChaiScript\include;$(LibDir)Vulkan\Include;$(LibDir)vkcpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Link>
@@ -171,7 +171,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(SrcDir)Engine;$(SrcDir)SDK;$(LibDir)ChaiScript\include;$(LibDir)Vulkan\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SrcDir)Engine;$(SrcDir)SDK;$(LibDir)ChaiScript\include;$(LibDir)Vulkan\Include;$(LibDir)vkcpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Lib>
@@ -187,7 +187,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(SrcDir)Engine;$(SrcDir)SDK;$(LibDir)ChaiScript\include;$(LibDir)Vulkan\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SrcDir)Engine;$(SrcDir)SDK;$(LibDir)ChaiScript\include;$(LibDir)Vulkan\Include;$(LibDir)vkcpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Link>
@@ -204,7 +204,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(SrcDir)Engine;$(SrcDir)SDK;$(LibDir)ChaiScript\include;$(LibDir)Vulkan\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SrcDir)Engine;$(SrcDir)SDK;$(LibDir)ChaiScript\include;$(LibDir)Vulkan\Include;$(LibDir)vkcpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Lib>
@@ -222,7 +222,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(SrcDir)Engine;$(SrcDir)SDK;$(LibDir)ChaiScript\include;$(LibDir)Vulkan\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SrcDir)Engine;$(SrcDir)SDK;$(LibDir)ChaiScript\include;$(LibDir)Vulkan\Include;$(LibDir)vkcpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Link>
@@ -243,7 +243,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(SrcDir)Engine;$(SrcDir)SDK;$(LibDir)ChaiScript\include;$(LibDir)Vulkan\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SrcDir)Engine;$(SrcDir)SDK;$(LibDir)ChaiScript\include;$(LibDir)Vulkan\Include;$(LibDir)vkcpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Link>
@@ -263,7 +263,6 @@
     <ClCompile Include="..\..\Source\SDK\HE_Allocator.cpp" />
     <ClCompile Include="..\..\Source\SDK\HE_Assert.cpp" />
     <ClCompile Include="..\..\Source\SDK\HE_String.cpp" />
-    <ClCompile Include="..\..\Source\SDK\HE_Vulkan.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Engine\Entity.h" />
@@ -274,7 +273,6 @@
     <ClInclude Include="..\..\Source\SDK\HE_Math.h" />
     <ClInclude Include="..\..\Source\SDK\HE_String.h" />
     <ClInclude Include="..\..\Source\SDK\HE_Platform.h" />
-    <ClInclude Include="..\..\Source\SDK\HE_Vulkan.h" />
     <ClInclude Include="..\..\Source\SDK\TMP_Helper.h" />
   </ItemGroup>
   <ItemGroup>

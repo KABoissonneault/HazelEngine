@@ -285,7 +285,7 @@ namespace vk
 		vkFreeCommandBuffers(device, commandPool, gsl::narrow_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 	}
 
-	VkCommandBufferBeginInfo MakeCommandBufferBeginInfo(VkCommandBufferUsageFlags flags, VkCommandBufferInheritanceInfo const* pInheritanceInfo, void const* pNext = nullptr) noexcept
+	VkCommandBufferBeginInfo MakeCommandBufferBeginInfo(VkCommandBufferUsageFlags flags, VkCommandBufferInheritanceInfo const* pInheritanceInfo, void const* pNext ) noexcept
 	{
 		VkCommandBufferBeginInfo ret;
 		ret.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
